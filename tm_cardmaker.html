@@ -1,0 +1,2584 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TM Card Maker</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,600,700,800">
+<style>
+/* ============================================================
+   POLICES LOCALES
+   ============================================================ */
+@font-face { font-family: Prototype; src: url(./fonts/Prototype.ttf); }
+@font-face { font-family: Pagella; src: url(./fonts/texgyrepagella-regular-webfont.ttf); font-weight: normal; font-style: normal; }
+@font-face { font-family: Pagella; src: url(./fonts/texgyrepagella-bold-webfont.ttf); font-weight: bold; font-style: normal; }
+@font-face { font-family: Pagella; src: url(./fonts/texgyrepagella-italic-webfont.ttf); font-weight: normal; font-style: italic; }
+@font-face { font-family: Pagella; src: url(./fonts/texgyrepagella-bolditalic-webfont.ttf); font-weight: bold; font-style: italic; }
+
+/* ============================================================
+   RESET
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; overflow-x: hidden; }
+body { margin: 0; }
+button, input, select, textarea, optgroup { font: inherit; margin: 0; }
+button, input { overflow: visible; }
+button, select { text-transform: none; }
+button, [type=button], [type=reset], [type=submit] { -webkit-appearance: button; }
+[type=checkbox], [type=radio] { padding: 0; }
+img { border-style: none; vertical-align: middle; }
+a { color: inherit; background-color: transparent; }
+a:active, a:hover { outline-width: 0; }
+textarea { overflow: auto; }
+
+/* ============================================================
+   VARIABLES & THÈME
+   ============================================================ */
+:root {
+  --mars: #C1440E; --rust: #E8651A; --gold: #E8A838;
+  --space: #12141A; --navy: #181C28; --panel: #1E2436;
+  --border: rgba(232,101,26,0.22); --text: #F0E6D3; --muted: #8A7E6E;
+  --sidebar: 260px;
+}
+body { background: var(--space); color: var(--text); font-family: "Roboto", sans-serif; font-size: 14px; max-width: 1800px; }
+
+/* ============================================================
+   ÉCRAN DE DÉMARRAGE
+   ============================================================ */
+#start-screen {
+  position: fixed; inset: 0; background: var(--space); z-index: 1000;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; padding: 30px; overflow-y: auto;
+}
+.start-planet {
+  width: 52px; height: 52px;
+  background: radial-gradient(circle at 35% 30%, #ff9966, #C1440E 55%, #5a1000);
+  border-radius: 50%; border: 3px solid var(--gold);
+  box-shadow: 0 0 24px rgba(193,68,14,0.5); flex-shrink: 0;
+}
+.start-logo { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
+.start-title { font-family: "Montserrat", sans-serif; font-size: 26px; font-weight: 800; color: #fff; letter-spacing: 0.06em; text-transform: uppercase; line-height: 1.1; }
+.start-title span { display: block; font-size: 12px; font-weight: 400; color: var(--gold); letter-spacing: 0.1em; margin-top: 2px; }
+.start-sub { color: var(--muted); font-size: 13px; margin-bottom: 32px; }
+.start-actions { display: flex; gap: 10px; margin-bottom: 36px; flex-wrap: wrap; justify-content: center; }
+.sbtn { padding: 9px 20px; border-radius: 6px; border: none; font-family: "Montserrat", sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s; letter-spacing: 0.04em; }
+.sbtn-primary { background: linear-gradient(135deg, var(--mars), var(--rust)); color: #fff; box-shadow: 0 4px 14px rgba(193,68,14,0.35); }
+.sbtn-primary:hover { filter: brightness(1.1); }
+.sbtn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+.sbtn-ghost:hover { color: var(--text); border-color: var(--muted); }
+.tpl-label { font-family: "Montserrat", sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; text-align: center; }
+.tpl-grid { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; max-width: 860px; width: 100%; }
+.tpl-card {
+  background: var(--panel); border: 2px solid var(--border); border-radius: 10px;
+  padding: 12px 8px 10px; cursor: pointer; transition: all 0.18s;
+  text-align: center; display: flex; flex-direction: column; align-items: center; gap: 7px;
+  flex: 0 0 auto;
+}
+.tpl-card:hover { border-color: var(--rust); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+.tpl-card:hover .tpl-name { color: var(--rust); }
+/* Cartes verticales */
+.tpl-thumb {
+  width: 72px; height: 100px; border-radius: 5px; display: flex;
+  align-items: center; justify-content: center; font-size: 28px;
+  border: 1px solid rgba(255,255,255,0.1); overflow: hidden;
+}
+/* Cartes horizontales (prélude, corporation) */
+.tpl-thumb-h {
+  width: 140px; height: 100px; border-radius: 5px; display: flex;
+  align-items: center; justify-content: center; font-size: 28px;
+  border: 1px solid rgba(255,255,255,0.1); overflow: hidden;
+}
+.tpl-thumb img, .tpl-thumb-h img { width: 100%; height: 100%; object-fit: cover; }
+.tc-green  { background: linear-gradient(160deg,#2d6a35,#1a3d1e); }
+.tc-blue   { background: linear-gradient(160deg,#1a4f7a,#0d2b45); }
+.tc-red    { background: linear-gradient(160deg,#7a2010,#3d1008); }
+.tc-purple { background: linear-gradient(160deg,#6b3070,#3a1a40); }
+.tc-dark   { background: linear-gradient(160deg,#3a3a3a,#1a1a1a); }
+.tpl-name { font-family: "Montserrat", sans-serif; font-size: 11px; font-weight: 700; color: var(--text); transition: color 0.15s; }
+.tpl-sub  { font-size: 10px; color: var(--muted); }
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+#mySidebar {
+  position: fixed; top: 0; left: 0; width: var(--sidebar); height: 100vh;
+  background: var(--navy); border-right: 1px solid var(--border);
+  overflow-y: auto; overflow-x: hidden; z-index: 50; display: flex; flex-direction: column;
+}
+.sb-head { padding: 12px 14px; background: linear-gradient(135deg,#7a1800,var(--mars)); border-bottom: 2px solid var(--rust); display: flex; align-items: center; gap: 9px; flex-shrink: 0; }
+.sb-planet { width: 26px; height: 26px; background: radial-gradient(circle at 35% 30%,#ff9966,var(--mars) 60%,#5a1000); border-radius: 50%; border: 2px solid var(--gold); flex-shrink: 0; }
+.sb-title { font-family: "Montserrat", sans-serif; font-size: 12px; font-weight: 800; color: #fff; letter-spacing: 0.06em; text-transform: uppercase; line-height: 1.2; }
+.sb-title span { display: block; font-size: 9px; color: rgba(255,255,255,0.55); font-weight: 400; }
+.undo-bar { display: flex; gap: 6px; padding: 8px 10px; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.2); }
+.undo-btn { flex: 1; padding: 6px 4px; border-radius: 5px; border: 1px solid var(--border); background: var(--panel); color: var(--muted); font-size: 13px; cursor: pointer; transition: all 0.15s; }
+.undo-btn:hover:not(:disabled) { background: var(--mars); color: #fff; border-color: var(--rust); }
+.undo-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.new-btn { margin: 10px; padding: 8px; border-radius: 6px; background: linear-gradient(135deg, var(--mars), var(--rust)); border: none; color: #fff; font-family: "Montserrat", sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; cursor: pointer; transition: all 0.15s; }
+.new-btn:hover { filter: brightness(1.1); }
+.sb-sec { border-bottom: 1px solid var(--border); }
+.sb-sec-btn { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 8px 13px; background: transparent; border: none; color: var(--gold); font-family: "Montserrat", sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: background 0.12s; }
+.sb-sec-btn:hover { background: rgba(232,101,26,0.1); }
+.sb-sec-btn .arr { font-size: 9px; color: var(--muted); transition: transform 0.2s; }
+.sb-sec-btn.open .arr { transform: rotate(180deg); }
+.sb-content { display: none; background: rgba(0,0,0,0.15); }
+.sb-content.open { display: block; }
+.sb-icon-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 5px; padding: 8px; }
+.sb-icon { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 3px; border-radius: 5px; background: var(--panel); border: 1px solid var(--border); cursor: pointer; transition: all 0.15s; text-decoration: none; border: none; }
+.sb-icon:hover { background: var(--mars); border-color: var(--rust); }
+.sb-icon img { width: 34px; height: 34px; object-fit: contain; border-radius: 3px; }
+.sb-icon span { font-size: 8px; color: var(--muted); text-align: center; line-height: 1.2; }
+.sb-icon:hover span { color: #fff; }
+.sb-item { display: block; padding: 7px 18px; color: var(--text); font-size: 12px; text-decoration: none; cursor: pointer; border: none; background: transparent; width: 100%; text-align: left; transition: all 0.12s; font-family: "Roboto", sans-serif; }
+.sb-item:hover { background: rgba(193,68,14,0.18); color: var(--rust); padding-left: 22px; }
+
+/* ============================================================
+   TOPBAR MOBILE
+   ============================================================ */
+#topbar { display: none; position: fixed; top: 0; left: 0; right: 0; height: 52px; background: var(--navy); border-bottom: 2px solid var(--mars); align-items: center; padding: 0 14px; z-index: 200; gap: 10px; }
+#topbar .mbtn { background: none; border: none; color: var(--text); font-size: 22px; cursor: pointer; }
+#topbar .mtitle { font-family: "Montserrat", sans-serif; font-size: 13px; font-weight: 800; color: var(--gold); letter-spacing: 0.06em; text-transform: uppercase; flex: 1; }
+#myOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 49; }
+
+/* ============================================================
+   CONTENU PRINCIPAL
+   ============================================================ */
+#main-content { margin-left: var(--sidebar); min-height: 100vh; background: var(--space); padding: 18px; }
+#canvas-area { display: flex; gap: 18px; align-items: flex-start; flex-wrap: wrap; }
+#cmcanvas { border: 2px solid var(--border); border-radius: 4px; flex-shrink: 0; box-shadow: 0 0 36px rgba(193,68,14,0.1), 0 4px 20px rgba(0,0,0,0.6); background: #111; cursor: default; }
+#cmcanvas.dragging { cursor: grabbing; }
+
+/* ============================================================
+   PANNEAU CALQUES
+   ============================================================ */
+#layer-panel { background: var(--navy); border: 1px solid var(--border); border-radius: 8px; padding: 13px; min-width: 230px; flex: 1; max-width: 290px; }
+#layer-panel h2 { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 9px; padding-bottom: 7px; border-bottom: 1px solid var(--border); }
+.divRec { cursor: move; border: 1px solid var(--border); border-radius: 5px; margin-bottom: 4px; background: var(--panel); transition: border-color 0.12s; font-size: 13px; }
+.divRec:hover { border-color: var(--muted); }
+/* Calque verrouillé — aspect atténué */
+.divRec.layer-locked { background: rgba(18,20,26,0.7); border-color: rgba(138,126,110,0.2); }
+.divRec.layer-locked .inside input[type=text] { color: var(--muted); }
+div.selected { border: 2px solid var(--rust) !important; background: rgba(232,101,26,0.07); }
+.inside { display: flex; align-items: center; padding: 5px 8px; gap: 5px; cursor: pointer; }
+.inside input[type=text] { flex: 1; background: transparent; border: none; color: var(--text); font-size: 12px; font-family: "Roboto", sans-serif; outline: none; min-width: 0; }
+.inside input[type=text]:focus { color: var(--rust); }
+.inside button { background: rgba(193,68,14,0.3); border: none; color: var(--muted); border-radius: 3px; padding: 2px 5px; font-size: 10px; cursor: pointer; flex-shrink: 0; transition: all 0.12s; }
+.inside button:hover { background: var(--mars); color: #fff; }
+/* Bouton verrou */
+.lock-btn { background: transparent !important; border: none !important; font-size: 12px; cursor: pointer; padding: 2px 3px !important; flex-shrink: 0; opacity: 0.6; transition: opacity 0.15s; }
+.lock-btn:hover { opacity: 1; }
+.divRec.layer-locked .lock-btn { opacity: 1; color: var(--gold); }
+.ghost { opacity: 0.4; border: 1px dashed var(--rust) !important; }
+.group-row { margin-top: 9px; padding-top: 9px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 7px; color: var(--muted); font-size: 11px; }
+.group-row input { accent-color: var(--rust); }
+
+/* ============================================================
+   PARAMS
+   ============================================================ */
+#params { margin-top: 14px; background: var(--navy); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+#params.hidden { display: none; }
+.pt { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--rust); margin: 12px 0 7px; padding-bottom: 3px; border-bottom: 1px solid var(--border); }
+.pt:first-child { margin-top: 0; }
+.pr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; gap: 7px; }
+.pl { color: var(--muted); font-size: 11px; font-weight: 500; white-space: nowrap; min-width: 78px; }
+.pi { background: #0a1828; border: 1px solid var(--border); border-radius: 4px; color: var(--text); padding: 5px 8px; font-size: 12px; font-family: "Roboto", sans-serif; width: 135px; transition: border-color 0.15s; }
+.pi:focus { outline: none; border-color: var(--rust); box-shadow: 0 0 0 2px rgba(232,101,26,0.15); }
+select.pi { cursor: pointer; }
+textarea.pi { width: 135px; height: 68px; resize: vertical; line-height: 1.4; }
+input[type=color].pi { padding: 2px 4px; height: 29px; cursor: pointer; }
+input[type=checkbox].pc { accent-color: var(--rust); width: 14px; height: 14px; cursor: pointer; }
+.pbar { display: flex; align-items: center; justify-content: flex-end; margin-bottom: 10px; padding-bottom: 9px; border-bottom: 1px solid var(--border); gap: 7px; }
+.pbar label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+
+/* ============================================================
+   LOADING
+   ============================================================ */
+#loadprogress { background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; margin-bottom: 14px; display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+#loadprogress label { color: var(--muted); font-size: 11px; }
+#files { flex: 1; min-width: 100px; accent-color: var(--rust); height: 5px; }
+#fontload { display: flex; gap: 12px; font-size: 10px; color: var(--muted); }
+
+/* ============================================================
+   OVERLAYS / MODALES
+   ============================================================ */
+.overlay { position: fixed; inset: 0; background: rgba(5,8,15,0.88); z-index: 500; display: flex; align-items: center; justify-content: center; }
+.overlay.hidden { display: none; }
+.modal { background: var(--navy); border: 1px solid var(--rust); border-radius: 10px; padding: 28px 34px; box-shadow: 0 8px 48px rgba(0,0,0,0.8); min-width: 290px; }
+.modal h3 { font-family: "Montserrat", sans-serif; font-size: 14px; font-weight: 700; color: var(--gold); margin-bottom: 12px; letter-spacing: 0.05em; }
+.modal p { color: var(--muted); font-size: 12px; margin-bottom: 9px; }
+.modal input { width: 100%; padding: 7px 11px; background: #0a1828; border: 1px solid var(--border); border-radius: 4px; color: var(--text); font-size: 13px; margin-bottom: 13px; font-family: "Roboto", sans-serif; }
+.modal input:focus { outline: none; border-color: var(--rust); }
+.mact { display: flex; gap: 9px; justify-content: flex-end; }
+.btn { padding: 7px 16px; border-radius: 5px; border: none; font-size: 12px; font-family: "Montserrat", sans-serif; font-weight: 700; cursor: pointer; transition: all 0.15s; letter-spacing: 0.04em; }
+.btn-p { background: linear-gradient(135deg, var(--mars), var(--rust)); color: #fff; }
+.btn-p:hover { filter: brightness(1.1); }
+.btn-g { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+.btn-g:hover { color: var(--text); border-color: var(--muted); }
+
+/* ============================================================
+   POIGNÉES DE REDIMENSIONNEMENT
+   ============================================================ */
+.resize-handle {
+  position: fixed; width: 10px; height: 10px; background: #fff;
+  border: 2px solid var(--rust); border-radius: 2px; z-index: 9000;
+  cursor: pointer; transform: translate(-50%, -50%);
+}
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--space); }
+::-webkit-scrollbar-thumb { background: var(--mars); border-radius: 3px; }
+
+/* ============================================================
+   UTILITAIRES
+   ============================================================ */
+.hidden { display: none !important; }
+.vis-hidden { visibility: hidden; position: absolute; }
+#xcanvases { width: 100%; }
+input[type=number] { width: auto; }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 900px) {
+  #mySidebar { transform: translateX(-100%); transition: transform 0.25s; }
+  #mySidebar.open { transform: translateX(0); }
+  #main-content { margin-left: 0; padding-top: 68px; }
+  #topbar { display: flex; }
+  #canvas-area { flex-direction: column; }
+  #layer-panel { max-width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     ÉCRAN DE DÉMARRAGE
+     ============================================================ -->
+<div id="start-screen">
+  <div class="start-logo">
+    <div class="start-planet"></div>
+    <div class="start-title">TM Card Maker<span>Terraforming Mars — Outil Fan Made</span></div>
+  </div>
+  <p class="start-sub">Crée tes propres cartes pour Terraforming Mars</p>
+  <div class="start-actions">
+    <button class="sbtn sbtn-ghost" onclick="startLoad()">📂 Charger un projet</button>
+  </div>
+  <div class="tpl-label">Choisir un type de carte</div>
+  <div class="tpl-grid">
+    <div class="tpl-card" onclick="startTemplate('green_normal')">
+      <div class="tpl-thumb tc-green"><img src="templates/green_normal.png" alt="Carte Verte" onerror="this.style.display='none'"></div>
+      <div class="tpl-name">Carte Verte</div><div class="tpl-sub">Projet</div>
+    </div>
+    <div class="tpl-card" onclick="startTemplate('blue_normal')">
+      <div class="tpl-thumb tc-blue"><img src="templates/blue_normal.png" alt="Carte Bleue" onerror="this.style.display='none'"></div>
+      <div class="tpl-name">Carte Bleue</div><div class="tpl-sub">Action / Effet</div>
+    </div>
+    <div class="tpl-card" onclick="startTemplate('red_normal')">
+      <div class="tpl-thumb tc-red"><img src="templates/red_normal.png" alt="Carte Rouge" onerror="this.style.display='none'"></div>
+      <div class="tpl-name">Carte Rouge</div><div class="tpl-sub">Événement</div>
+    </div>
+    <div class="tpl-card" onclick="startTemplate('prelude')">
+      <div class="tpl-thumb-h tc-purple"><img src="templates/prelude.png" alt="Prélude" onerror="this.style.display='none'"></div>
+      <div class="tpl-name">Prélude</div><div class="tpl-sub">Horizontale</div>
+    </div>
+    <div class="tpl-card" onclick="startTemplate('corporation')">
+      <div class="tpl-thumb-h tc-dark"><img src="templates/corporation.png" alt="Corporation" onerror="this.style.display='none'"></div>
+      <div class="tpl-name">Corporation</div><div class="tpl-sub">Horizontale</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     OVERLAYS
+     ============================================================ -->
+<div class="overlay hidden" id="overlay">
+  <div class="modal">
+    <h3>Charger une image web</h3>
+    <p>URL de l'image :</p>
+    <input id="url2load" type="url" placeholder="https://exemple.com/image.png">
+    <div class="mact">
+      <button class="btn btn-g" onclick="closeOverlay('overlay')">Annuler</button>
+      <button class="btn btn-p" onclick="loadWebImage()">Charger</button>
+    </div>
+  </div>
+</div>
+<div class="overlay hidden" id="fontoverlay">
+  <div class="modal">
+    <h3>Charger une police web</h3>
+    <p>URL Google Fonts :</p>
+    <input id="fonturl2load" type="text" placeholder="https://fonts.googleapis.com/css2?family=...">
+    <div class="mact">
+      <button class="btn btn-g" onclick="closeOverlay('fontoverlay')">Annuler</button>
+      <button class="btn btn-p" onclick="loadSpecifiedFont()">Charger</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     TOPBAR MOBILE
+     ============================================================ -->
+<header id="topbar">
+  <button class="mbtn" onclick="toggleSB()">☰</button>
+  <span class="mtitle">TM Card Maker</span>
+  <button id="btn-undo-top" class="undo-btn" onclick="undo()" disabled style="width:34px;flex:none;">↩</button>
+  <button id="btn-redo-top" class="undo-btn" onclick="redo()" disabled style="width:34px;flex:none;">↪</button>
+</header>
+<div id="myOverlay" onclick="closeSB()"></div>
+
+<!-- ============================================================
+     SIDEBAR
+     ============================================================ -->
+<nav id="mySidebar">
+  <div class="sb-head">
+    <div class="sb-planet"></div>
+    <div class="sb-title">TM Card Maker<span>Fan Made Tool</span></div>
+  </div>
+  <div class="undo-bar">
+    <button id="btn-undo" class="undo-btn" onclick="undo()" disabled title="Ctrl+Z">↩ Annuler</button>
+    <button id="btn-redo" class="undo-btn" onclick="redo()" disabled title="Ctrl+Y">Refaire ↪</button>
+  </div>
+  <button class="new-btn" onclick="showStart()">＋ Nouvelle carte</button>
+
+  <div class="sb-sec">
+    <button class="sb-sec-btn" onclick="toggleSec(this,'sf')">Fichier <span class="arr">▼</span></button>
+    <div class="sb-content" id="sf">
+      <button onclick="exportPNG()" class="sb-item">🖼️ Exporter en PNG</button>
+      <button onclick="saveProjectCont(false)" class="sb-item">💾 Sauvegarder projet</button>
+      <button onclick="clickLoadNewProject()" class="sb-item">📂 Ouvrir projet</button>
+      <button onclick="clickSaveProject()" class="sb-item">📦 Exporter projet</button>
+    </div>
+  </div>
+  <div class="sb-sec">
+    <button class="sb-sec-btn open" onclick="toggleSec(this,'st')">Tags <span class="arr">▼</span></button>
+    <div class="sb-content open" id="st"><div class="sb-icon-grid" id="tags"></div></div>
+  </div>
+  <div class="sb-sec">
+    <button class="sb-sec-btn open" onclick="toggleSec(this,'sr')">Ressources <span class="arr">▼</span></button>
+    <div class="sb-content open" id="sr"><div class="sb-icon-grid" id="resources"></div></div>
+  </div>
+  <div class="sb-sec">
+    <button class="sb-sec-btn" onclick="toggleSec(this,'sti')">Tuiles <span class="arr">▼</span></button>
+    <div class="sb-content" id="sti"><div class="sb-icon-grid" id="tiles"></div></div>
+  </div>
+  <div class="sb-sec">
+    <button class="sb-sec-btn" onclick="toggleSec(this,'sv')">Points de victoire <span class="arr">▼</span></button>
+    <div class="sb-content" id="sv"><div class="sb-icon-grid" id="VPs"></div></div>
+  </div>
+  <div class="sb-sec">
+    <button class="sb-sec-btn" onclick="toggleSec(this,'sq')">Prérequis <span class="arr">▼</span></button>
+    <div class="sb-content" id="sq"><div class="sb-icon-grid" id="requisites"></div></div>
+  </div>
+  <div class="sb-sec">
+    <button class="sb-sec-btn" onclick="toggleSec(this,'sg')">Params globaux <span class="arr">▼</span></button>
+    <div class="sb-content" id="sg"><div class="sb-icon-grid" id="globalparameters"></div></div>
+  </div>
+  <div class="sb-sec">
+    <button class="sb-sec-btn" onclick="toggleSec(this,'sp')">Partis <span class="arr">▼</span></button>
+    <div class="sb-content" id="sp"><div class="sb-icon-grid" id="parties"></div></div>
+  </div>
+  <div class="sb-sec">
+    <button class="sb-sec-btn" onclick="toggleSec(this,'sm')">Divers <span class="arr">▼</span></button>
+    <div class="sb-content" id="sm"><div class="sb-icon-grid" id="misc"></div></div>
+  </div>
+  <div class="sb-sec">
+    <button class="sb-sec-btn" onclick="toggleSec(this,'so')">Texte &amp; outils <span class="arr">▼</span></button>
+    <div class="sb-content" id="so">
+      <button onclick="addTextBox()" class="sb-item">🔤 Zone de texte</button>
+      <button onclick="addProduction()" class="sb-item">⬛ Boîte production</button>
+      <button onclick="addEffectBox()" class="sb-item">✦ Boîte effet</button>
+      <button onclick="addLine()" class="sb-item">— Ligne</button>
+      <button onclick="openOverlay('overlay')" class="sb-item">🌐 Image web</button>
+      <button onclick="document.getElementById('fileselection').click()" class="sb-item">📁 Image locale</button>
+      <button onclick="openOverlay('fontoverlay')" class="sb-item">🔡 Police web</button>
+      <input type="file" id="fileselection" class="hidden" onchange="addUserFile(this)">
+    </div>
+  </div>
+  <div style="display:none">
+    <div id="templates"></div>
+    <div id="fromTemplate"></div>
+  </div>
+</nav>
+
+<!-- ============================================================
+     CONTENU PRINCIPAL
+     ============================================================ -->
+<div id="main-content">
+  <div id="loadprogress" style="display:none;">
+    <label>Chargement :</label>
+    <progress id="files" value="0" max="100"></progress>
+    <div id="fontload">
+      <div style="font-family:Prototype;">Prototype</div>
+      <div style="font-family:Pagella;">Palatino</div>
+      <div style="font-family:'Times New Roman';">Times New Roman</div>
+    </div>
+  </div>
+  <div id="canvas-area">
+    <div>
+      <canvas id="cmcanvas" height="1050px" width="750px"></canvas>
+      <a id="projectlink"></a>
+    </div>
+    <div id="layer-panel">
+      <h2>Calques — <small style="color:var(--muted);font-size:9px;">Double-clic = éditer</small></h2>
+      <section id="layerlist"></section>
+      <div class="group-row">
+        <input id="groupmode" type="checkbox" onchange="groupModeToggle()">
+        <label for="groupmode">Mode groupe</label>
+      </div>
+    </div>
+  </div>
+  <div id="xcanvases" style="width:100%;"></div>
+  <div id="params" class="hidden">
+    <div id="allpreset" class="hidden">
+      <div class="pbar">
+        <label>Preset :</label>
+        <select id="presets" class="pi" onchange="setPresets(this)">
+          <option value="">Sélectionner…</option>
+          <option value="defselect0"></option>
+          <option value="defselect1"></option>
+        </select>
+      </div>
+    </div>
+    <div id="allall" class="hidden">
+      <div class="pt">Position &amp; Taille</div>
+      <div class="pr"><span class="pl">X</span><input id="inputx" type="number" class="pi" onchange="updateValue(this)"></div>
+      <div class="pr"><span class="pl">Y</span><input id="inputy" type="number" class="pi" onchange="updateValue(this)"></div>
+      <div class="pr"><span class="pl">Largeur</span><input id="inputwidth" type="number" min="1" class="pi" onchange="updateValue(this)"></div>
+    </div>
+    <div id="allimages" class="hidden">
+      <div class="pr"><span class="pl">Ratio fixe</span><input id="lar" type="checkbox" class="pc" onchange="updateValue(this)" checked></div>
+      <div class="pr"><span class="pl">Hauteur</span><input id="inputheight" type="number" min="1" class="pi" onchange="updateValue(this)"></div>
+    </div>
+    <div id="allangle" class="hidden">
+      <div class="pr"><span class="pl">Angle</span><input id="inputangle" type="number" min="0" max="359" class="pi" onchange="updateValue(this)"></div>
+    </div>
+    <div id="alllen" class="hidden">
+      <div class="pr"><span class="pl">Longueur</span><input id="inputlen" type="number" min="1" class="pi" onchange="updateValue(this)"></div>
+    </div>
+    <div id="clipimages" class="hidden">
+      <div class="pt">Recadrage image</div>
+      <div class="pr"><span class="pl">Opacité %</span><input id="inputalpha" type="number" min="0" max="100" class="pi" onchange="updateValue(this)"></div>
+      <div class="pr"><span class="pl">Source X</span><input id="inputsx" type="number" min="0" class="pi" onchange="updateValue(this)"></div>
+      <div class="pr"><span class="pl">Source Y</span><input id="inputsy" type="number" min="0" class="pi" onchange="updateValue(this)"></div>
+      <div class="pr"><span class="pl">Source L</span><input id="inputswidth" type="number" min="1" class="pi" onchange="updateValue(this)"></div>
+      <div class="pr"><span class="pl">Ratio fixe</span><input id="slar" type="checkbox" class="pc" onchange="updateValue(this)" checked></div>
+      <div class="pr"><span class="pl">Source H</span><input id="inputsheight" type="number" min="1" class="pi" onchange="updateValue(this)"></div>
+    </div>
+    <div id="otherbg" class="hidden">
+      <div class="pr"><span class="pl">Fond autres</span><input id="inputobg" type="checkbox" class="pc" onchange="updateValue(this)"></div>
+    </div>
+    <div id="alltext" class="hidden">
+      <div class="pt">Texte</div>
+      <div class="pr"><span class="pl">Contenu</span><textarea id="inputdata" class="pi" onchange="updateValue(this)" oninput="liveUpdateText(this)"></textarea></div>
+      <div class="pr"><span class="pl">Interligne</span><input id="inputlineSpace" type="number" class="pi" onchange="updateValue(this)"></div>
+      <div class="pr"><span class="pl">Police</span>
+        <select id="inputfont" class="pi" onchange="updateValue(this)">
+          <option value="Prototype">Prototype</option>
+          <option value="Pagella">Palatino</option>
+          <option value="times">Times New Roman</option>
+        </select>
+      </div>
+      <div class="pr"><span class="pl">Style</span>
+        <select id="inputstyle" class="pi" onchange="updateValue(this)">
+          <option value="normal">Normal</option>
+          <option value="italic">Italique</option>
+        </select>
+      </div>
+      <div class="pr"><span class="pl">Graisse</span>
+        <select id="inputweight" class="pi" onchange="updateValue(this)">
+          <option value="normal">Normal</option>
+          <option value="bold">Gras</option>
+        </select>
+      </div>
+      <div class="pr"><span class="pl">Alignement</span>
+        <select id="inputjustify" class="pi" onchange="updateValue(this)">
+          <option value="center">Centré</option>
+          <option value="left">Gauche</option>
+          <option value="right">Droite</option>
+        </select>
+      </div>
+    </div>
+    <div id="color" class="hidden">
+      <div class="pt">Couleur</div>
+      <div class="pr"><span class="pl">Couleur</span><input id="inputcolor" type="color" class="pi" onchange="updateValue(this)"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     JAVASCRIPT — imageFit
+     ============================================================ -->
+<script>
+function fitImages(imgList, minWidth) {
+  var boxes = [], pos = [], order = [];
+  for (var i = 0; i < imgList.length; i++) { boxes[i] = {w: imgList[i].width, h: imgList[i].height}; pos[i] = {}; order[i] = i; }
+  var area = 0, maxWidth = 0;
+  for (var b = 0; b < boxes.length; b++) { area += boxes[b].w * boxes[b].h; maxWidth = Math.max(maxWidth, boxes[b].w); }
+  order.sort(function(a, b2) { return boxes[b2].h - boxes[a].h; });
+  var startWidth = Math.max(Math.ceil(Math.sqrt(area / 0.9)), maxWidth, minWidth);
+  var spaces = [{x:0, y:0, w:startWidth, h:Infinity}];
+  var width = 0, height = 0;
+  for (var i2 = 0; i2 < boxes.length; i2++) {
+    var box = boxes[order[i2]];
+    for (var si = spaces.length - 1; si >= 0; si--) {
+      var space = spaces[si];
+      if (box.w > space.w || box.h > space.h) continue;
+      box.x = space.x; box.y = space.y;
+      pos[order[i2]].x = space.x; pos[order[i2]].y = space.y;
+      height = Math.max(height, box.y + box.h); width = Math.max(width, box.x + box.w);
+      if (box.w === space.w && box.h === space.h) { var last = spaces.pop(); if (si < spaces.length) spaces[si] = last; }
+      else if (box.h === space.h) { space.x += box.w; space.w -= box.w; }
+      else if (box.w === space.w) { space.y += box.h; space.h -= box.h; }
+      else { spaces.push({x: space.x + box.w, y: space.y, w: space.w - box.w, h: box.h}); space.y += box.h; space.h -= box.h; }
+      break;
+    }
+  }
+  return {container: {width: width, height: height}, pos: pos};
+}
+</script>
+
+<!-- ============================================================
+     JAVASCRIPT — APPLICATION PRINCIPALE
+     ============================================================ -->
+<script>
+"use strict";
+
+// ============================================================
+// ÉTAT GLOBAL
+// ============================================================
+var aLayers = {};
+var ddcount  = 0;
+var tagCount = 0;
+var reloading = false;
+var unreloadable = false;
+var projectLoad = false;
+var mostRecentFile = {};
+var userImageList  = [];
+var otherBgList    = {};
+var type2FuncList  = {};
+var fontList = { Prototype: "", Pagella: "", times: "" };
+var lastAutoSave = "";
+var extraRows = 0;
+// Template actif : "vertical" ou "horizontal"
+var currentTemplateType = "vertical";
+
+// Canvas de transparence réutilisable
+var _transparencyCanvas = document.createElement("canvas");
+var _transparencyCtx    = _transparencyCanvas.getContext("2d");
+
+// DOM params — nœud unique déplacé dans le calque sélectionné
+var domInputfont = document.getElementById("inputfont");
+var domParams    = document.getElementById("params");
+domParams.parentNode.removeChild(domParams);
+domParams.classList.remove("hidden");
+
+// ============================================================
+// HISTORIQUE — Ctrl+Z / Ctrl+Y
+// ============================================================
+var undoHistory = [];
+var undoIndex   = -1;
+var MAX_HISTORY = 50;
+
+function saveToHistory() {
+  if (undoIndex < undoHistory.length - 1) undoHistory = undoHistory.slice(0, undoIndex + 1);
+  var layerDivs = document.getElementsByClassName("divRec");
+  var state = {layers: [], order: []};
+  for (var i = 0; i < layerDivs.length; i++) {
+    var id = layerDivs[i].id;
+    state.order.push(id);
+    state.layers.push({id: id, data: JSON.parse(JSON.stringify(aLayers[id]))});
+  }
+  undoHistory.push(JSON.stringify(state));
+  if (undoHistory.length > MAX_HISTORY) { undoHistory.shift(); }
+  else { undoIndex++; }
+  updateUndoButtons();
+}
+
+function undo() { if (undoIndex <= 0) return; undoIndex--; restoreHistory(undoIndex); }
+function redo() { if (undoIndex >= undoHistory.length - 1) return; undoIndex++; restoreHistory(undoIndex); }
+
+function restoreHistory(idx) {
+  var state = JSON.parse(undoHistory[idx]);
+  var newLayers = {};
+  var layerlist = document.getElementById("layerlist");
+  for (var i = 0; i < state.layers.length; i++) newLayers[state.layers[i].id] = state.layers[i].data;
+  aLayers = newLayers;
+  for (var j = 0; j < state.order.length; j++) {
+    var el = document.getElementById(state.order[j]);
+    if (el) layerlist.appendChild(el);
+  }
+  drawProject();
+  updateUndoButtons();
+}
+
+function updateUndoButtons() {
+  var canUndo = undoIndex > 0, canRedo = undoIndex < undoHistory.length - 1;
+  ["btn-undo","btn-undo-top"].forEach(function(id) { var el = document.getElementById(id); if (el) el.disabled = !canUndo; });
+  ["btn-redo","btn-redo-top"].forEach(function(id) { var el = document.getElementById(id); if (el) el.disabled = !canRedo; });
+}
+
+document.addEventListener("keydown", function(e) {
+  if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+  if (e.ctrlKey && e.key === "z") { e.preventDefault(); undo(); }
+  if (e.ctrlKey && e.key === "y") { e.preventDefault(); redo(); }
+  if (e.key === "Escape") { closeAllOverlays(); removeResizeHandles(); }
+});
+
+// ============================================================
+// DONNÉES
+// ============================================================
+var blockList = [
+  {putUnder:"templates",        text:"Green Card",            src:"green_normal"},         // 0
+  {putUnder:"templates",        text:"Green Small Bottom",    src:"green_small_bottom"},    // 1
+  {putUnder:"templates",        text:"Green Big Bottom",      src:"green_big_bottom"},      // 2
+  {putUnder:"templates",        text:"Blue Card",             src:"blue_normal"},           // 3
+  {putUnder:"templates",        text:"Blue Big Bottom",       src:"blue_big_bottom"},       // 4
+  {putUnder:"templates",        text:"Blue Big Top",          src:"blue_big_top"},          // 5
+  {putUnder:"templates",        text:"Red Card",              src:"red_normal"},            // 6
+  {putUnder:"templates",        text:"Red Small Bottom",      src:"red_small_bottom"},      // 7
+  {putUnder:"globalparameters", text:"",                      src:"oxygen"},               // 8
+  {putUnder:"globalparameters", text:"",                      src:"temperature"},          // 9
+  {putUnder:"globalparameters", text:"",                      src:"venus"},                // 10
+  {putUnder:"misc",             text:"",                      src:"megacredit",           otherbg:"mc_otherbg"}, // 11
+  {putUnder:"misc",             text:"mc_otherbg",            src:"other_player_background", hidden:true},        // 12
+  {putUnder:"misc",             text:"",                      src:"arrow"},                // 13
+  {putUnder:"misc",             text:"Asterisk",              src:"asterisc"},             // 14
+  {putUnder:"misc",             text:"Slash",                 src:"bar"},                  // 15
+  {putUnder:"misc",             text:"",                      src:"chairman"},             // 16
+  {putUnder:"misc",             text:"",                      src:"colon"},               // 17
+  {putUnder:"misc",             text:"",                      src:"delegate"},             // 18
+  {putUnder:"misc",             text:"",                      src:"influence"},            // 19
+  {putUnder:"parties",          text:"",                      src:"bureacrats"},           // 20
+  {putUnder:"parties",          text:"",                      src:"centrists"},            // 21
+  {putUnder:"parties",          text:"",                      src:"empower"},              // 22
+  {putUnder:"parties",          text:"",                      src:"greens"},               // 23
+  {putUnder:"parties",          text:"",                      src:"kelvinists"},           // 24
+  {putUnder:"parties",          text:"",                      src:"mars_first"},           // 25
+  {putUnder:"parties",          text:"",                      src:"populists"},            // 26
+  {putUnder:"parties",          text:"",                      src:"reds"},                 // 27
+  {putUnder:"parties",          text:"",                      src:"scientists"},           // 28
+  {putUnder:"parties",          text:"",                      src:"spome"},                // 29
+  {putUnder:"parties",          text:"",                      src:"transhumanists"},       // 30
+  {putUnder:"parties",          text:"",                      src:"unity"},                // 31
+  {putUnder:"productionboxes",  text:"prod_nxn",              src:"nxn",  hidden:true},    // 32
+  {putUnder:"requisites",       text:"Max Requirement",       src:"max_big"},              // 33
+  {putUnder:"requisites",       text:"Min Requirement",       src:"min_medium"},           // 34
+  {putUnder:"requisites",       text:"No Requirement",        src:"normal"},               // 35
+  {putUnder:"resources",        text:"",                      src:"animal",    otherbg:"res_otherbg"}, // 36
+  {putUnder:"resources",        text:"",                      src:"card",      otherbg:"res_otherbg"}, // 37
+  {putUnder:"resources",        text:"",                      src:"data",      otherbg:"res_otherbg"}, // 38
+  {putUnder:"resources",        text:"",                      src:"fighter",   otherbg:"res_otherbg"}, // 39
+  {putUnder:"resources",        text:"",                      src:"floater",   otherbg:"res_otherbg"}, // 40
+  {putUnder:"resources",        text:"",                      src:"heat",      otherbg:"res_otherbg"}, // 41
+  {putUnder:"resources",        text:"",                      src:"microbe",   otherbg:"res_otherbg"}, // 42
+  {putUnder:"resources",        text:"res_otherbg",           src:"other_player_background", hidden:true}, // 43
+  {putUnder:"resources",        text:"",                      src:"plant",     otherbg:"res_otherbg"}, // 44
+  {putUnder:"resources",        text:"",                      src:"power",     otherbg:"res_otherbg"}, // 45
+  {putUnder:"resources",        text:"",                      src:"radiation", otherbg:"res_otherbg"}, // 46
+  {putUnder:"resources",        text:"",                      src:"science",   otherbg:"res_otherbg"}, // 47
+  {putUnder:"resources",        text:"",                      src:"steel",     otherbg:"res_otherbg"}, // 48
+  {putUnder:"resources",        text:"",                      src:"titanium",  otherbg:"res_otherbg"}, // 49
+  {putUnder:"resources",        text:"",                      src:"TR",        otherbg:"res_otherbg"}, // 50
+  {putUnder:"resources",        text:"",                      src:"wild",      otherbg:"res_otherbg"}, // 51
+  {putUnder:"tags",             text:"",                      src:"animal",    otherbg:"tag_otherbg"}, // 52
+  {putUnder:"tags",             text:"",                      src:"building",  otherbg:"tag_otherbg"}, // 53
+  {putUnder:"tags",             text:"",                      src:"city",      otherbg:"tag_otherbg"}, // 54
+  {putUnder:"tags",             text:"",                      src:"earth",     otherbg:"tag_otherbg"}, // 55
+  {putUnder:"tags",             text:"",                      src:"event",     otherbg:"tag_otherbg"}, // 56
+  {putUnder:"tags",             text:"",                      src:"galactic",  otherbg:"tag_otherbg"}, // 57
+  {putUnder:"tags",             text:"",                      src:"infrastructure", otherbg:"tag_otherbg"}, // 58
+  {putUnder:"tags",             text:"",                      src:"jovian",    otherbg:"tag_otherbg"}, // 59
+  {putUnder:"tags",             text:"",                      src:"mars",      otherbg:"tag_otherbg"}, // 60
+  {putUnder:"tags",             text:"",                      src:"microbe",   otherbg:"tag_otherbg"}, // 61
+  {putUnder:"tags",             text:"",                      src:"moon",      otherbg:"tag_otherbg"}, // 62
+  {putUnder:"tags",             text:"tag_otherbg",           src:"other_player_background", hidden:true}, // 63
+  {putUnder:"tags",             text:"",                      src:"planetary", otherbg:"tag_otherbg"}, // 64
+  {putUnder:"tags",             text:"",                      src:"plant",     otherbg:"tag_otherbg"}, // 65
+  {putUnder:"tags",             text:"",                      src:"power",     otherbg:"tag_otherbg"}, // 66
+  {putUnder:"tags",             text:"",                      src:"radioactive",otherbg:"tag_otherbg"}, // 67
+  {putUnder:"tags",             text:"",                      src:"science",   otherbg:"tag_otherbg"}, // 68
+  {putUnder:"tags",             text:"",                      src:"space",     otherbg:"tag_otherbg"}, // 69
+  {putUnder:"tags",             text:"",                      src:"venus",     otherbg:"tag_otherbg"}, // 70
+  {putUnder:"tags",             text:"",                      src:"wild",      otherbg:"tag_otherbg"}, // 71
+  {putUnder:"tiles",            text:"",                      src:"city",      otherbg:"tiles_otherbg"}, // 72
+  {putUnder:"tiles",            text:"",                      src:"colony"},                             // 73
+  {putUnder:"tiles",            text:"",                      src:"empty",     otherbg:"tiles_otherbg"}, // 74
+  {putUnder:"tiles",            text:"",                      src:"greenery_no_O2", otherbg:"tiles_otherbg"}, // 75
+  {putUnder:"tiles",            text:"",                      src:"greenery",  otherbg:"tiles_otherbg"}, // 76
+  {putUnder:"tiles",            text:"",                      src:"ocean",     otherbg:"tiles_otherbg"}, // 77
+  {putUnder:"tiles",            text:"",                      src:"off-world_city", otherbg:"tiles_otherbg"}, // 78
+  {putUnder:"tiles",            text:"",                      src:"special",   otherbg:"tiles_otherbg"}, // 79
+  {putUnder:"tiles",            text:"",                      src:"trade"},                              // 80
+  {putUnder:"VPs",              text:"VP 1/",                 src:"1_for"},    // 81
+  {putUnder:"VPs",              text:"1 VP",                  src:"1"},        // 82
+  {putUnder:"VPs",              text:"VP 2/",                 src:"2_for"},    // 83
+  {putUnder:"VPs",              text:"2 VP",                  src:"2"},        // 84
+  {putUnder:"VPs",              text:"3 VP",                  src:"3"},        // 85
+  {putUnder:"VPs",              text:"4 VP",                  src:"4"},        // 86
+  {putUnder:"VPs",              text:"5 VP",                  src:"5"},        // 87
+  {putUnder:"VPs",              text:"VP background",         src:"blank"},    // 88
+  {putUnder:"VPs",              text:"-VP",                   src:"VPnegative"}, // 89
+  {putUnder:"VPs",              text:"/ VP",                  src:"n_for"},    // 90
+  {putUnder:"misc",             text:"",                      src:"party_leader"}, // 91
+  {putUnder:"templates",        text:"",                      src:"prelude"},      // 92
+  {putUnder:"templates",        text:"",                      src:"corporation"},  // 93
+  {putUnder:"misc",             text:"Tag Holder",            src:"corp_tag_holder"}, // 94
+  {putUnder:"misc",             text:"Effect (bg)",           src:"effect"},          // 95
+  {putUnder:"tags",             text:"",                      src:"multitag",  otherbg:"tag_otherbg"}, // 96
+  {putUnder:"tiles",            text:"tiles_otherbg",         src:"other_player_background", hidden:true}, // 97
+  {putUnder:"tags",             text:"",                      src:"tourism",   otherbg:"tag_otherbg"}, // 98
+  {putUnder:"tags",             text:"",                      src:"mercury",   otherbg:"tag_otherbg"}, // 99
+  {putUnder:"resources",        text:"",                      src:"asteroid",  otherbg:"res_otherbg"}, // 100
+  {putUnder:"resources",        text:"",                      src:"ore",       otherbg:"res_otherbg"}, // 101
+  {putUnder:"misc",             text:"",                      src:"asset"},       // 102
+  {putUnder:"misc",             text:"Colony Tile",           src:"colonytile"},  // 103
+  {putUnder:"misc",             text:"",                      src:"population"}   // 104
+];
+
+var hiddenImage = {};
+
+// Indices VP exclusifs (un seul à la fois)
+var VP_EXCLUSIVE = [81, 82, 83, 84, 85, 86, 87];
+// Indice VP background (toggle)
+var VP_BG_IDX = 88;
+// Indice prérequis (un seul à la fois)
+var REQ_INDICES = [33, 34, 35];
+
+var blockDefaults = {
+  tags: [
+    {label:"First Tag",     x:639, y:67, width:110, height:110},
+    {label:"Second Tag",    x:524, y:67, width:110, height:110},
+    {label:"Third Tag",     x:410, y:67, width:110, height:110},
+    {label:"Small Tag",     x:330, y:536, width:82,  height:82},
+    {label:"First (Prel)",  x:937, y:67, width:110, height:110},
+    {label:"Second (Prel)", x:822, y:67, width:110, height:110},
+    {label:"Third (Prel)",  x:708, y:67, width:110, height:110},
+    {label:"First (Corp)",  x:937, y:90, width:110, height:110},
+    {label:"Second (Corp)", x:822, y:90, width:110, height:110}
+  ],
+  templates: [
+    {label:"Carte Verticale",   x:0, y:0, width:826,  height:1126},
+    {label:"Carte Horizontale", x:0, y:0, width:1126, height:826}
+  ],
+  text: [
+    {label:"Card Cost",   x:118, y:147,  height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", justify:"center"},
+    {label:"Card Name",   x:413, y:214,  height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", justify:"center"},
+    {label:"Description", x:413, y:643,  height:22, lineSpace:4, color:"#000000", font:"Pagella", style:"normal", weight:"normal", justify:"center"},
+    {label:"Flavor Text", x:413, y:1005, height:22, lineSpace:4, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   justify:"center"},
+    {label:"FAN MADE",    x:413, y:611,  height:24, color:"#24770d", font:"Prototype", style:"normal", weight:"normal", justify:"center"},
+    {label:"PRELUDE",     data:"P R E L U D E",         x:563, y:99,  height:22, color:"#000000", font:"Prototype", style:"normal", weight:"normal", justify:"center"},
+    {label:"CORPORATION", data:"C O R P O R A T I O N", x:563, y:109, height:24, color:"#000000", font:"Prototype", style:"normal", weight:"normal", justify:"center"},
+    {label:"EFFECT",      data:"E F F E C T",            x:800, y:333, height:22, color:"#000000", font:"Prototype", style:"normal", weight:"normal", justify:"center"}
+  ],
+  resources: [
+    {label:"Standard", x:413, y:643, width:92,  height:92},
+    {label:"Card",     x:413, y:643, width:88,  height:122},
+    {label:"TR",       x:413, y:643, width:151, height:112}
+  ],
+  VPs: [
+    {label:"Standard", x:542, y:836, width:223, height:223},
+    {label:"Negative",  x:652, y:836, width:223, height:223}
+  ],
+  tiles: [{label:"Standard tile", x:200, y:400, width:142, height:142}],
+  requisites: [
+    {label:"Max",       x:180, y:92, width:200, height:60},
+    {label:"Min",       x:180, y:92, width:147, height:60},
+    {label:"Aucun",     x:180, y:92, width:21,  height:60}
+  ],
+  globalparameters: [
+    {label:"Oxygen", x:413, y:643, width:118, height:118},
+    {label:"Temp",   x:413, y:643, width:35,  height:118},
+    {label:"Venus",  x:413, y:643, width:125, height:71}
+  ],
+  misc: [
+    {label:"MC",           x:413, y:643, width:92,  height:92},
+    {label:"Arrow",        x:413, y:429, width:116, height:55},
+    {label:"Asterisk",     x:413, y:643, width:35,  height:35},
+    {label:"Slash",        x:413, y:643, width:55,  height:146},
+    {label:"Colon",        x:413, y:643, width:11,  height:55},
+    {label:"Delegate",     x:413, y:643, width:77,  height:99},
+    {label:"Effect (bg)",  x:631, y:307, width:346, height:36},
+    {label:"Influence",    x:413, y:643, width:117, height:122},
+    {label:"Tag Holder 0", x:969, y:103, width:257, height:89},
+    {label:"Tag Holder 1", x:898, y:103, width:257, height:89},
+    {label:"Tag Holder 2", x:794, y:103, width:257, height:89}
+  ],
+  parties: [{label:"Party", x:413, y:643, width:169, height:122}],
+  production: [
+    {label:"1x hauteur",   height:143},
+    {label:"2x hauteur",   height:235},
+    {label:"1x largeur",   width:143},
+    {label:"1.5x largeur", width:188},
+    {label:"2x largeur",   width:235},
+    {label:"2.5x largeur", width:279},
+    {label:"3x largeur",   width:325}
+  ]
+};
+
+// Presets par défaut automatiques à l'insertion (index dans blockDefaults[category])
+var autoPresetIndex = {
+  // resources: 0=Standard, 1=Card, 2=TR
+  36:0, 37:1, 38:0, 39:0, 40:0, 41:0, 42:0, 44:0, 45:0, 46:0, 47:0, 48:0, 49:0, 50:2, 51:0, 100:0, 101:0,
+  // globalparameters: 0=Oxygen, 1=Temp, 2=Venus
+  8:0, 9:1, 10:2,
+  // requisites: 0=Max, 1=Min, 2=Aucun
+  33:0, 34:1, 35:2,
+  // tiles: 0=Standard
+  72:0, 73:0, 74:0, 75:0, 76:0, 77:0, 78:0, 79:0, 80:0,
+  // misc
+  13:1, // arrow -> Arrow
+  14:2, // asterisk -> Asterisk (index 2)
+  15:3, // slash -> Slash
+  16:5, // chairman -> Delegate
+  18:5, // delegate -> Delegate
+  91:5  // party_leader -> Delegate
+};
+
+var megaTemplates = {
+  green_normal: { type:"vertical", layers: [
+    {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
+    {type:"block", iNum:0,  x:0,   y:0,   width:826, height:1126, params:"allimages", locked:true},
+    {type:"text",  data:"Cost",      x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset", locked:true, fitMode:"shrink"},
+    {type:"block", iNum:35, x:179, y:97,  width:21,  height:60,  params:"allimages allpreset", locked:true},
+    {type:"text",  data:"CARD NAME", x:413, y:214,  width:700, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset", fitMode:"shrink"},
+    {type:"text",  data:"FAN MADE",  x:413, y:612,  width:826, height:24, color:"#24770d", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset", locked:true},
+    {type:"text",  data:"Card description\nMultiple lines\n'V space' controls line spacing", x:110, y:770, width:606, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",  data:"Flavor text!", x:413, y:1005, width:826, height:22, color:"#000000", font:"Pagella", style:"italic", weight:"bold", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"}
+  ]},
+  blue_normal: { type:"vertical", layers: [
+    {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
+    {type:"block", iNum:3,  x:0,   y:0,   width:826, height:1126, params:"allimages", locked:true},
+    {type:"text",  data:"Cost",      x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset", locked:true, fitMode:"shrink"},
+    {type:"block", iNum:35, x:179, y:97,  width:21,  height:60,  params:"allimages allpreset", locked:true},
+    {type:"text",  data:"CARD NAME", x:413, y:214,  width:700, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset", fitMode:"shrink"},
+    {type:"text",  data:"FAN MADE",  x:413, y:798,  width:826, height:24, color:"#0c5e84", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset", locked:true},
+    {type:"block", iNum:13, x:355,  y:265, width:116, height:55, params:"allimages allpreset"},
+    {type:"text",  data:"Effet ou Action", x:413, y:360, width:606, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
+    {type:"text",  data:"Card description", x:100, y:860, width:626, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",  data:"Flavor text!", x:413, y:1005, width:826, height:22, color:"#000000", font:"Pagella", style:"italic", weight:"bold", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"}
+  ]},
+  red_normal: { type:"vertical", layers: [
+    {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
+    {type:"block", iNum:6,  x:0,   y:0,   width:826, height:1126, params:"allimages", locked:true},
+    {type:"text",  data:"Cost",      x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset", locked:true, fitMode:"shrink"},
+    {type:"block", iNum:35, x:179, y:97,  width:21,  height:60,  params:"allimages allpreset", locked:true},
+    {type:"text",  data:"CARD NAME", x:413, y:214,  width:700, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset", fitMode:"shrink"},
+    {type:"text",  data:"FAN MADE",  x:413, y:685,  width:826, height:24, color:"#c36a17", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset", locked:true},
+    {type:"text",  data:"Card description", x:100, y:810, width:626, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",  data:"Flavor text!", x:413, y:1005, width:826, height:22, color:"#000000", font:"Pagella", style:"italic", weight:"bold", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"}
+  ]},
+  prelude: { type:"horizontal", layers: [
+    {type:"base",  color:"#ffffff", height:826, width:1126, params:"color"},
+    {type:"block", iNum:92, x:0,   y:0,   width:1126, height:826, params:"allimages", locked:true},
+    {type:"text",  data:"CARD NAME", x:563, y:218, width:900, height:48, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset", fitMode:"shrink"},
+    {type:"text",  data:"FAN MADE",  x:563, y:500, width:826, height:24, color:"#ce809f", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset", locked:true},
+    {type:"text",  data:"P R E L U D E", x:563, y:99, width:826, height:24, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset", locked:true},
+    {type:"text",  data:"Card description", x:110, y:560, width:900, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",  data:"Flavor text!", x:563, y:723, width:826, height:22, color:"#000000", font:"Pagella", style:"italic", weight:"bold", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"}
+  ]},
+  corporation: { type:"horizontal", layers: [
+    {type:"base",   color:"#ffffff", height:826, width:1126, params:"color"},
+    {type:"block",  iNum:94, x:969, y:103, width:257,    height:89,  params:"allimages"},
+    {type:"block",  iNum:93, x:0,   y:0,   width:1126,   height:826, params:"allimages", locked:true},
+    {type:"effect", x:600, y:300, width:400, height:300, params:"allimages allpreset"},
+    {type:"block",  iNum:95, x:631, y:307, width:345.79, height:36,  params:"allimages"},
+    {type:"text",   data:"E F F E C T",             x:800, y:333, width:1126, height:22, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
+    {type:"text",   data:"FAN MADE",                x:198, y:736, width:826,  height:24, color:"#c3c3c3", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset", locked:true},
+    {type:"text",   data:"C O R P O R A T I O N",  x:563, y:109, width:826,  height:24, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset", locked:true},
+    {type:"text",   data:"Card description", x:110, y:560, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",   data:"Flavor text!", x:563, y:723, width:826, height:22, color:"#000000", font:"Pagella", style:"italic", weight:"bold", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"}
+  ]}
+};
+
+// ============================================================
+// UTILITAIRES POSITION
+// ============================================================
+function getCanvasCenter() {
+  var c = document.getElementById("cmcanvas");
+  return {x: Math.round(c.width / 2), y: Math.round(c.height / 2)};
+}
+
+// Calcule une position non superposée pour un nouvel élément du même type
+var _insertOffsets = {}; // clé = putUnder ou type, valeur = compteur
+function getNextPosition(category, baseX, baseY) {
+  if (!_insertOffsets[category]) _insertOffsets[category] = 0;
+  var offset = _insertOffsets[category] * 20;
+  _insertOffsets[category]++;
+  var c = document.getElementById("cmcanvas");
+  var x = Math.min(baseX + offset, c.width - 10);
+  var y = Math.min(baseY + offset, c.height - 10);
+  return {x: x, y: y};
+}
+function resetInsertOffset(category) { _insertOffsets[category] = 0; }
+
+// S'assure que les coordonnées restent dans le canvas
+function clampToCanvas(layer) {
+  var c = document.getElementById("cmcanvas");
+  var w = layer.width  || 50;
+  var h = layer.height || 50;
+  if (layer.x < 0) layer.x = 0;
+  if (layer.y < 0) layer.y = 0;
+  if (layer.x > c.width  - 10) layer.x = Math.max(0, c.width  - w);
+  if (layer.y > c.height - 10) layer.y = Math.max(0, c.height - h);
+}
+
+// ============================================================
+// PLACEMENT DES BADGES SELON LE TEMPLATE ET ORDRE
+// ============================================================
+function getTagPresetIndex() {
+  // Compte les tags déjà présents
+  var layerDivs = document.getElementsByClassName("divRec");
+  var tagCount2 = 0;
+  for (var i = 0; i < layerDivs.length; i++) {
+    var l = aLayers[layerDivs[i].id];
+    if (l && l.type === "block" && blockList[l.iNum] && blockList[l.iNum].putUnder === "tags") tagCount2++;
+  }
+  return tagCount2; // 0=first,1=second,2=third,3+=small
+}
+
+function applyTagPreset(layer) {
+  var idx = getTagPresetIndex();
+  var c = document.getElementById("cmcanvas");
+  var isHorizontal = (c.width > c.height);
+
+  if (!isHorizontal) {
+    // Cartes verticales et corporations
+    var presets = [
+      {x:639, y:67, width:110, height:110},  // first
+      {x:524, y:67, width:110, height:110},  // second
+      {x:410, y:67, width:110, height:110},  // third
+      {x:330, y:536, width:82, height:82}    // small (et suivants)
+    ];
+    var p = presets[Math.min(idx, 3)];
+    if (idx > 3) { p = {x: presets[3].x - (idx-3)*90, y: presets[3].y, width:82, height:82}; }
+    layer.x = p.x; layer.y = p.y; layer.width = p.width; layer.height = p.height;
+  } else {
+    // Prélude horizontal
+    var presetsH = [
+      {x:937, y:67, width:110, height:110},
+      {x:822, y:67, width:110, height:110},
+      {x:708, y:67, width:110, height:110},
+      {x:600, y:67, width:82,  height:82}
+    ];
+    var pH = presetsH[Math.min(idx, 3)];
+    if (idx > 3) { pH = {x: presetsH[3].x - (idx-3)*90, y: presetsH[3].y, width:82, height:82}; }
+    layer.x = pH.x; layer.y = pH.y; layer.width = pH.width; layer.height = pH.height;
+  }
+  clampToCanvas(layer);
+}
+
+// ============================================================
+// PRESET PAR DÉFAUT À L'INSERTION
+// ============================================================
+function applyDefaultPreset(layer, putUnder, iNum) {
+  // Tags : logique spéciale
+  if (putUnder === "tags") { applyTagPreset(layer); return; }
+
+  // Preset auto selon l'indice du bloc
+  if (iNum !== undefined && autoPresetIndex[iNum] !== undefined) {
+    var cat = putUnder;
+    var pIdx = autoPresetIndex[iNum];
+    if (blockDefaults[cat] && blockDefaults[cat][pIdx]) {
+      var p = blockDefaults[cat][pIdx];
+      if (p.x      !== undefined) layer.x      = p.x;
+      if (p.y      !== undefined) layer.y      = p.y;
+      if (p.width  !== undefined) layer.width  = p.width;
+      if (p.height !== undefined) layer.height = p.height;
+      clampToCanvas(layer);
+      return;
+    }
+  }
+
+  // Preset standard (premier de la liste)
+  if (!blockDefaults[putUnder] || !blockDefaults[putUnder].length) return;
+  var preset = blockDefaults[putUnder][0];
+  if (preset.x      !== undefined) layer.x      = preset.x;
+  if (preset.y      !== undefined) layer.y      = preset.y;
+  if (preset.width  !== undefined) layer.width  = preset.width;
+  if (preset.height !== undefined) layer.height = preset.height;
+  clampToCanvas(layer);
+}
+
+// ============================================================
+// OVERLAYS
+// ============================================================
+function openOverlay(id)  { document.getElementById(id).classList.remove("hidden"); }
+function closeOverlay(id) { document.getElementById(id).classList.add("hidden"); }
+function closeAllOverlays() { ["overlay","fontoverlay"].forEach(function(id){ closeOverlay(id); }); }
+
+// ============================================================
+// SIDEBAR
+// ============================================================
+function showStart() { document.getElementById("start-screen").style.display = "flex"; }
+function hideStart() { document.getElementById("start-screen").style.display = "none"; }
+
+function startTemplate(name) {
+  hideStart();
+  if (!megaTemplates[name]) return;
+  document.getElementById("layerlist").innerHTML = "";
+  ddcount = 0; aLayers = {}; tagCount = 0; undoHistory = []; undoIndex = -1;
+  _insertOffsets = {};
+  currentTemplateType = megaTemplates[name].type || "vertical";
+  addLayer("Base", {type:"base", color:"#ffffff", height:1126, width:826, params:"color"});
+  loadFrom(megaTemplates[name].layers);
+  saveToHistory();
+}
+
+function startLoad() { hideStart(); clickLoadNewProject(); }
+
+function toggleSec(btn, id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var o = el.classList.toggle("open");
+  btn.classList.toggle("open", o);
+}
+
+function toggleSB() {
+  var sb = document.getElementById("mySidebar");
+  var ov = document.getElementById("myOverlay");
+  var o  = sb.classList.toggle("open");
+  ov.style.display = o ? "block" : "none";
+}
+
+function closeSB() {
+  document.getElementById("mySidebar").classList.remove("open");
+  document.getElementById("myOverlay").style.display = "none";
+}
+
+// ============================================================
+// GESTION DES CALQUES
+// ============================================================
+function insertLayerAtPosition(divEl, position) {
+  // position: "afterBase" = entre Base et template (index 1)
+  //           "aboveTemplate" = juste au-dessus du template (index 2)
+  //           "top" = tout en haut
+  //           null = append normal
+  var layerlist = document.getElementById("layerlist");
+  var children = layerlist.children;
+  if (position === "afterBase" && children.length >= 2) {
+    layerlist.insertBefore(divEl, children[1]);
+  } else if (position === "aboveTemplate" && children.length >= 3) {
+    layerlist.insertBefore(divEl, children[2]);
+  } else {
+    layerlist.appendChild(divEl);
+  }
+}
+
+function addLayer(title, layer, insertPos) {
+  var toAdd = document.createElement("div");
+  toAdd.id = "dragdropdiv" + ddcount;
+  toAdd.classList.add("divRec");
+  if (layer.locked) toAdd.classList.add("layer-locked");
+
+  if (ddcount) toAdd.appendChild(createGroupCheckbox());
+
+  var childAdd = document.createElement("div");
+  childAdd.classList.add("inside");
+  childAdd.appendChild(createTextbox(title));
+  childAdd.onclick = selectLayer;
+
+  if (ddcount) {
+    // Bouton verrou
+    var lockBtn = document.createElement("button");
+    lockBtn.className = "lock-btn";
+    lockBtn.title = layer.locked ? "Déverrouiller" : "Verrouiller";
+    lockBtn.textContent = layer.locked ? "🔒" : "🔓";
+    lockBtn.onclick = function(e) { e.stopPropagation(); toggleLock(this); };
+    childAdd.appendChild(lockBtn);
+    // Bouton supprimer
+    childAdd.appendChild(deleteButton());
+  }
+  toAdd.appendChild(childAdd);
+
+  var layerlist = document.getElementById("layerlist");
+  if (insertPos) {
+    insertLayerAtPosition(toAdd, insertPos);
+  } else {
+    layerlist.appendChild(toAdd);
+  }
+
+  aLayers[toAdd.id] = layer;
+  ddcount++;
+  sortable(layerlist, function() {});
+  return layer;
+}
+
+function toggleLock(btn) {
+  var divRec = btn.parentNode.parentNode;
+  var layer = aLayers[divRec.id];
+  layer.locked = !layer.locked;
+  divRec.classList.toggle("layer-locked", layer.locked);
+  btn.textContent = layer.locked ? "🔒" : "🔓";
+  btn.title = layer.locked ? "Déverrouiller" : "Verrouiller";
+  saveToHistory();
+}
+
+function createGroupCheckbox() {
+  var toAdd = document.createElement("input");
+  toAdd.type = "checkbox";
+  toAdd.classList.add("groupcheck");
+  toAdd.classList.add("vis-hidden");
+  toAdd.checked = false;
+  return toAdd;
+}
+
+function createTextbox(txt) {
+  var toAdd = document.createElement("input");
+  toAdd.type = "text";
+  toAdd.id = "layername" + ddcount;
+  toAdd.maxLength = 20;
+  toAdd.size = 15;
+  toAdd.value = txt;
+  toAdd.onchange = function() { updateLayerName(this); };
+  return toAdd;
+}
+
+function updateLayerName(th) {
+  var layerName = th.parentNode.parentNode.id;
+  aLayers[layerName].name = th.value;
+  drawProject();
+}
+
+function deleteButton() {
+  var toAdd = document.createElement("button");
+  toAdd.innerHTML = "✕";
+  toAdd.style.float = "right";
+  toAdd.onclick = function(e) { deleteListItem(e, this); };
+  return toAdd;
+}
+
+function deleteListItem(e, th) {
+  e.stopPropagation();
+  var toDelete = th.parentNode.parentNode;
+  delete aLayers[toDelete.id];
+  toDelete.parentNode.removeChild(toDelete);
+  removeResizeHandles();
+  drawProject();
+  saveToHistory();
+}
+
+function selectLayer() {
+  removeKeyInputFocus();
+  removeResizeHandles();
+  var allLayerNodes = document.getElementById("layerlist").children;
+  var clickedNode = this.parentNode;
+
+  for (var ch = 0; ch < allLayerNodes.length; ch++) {
+    var node = allLayerNodes[ch];
+    if (node.classList.contains("selected")) {
+      if (domParams.parentNode === node) node.removeChild(domParams);
+      node.classList.remove("selected");
+      var btns = node.querySelectorAll("button:not(.lock-btn)");
+      if (btns.length) btns[0].style.display = "block";
+    }
+  }
+
+  var node2 = clickedNode;
+  var btns2 = node2.querySelectorAll("button:not(.lock-btn)");
+  if (btns2.length) btns2[0].style.display = "none";
+  node2.classList.add("selected");
+
+  var thisLayer = aLayers[node2.id];
+  var thisLayerParams = thisLayer.params;
+  if (node2.id !== "dragdropdiv0") thisLayerParams += " allall";
+
+  // Prérequis : ratio non fixe par défaut
+  var isReq = thisLayer.type === "block" && REQ_INDICES.indexOf(thisLayer.iNum) !== -1;
+
+  for (var pch = 0; pch < domParams.children.length; pch++) {
+    var section = domParams.children[pch];
+    if (thisLayerParams.indexOf(section.id) === -1) {
+      section.classList.add("hidden");
+    } else {
+      section.classList.remove("hidden");
+      var inputTypes = ["input", "textarea", "select"];
+      for (var ti = 0; ti < inputTypes.length; ti++) {
+        var chInputs = section.getElementsByTagName(inputTypes[ti]);
+        for (var si2 = 0; si2 < chInputs.length; si2++) {
+          var sub = chInputs[si2];
+          if (sub.id.indexOf("input") === 0) {
+            if (sub.type === "checkbox") { sub.checked = thisLayer[sub.id.slice(5)]; }
+            else { sub.value = thisLayer[sub.id.slice(5)]; }
+          } else if (sub.id === "lar") {
+            // Pour les prérequis, ratio non fixe par défaut
+            sub.checked = isReq ? false : true;
+          } else if (sub.id === "slar") {
+            sub.checked = true;
+          } else if (sub.id === "presets") {
+            var opts = sub.getElementsByTagName("option");
+            var defType = "";
+            if (thisLayer.type === "block")      defType = blockList[thisLayer.iNum].putUnder;
+            else if (thisLayer.type === "text")  defType = "text";
+            else if (thisLayer.type === "production") defType = "production";
+            if (defType && blockDefaults[defType]) {
+              sub.value = "";
+              while (opts.length < blockDefaults[defType].length + 1) {
+                var cNode = opts[1].cloneNode(false);
+                cNode.value = "defselect" + (opts.length - 1);
+                sub.appendChild(cNode);
+              }
+              for (var oi = 1; oi < opts.length; oi++) {
+                if (oi <= blockDefaults[defType].length) {
+                  opts[oi].innerText = blockDefaults[defType][oi-1].label;
+                  opts[oi].classList.remove("hidden");
+                } else { opts[oi].classList.add("hidden"); }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  node2.appendChild(domParams);
+  focusKeyInput(thisLayer);
+}
+
+// ============================================================
+// RENDU CANVAS
+// ============================================================
+function drawProject() {
+  if (reloading) return;
+  var c   = document.getElementById("cmcanvas");
+  var ctx = c.getContext("2d");
+  var layerDivs = document.getElementsByClassName("divRec");
+  var imagesForSaving = [];
+
+  for (var i = 0; i < layerDivs.length; i++) {
+    var layer = aLayers[layerDivs[i].id];
+    imagesForSaving.push(layer);
+    ctx.save();
+
+    switch (layer.type) {
+      case "base":
+        c.height = layer.height; c.width = layer.width;
+        ctx.fillStyle = layer.color;
+        ctx.fillRect(0, 0, layer.width, layer.height);
+        break;
+
+      case "block":
+        if (i === 0) { c.height = layer.height; c.width = layer.width; }
+        if (layer.obg) {
+          var bgKey = blockList[layer.iNum].otherbg;
+          var bgImg = otherBgList[bgKey];
+          if (!bgImg) {
+            for (var j = 0; j < blockList.length; j++) { if (blockList[j].text === bgKey) { fetchBlock(j); break; } }
+          } else if (bgImg.complete) {
+            var brdr = 3;
+            ctx.drawImage(bgImg, layer.x-brdr, layer.y-brdr, layer.width+2*brdr, layer.height+2*brdr);
+          }
+        }
+        if (!blockList[layer.iNum].obj) { fetchBlock(layer.iNum); }
+        else if (blockList[layer.iNum].obj.complete) {
+          ctx.drawImage(blockList[layer.iNum].obj, layer.x, layer.y, layer.width, layer.height);
+        }
+        break;
+
+      case "text":
+        ctx.textAlign = layer.justify || "center";
+        if (!layer.style) layer.style = "normal";
+        var fontSize = layer.height;
+        // fitMode "shrink" : réduire la police si le texte dépasse sur une ligne
+        if (layer.fitMode === "shrink") {
+          ctx.font = layer.style + " " + layer.weight + " " + fontSize + "px " + layer.font;
+          while (fontSize > 8 && ctx.measureText(layer.data).width > layer.width) {
+            fontSize--;
+            ctx.font = layer.style + " " + layer.weight + " " + fontSize + "px " + layer.font;
+          }
+        } else {
+          ctx.font = layer.style + " " + layer.weight + " " + fontSize + "px " + layer.font;
+        }
+        ctx.fillStyle = layer.color;
+        var lines = layer.data.split("\n");
+        var cnt = 0;
+        for (var ln = 0; ln < lines.length; ln++) {
+          var spl = lines[ln].split(" ");
+          var o = "";
+          while (spl.length) {
+            o = spl.shift();
+            while (spl.length && ctx.measureText(o + " " + spl[0]).width < layer.width) o += " " + spl.shift();
+            ctx.fillText(o, layer.x, layer.y + (layer.height + layer.lineSpace) * cnt);
+            cnt++;
+          }
+        }
+        break;
+
+      case "production":
+        drawProduction(ctx, layer);
+        break;
+
+      case "effect":
+        drawEffect(ctx, layer);
+        break;
+
+      case "userFile":
+      case "embedded":
+      case "webFile":
+        if (layer.iNum !== -1) {
+          if (layer.alpha === undefined) layer.alpha = 100;
+          ctx.globalAlpha = Number(layer.alpha) / 100;
+          ctx.drawImage(userImageList[layer.iNum], layer.sx, layer.sy, layer.swidth, layer.sheight, layer.x, layer.y, layer.width, layer.height);
+        }
+        break;
+
+      case "line":
+        ctx.lineWidth   = layer.width;
+        ctx.strokeStyle = layer.color;
+        ctx.translate(layer.x, layer.y);
+        ctx.rotate(Math.PI * layer.angle / 180);
+        ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(layer.len, 0); ctx.stroke();
+        break;
+
+      default:
+        console.warn("Type de calque inconnu :", layer.type);
+        break;
+    }
+    ctx.restore();
+  }
+  if (!layerToDrag) autoSave(imagesForSaving);
+}
+
+function drawProduction(ctx, layer) {
+  var sz = 20, border = 3;
+  var xpos = Number(layer.x), ypos = Number(layer.y);
+  var width = Number(layer.width), height = Number(layer.height);
+  var imgKey = hiddenImage["prod_nxn"];
+  if (imgKey === undefined || !blockList[imgKey] || !blockList[imgKey].obj) return;
+  var img = blockList[imgKey].obj;
+  var w = width % sz || sz, h = height % sz || sz;
+  for (var x = xpos; x < xpos + width; x += sz) {
+    for (var y = ypos; y < ypos + height; y += sz) {
+      var isLastX = (x + sz >= xpos + width), isLastY = (y + sz >= ypos + height);
+      var sw = isLastX ? w : sz, sh = isLastY ? h : sz;
+      ctx.drawImage(img, 0, 0, sw, sh, x, y, sw, sh);
+    }
+  }
+  var grad = ctx.createLinearGradient(0, ypos, 0, ypos + height);
+  grad.addColorStop(0, "#9d6c43"); grad.addColorStop(1, "#5a412c");
+  ctx.fillStyle = grad;
+  ctx.fillRect(xpos, ypos+border, width, border); ctx.fillRect(xpos, ypos+height-border*2, width, border);
+  ctx.fillRect(xpos+border, ypos, border, height); ctx.fillRect(xpos+width-border*2, ypos, border, height);
+  grad = ctx.createLinearGradient(0, ypos, 0, ypos + height);
+  grad.addColorStop(0, "#505050"); grad.addColorStop(1, "#c0c0c0");
+  ctx.fillStyle = grad;
+  ctx.fillRect(xpos, ypos, width, border); ctx.fillRect(xpos, ypos+height-border, width, border);
+  ctx.fillRect(xpos, ypos, border, height); ctx.fillRect(xpos+width-border, ypos, border, height);
+}
+
+function drawEffect(ctx, layer) {
+  var border = 5;
+  var xpos = Number(layer.x), ypos = Number(layer.y);
+  var width = Number(layer.width), height = Number(layer.height);
+  var stops = [0, 0.1, 0.2, 0.3, 0.4, 0.6, 0.68, 0.76, 0.84, 0.92];
+  var grd = ctx.createLinearGradient(xpos, ypos, xpos+width, ypos);
+  for (var s = 0; s < stops.length; s++) grd.addColorStop(stops[s], s%2===0 ? "#333333" : "#999999");
+  grd.addColorStop(1, "#777777");
+  ctx.fillStyle = grd; ctx.fillRect(xpos, ypos, width, height);
+  grd = ctx.createLinearGradient(xpos+border, ypos+border, xpos+width-border, ypos+height-border);
+  var stops2 = [0, 0.07, 0.25, 0.6, 0.85, 1.0];
+  for (var s2 = 0; s2 < stops2.length; s2++) grd.addColorStop(stops2[s2], s2%2===0 ? "#ffffff" : "#999999");
+  ctx.fillStyle = grd; ctx.fillRect(xpos+border, ypos+border, width-2*border, height-2*border);
+}
+
+// ============================================================
+// AUTOSAVE
+// ============================================================
+function autoSave(layers) {
+  lastAutoSave = projectDataToJson(layers);
+  try { if (typeof Storage !== "undefined") localStorage.setItem("autosave", lastAutoSave); }
+  catch(e) { console.warn("Autosave échoué :", e); }
+}
+
+function autoSaveImmediately() {
+  var layerDivs = document.getElementsByClassName("divRec");
+  var layers = [];
+  for (var i = 0; i < layerDivs.length; i++) layers.push(aLayers[layerDivs[i].id]);
+  autoSave(layers);
+}
+
+// ============================================================
+// CHARGEMENT DES BLOCS
+// ============================================================
+function fetchBlock(num) {
+  if (blockList[num].obj) return;
+  var imageObj = new Image();
+  imageObj.onload  = onBlockLoad;
+  imageObj.onerror = function() { console.warn("Image introuvable :", blockList[this.dataindex].src); };
+  imageObj.src = blockList[num].putUnder + "/" + blockList[num].src + ".png";
+  imageObj.dataindex = num;
+  blockList[num].obj = imageObj;
+  if (blockList[num].text && blockList[num].text.indexOf("otherbg") !== -1) otherBgList[blockList[num].text] = imageObj;
+}
+
+function _registerBlockInMenu(idx) {
+  if (document.getElementById("image" + idx)) return;
+  var bl = blockList[idx];
+  if (bl.hidden) { hiddenImage[bl.text] = idx; return; }
+  var tmpText = bl.text || (bl.src.replace(/_/g, " ").replace(/^./, function(c){ return c.toUpperCase(); }));
+  bl.text = tmpText;
+  var icon = document.createElement("button");
+  icon.id = "image" + idx;
+  icon.className = "sb-icon";
+  icon.dataset.iNum = idx;
+  icon.onclick = function() { addBlock(parseInt(this.dataset.iNum)); };
+  var img = document.createElement("img");
+  img.src = bl.putUnder + "/" + bl.src + ".png";
+  img.alt = tmpText;
+  img.onerror = function() { this.style.display = "none"; };
+  var lbl = document.createElement("span");
+  lbl.textContent = tmpText;
+  icon.appendChild(img); icon.appendChild(lbl);
+  var container = document.getElementById(bl.putUnder);
+  if (container) container.appendChild(icon);
+}
+
+function onBlockLoad() {
+  var idx = this.dataindex;
+  _registerBlockInMenu(idx);
+  var keys = Object.keys(aLayers);
+  for (var k = 0; k < keys.length; k++) {
+    var lay = aLayers[keys[k]];
+    if (lay.type === "block" && lay.iNum === idx) {
+      if (!lay.width)  lay.width  = blockList[idx].obj.width;
+      if (!lay.height) lay.height = blockList[idx].obj.height;
+    }
+  }
+  drawProject();
+}
+
+// ============================================================
+// RESET / INITIALISATION
+// ============================================================
+function resetProject(loadautosave) {
+  document.getElementById("layerlist").innerHTML = "";
+  ddcount = 0; aLayers = {}; tagCount = 0;
+  undoHistory = []; undoIndex = -1; _insertOffsets = {};
+  document.getElementById("xcanvases").innerHTML = "";
+  addLayer("Base", {type:"base", color:"#ffffff", height:1126, width:826, params:"color"});
+  for (var i = 0; i < blockList.length; i++) _registerBlockInMenu(i);
+  allLoadingDone(loadautosave);
+}
+
+function allLoadingDone(loadautosave) {
+  document.getElementById("loadprogress").style.display = "none";
+  document.getElementById("cmcanvas").style.display = "block";
+  try {
+    if (loadautosave) { loadFrom(JSON.parse(localStorage.getItem("autosave")), true); }
+    else { drawProject(); }
+  } catch(e) { drawProject(); }
+}
+
+// ============================================================
+// CHARGEMENT DE PROJET
+// ============================================================
+function loadFrom(saved, autoload) {
+  reloading = true; unreloadable = false;
+  var scale = {x:1, y:1, width:1, height:1};
+  try {
+    for (var li = 0; li < saved.length; li++) {
+      var layer = saved[li];
+      var ignore = ["type", "params"];
+      var newLayer = {};
+      switch (layer.type) {
+        case "block":
+          newLayer = addBlock(layer.iNum, true);
+          ignore.push("iNum");
+          for (var key in layer) { if (!layer.hasOwnProperty(key) || ignore.indexOf(key) !== -1) continue; newLayer[key] = scale[key] ? scale[key] * layer[key] : layer[key]; }
+          break;
+        case "text":
+          if (layer.filename && !fontList[layer.font]) loadFont(layer.filename);
+          newLayer = addTextBox(layer.data, true);
+          for (var key2 in layer) { if (!layer.hasOwnProperty(key2) || ignore.indexOf(key2) !== -1) continue; newLayer[key2] = scale[key2] ? scale[key2] * layer[key2] : layer[key2]; }
+          break;
+        case "production":
+        case "effect":
+        case "line":
+          newLayer = type2FuncList[layer.type](true);
+          for (var key3 in layer) { if (!layer.hasOwnProperty(key3) || ignore.indexOf(key3) !== -1) continue; newLayer[key3] = scale[key3] ? scale[key3] * layer[key3] : layer[key3]; }
+          break;
+        case "embedded":
+          if (autoload) { unreloadable = true; break; }
+          addLayer(layer.name || ("embed" + layer.iNum), layer);
+          break;
+        case "webFile":
+          reloadWebImage(layer.filename); layer.iNum = -1;
+          addLayer("Web:" + layer.filename, layer);
+          break;
+        case "userFile":
+          if (autoload) { unreloadable = true; break; }
+          layer.iNum = -1; addLayer("Local:" + layer.filename, layer);
+          break;
+        case "base":
+          newLayer = aLayers.dragdropdiv0;
+          for (var key4 in layer) {
+            if (!layer.hasOwnProperty(key4) || ignore.indexOf(key4) !== -1) continue;
+            newLayer[key4] = layer[key4];
+            if (layer[key4] === 1050) {
+              if (confirm("Données en ancienne taille détectées. Redimensionner automatiquement ?")) {
+                newLayer.height = 1126; newLayer.width = 826;
+                scale.x = scale.width = 826/750; scale.y = scale.height = 1126/1050;
+                break;
+              }
+            }
+          }
+          break;
+        default: console.warn("Type inconnu :", layer.type); break;
+      }
+      if (layer.name) {
+        var nameEl = document.getElementById("layername" + (ddcount - 1));
+        if (nameEl) nameEl.value = layer.name;
+      }
+      // Appliquer l'état verrouillé visuellement
+      if (layer.locked && newLayer) {
+        var divId = "dragdropdiv" + (ddcount - 1);
+        var divEl = document.getElementById(divId);
+        if (divEl) {
+          divEl.classList.add("layer-locked");
+          var lb = divEl.querySelector(".lock-btn");
+          if (lb) { lb.textContent = "🔒"; lb.title = "Déverrouiller"; }
+        }
+        newLayer.locked = true;
+      }
+    }
+  } catch(e) { console.warn("Erreur chargement :", e); }
+  if (unreloadable) alert("Fichiers locaux non rechargés. Vous devez le faire manuellement.");
+  reloading = false;
+  drawProject();
+}
+
+function projectDataToJson(data) {
+  return JSON.stringify(data).replace(/[\u007F-\uFFFF]/g, function(chr) {
+    return "\\u" + ("0000" + chr.charCodeAt(0).toString(16)).substr(-4);
+  });
+}
+
+// ============================================================
+// EXPORT PNG PROPRE
+// ============================================================
+function exportPNG() {
+  var c = document.getElementById("cmcanvas");
+  var link = document.createElement("a");
+  link.download = "carte_tm.png";
+  link.href = c.toDataURL("image/png");
+  link.click();
+}
+
+// ============================================================
+// EXPORT / IMPORT PROJET (stéganographie)
+// ============================================================
+function clickSaveProject() {
+  var layerDivs = document.getElementsByClassName("divRec");
+  var imagesForSaving = [];
+  for (var i = 0; i < layerDivs.length; i++) {
+    var layer = aLayers[layerDivs[i].id];
+    if (layer.type !== "userFile" && layer.type !== "embedded") continue;
+    imagesForSaving.push(userImageList[layer.iNum]);
+  }
+  var imgData = {container:{width:200, height:200}, pos:[]};
+  if (imagesForSaving.length) {
+    imgData = fitImages(imagesForSaving, 200);
+    if (imgData.container.width  < 200) imgData.container.width  = 200;
+    if (imgData.container.height < 200) imgData.container.height = 200;
+    for (var j = 0; j < imagesForSaving.length; j++) {
+      imgData.pos[j].width  = imagesForSaving[j].width;
+      imgData.pos[j].height = imagesForSaving[j].height;
+    }
+  }
+  var posStr = projectDataToJson(imgData.pos);
+  extraRows = Math.ceil(8 + (lastAutoSave.length + posStr.length + 10) / 0.375 / imgData.container.width);
+  for (var k = 0; k < imgData.pos.length; k++) imgData.pos[k].y += extraRows;
+  posStr = projectDataToJson(imgData.pos);
+  var c = document.getElementById("cmcanvas");
+  var ctx = c.getContext("2d");
+  c.height = imgData.container.height + extraRows;
+  c.width  = imgData.container.width;
+  var tmp = "tm_cmV01";
+  var imgPlus = ctx.createImageData(imgData.container.width, extraRows);
+  imgPlus.data.fill(255);
+  var p = 0;
+  p = string2array(tmp, imgPlus.data, p, false);
+  p = string2array(posStr, imgPlus.data, p, true);
+  p = string2array(lastAutoSave, imgPlus.data, p, true);
+  ctx.putImageData(imgPlus, 0, 0);
+  for (var m = 0; m < imgData.pos.length; m++) ctx.drawImage(imagesForSaving[m], imgData.pos[m].x, imgData.pos[m].y);
+  setTimeout(saveProjectCont, 100, true);
+}
+
+function saveProjectCont(need2wait) {
+  var c = document.getElementById("cmcanvas");
+  var projectlink = document.getElementById("projectlink");
+  projectlink.setAttribute("download", "projet_tm.png");
+  projectlink.setAttribute("href", c.toDataURL("image/png").replace("image/png","image/octet-stream"));
+  projectlink.click();
+  if (need2wait) saveDone();
+}
+
+function saveDone() {
+  alert("Projet sauvegardé !");
+  var c = document.getElementById("cmcanvas");
+  c.height -= extraRows; extraRows = 0;
+  drawProject();
+}
+
+// ============================================================
+// PARAMÈTRES / VALEURS
+// ============================================================
+var arAlt = { width:["height","lar"], height:["width","lar"], swidth:["sheight","slar"], sheight:["swidth","slar"] };
+
+function liveUpdateText(th) {
+  // Mise à jour en temps réel du texte pendant la frappe
+  var node = document.querySelector(".selected");
+  if (!node) return;
+  var layer = aLayers[node.id];
+  if (!layer || layer.type !== "text") return;
+  layer.data = th.value;
+  drawProject();
+}
+
+function updateValue(th) {
+  var node = th.parentNode.parentNode.parentNode.parentNode;
+  var layerName = node.id;
+  var fieldName = th.id.slice(5);
+  var layer = aLayers[layerName];
+  if (!layer) return;
+
+  if (th.type === "number") {
+    var newValue = Number(th.value);
+    if (fieldName === "x" || fieldName === "y") {
+      var gc = node.getElementsByClassName("groupcheck")[0];
+      if (gc && gc.checked) {
+        var diff = newValue - layer[fieldName];
+        var allGroups = document.getElementsByClassName("groupcheck");
+        for (var g = 0; g < allGroups.length; g++) {
+          if (!allGroups[g].checked) continue;
+          aLayers[allGroups[g].parentNode.id][fieldName] += diff;
+        }
+      }
+    }
+    // Ratio proportionnel (sauf prérequis)
+    var isReq = layer.type === "block" && REQ_INDICES.indexOf(layer.iNum) !== -1;
+    if (!isReq && arAlt[fieldName] && !reloading && layer.type !== "text") {
+      var larEl = document.getElementById(arAlt[fieldName][1]);
+      if (larEl && larEl.checked && layer[fieldName]) {
+        var otherValue = newValue * layer[arAlt[fieldName][0]] / layer[fieldName];
+        otherValue = Math.round(otherValue * 1000) / 1000;
+        if (Math.abs(otherValue - Math.round(otherValue)) < 0.01) otherValue = Math.round(otherValue);
+        layer[arAlt[fieldName][0]] = otherValue;
+        var otherEl = document.getElementById("input" + arAlt[fieldName][0]);
+        if (otherEl) otherEl.value = otherValue;
+      }
+    }
+    layer[fieldName] = newValue;
+  } else if (th.type === "checkbox") {
+    layer[fieldName] = th.checked;
+  } else {
+    if (th.id === "inputfont") layer.filename = fontList[th.value];
+    layer[fieldName] = th.value;
+  }
+  drawProject();
+  saveToHistory();
+}
+
+function setPresets(th) {
+  var selVal = document.getElementById("presets").value;
+  if (!selVal) return;
+  var sel = Number(selVal.slice(9));
+  var layerDom = th.parentNode.parentNode.parentNode.parentNode;
+  var layer = aLayers[layerDom.id];
+  var dName = "";
+  if      (layer.type === "block")      dName = blockList[layer.iNum].putUnder;
+  else if (layer.type === "text")       dName = "text";
+  else if (layer.type === "production") dName = "production";
+  if (!dName || !blockDefaults[dName]) return;
+  reloading = true;
+  for (var v in blockDefaults[dName][sel]) {
+    if (v === "label") continue;
+    var el = document.getElementById("input" + v);
+    if (!el) continue;
+    el.value = blockDefaults[dName][sel][v];
+    if (dName === "tiles") reloading = false;
+    updateValue(el);
+  }
+  if (dName === "templates") {
+    aLayers["dragdropdiv0"].height = blockDefaults[dName][sel].height;
+    aLayers["dragdropdiv0"].width  = blockDefaults[dName][sel].width;
+  }
+  reloading = false;
+  drawProject();
+}
+
+// ============================================================
+// AJOUT DE BLOCS
+// ============================================================
+
+// Retire l'ancien prérequis s'il existe
+function removeExistingRequirement() {
+  var layerDivs = document.getElementsByClassName("divRec");
+  for (var i = layerDivs.length - 1; i >= 0; i--) {
+    var l = aLayers[layerDivs[i].id];
+    if (l && l.type === "block" && REQ_INDICES.indexOf(l.iNum) !== -1) {
+      delete aLayers[layerDivs[i].id];
+      layerDivs[i].parentNode.removeChild(layerDivs[i]);
+      return;
+    }
+  }
+}
+
+// Retire l'ancien VP exclusif s'il existe
+function removeExistingExclusiveVP() {
+  var layerDivs = document.getElementsByClassName("divRec");
+  for (var i = layerDivs.length - 1; i >= 0; i--) {
+    var l = aLayers[layerDivs[i].id];
+    if (l && l.type === "block" && VP_EXCLUSIVE.indexOf(l.iNum) !== -1) {
+      delete aLayers[layerDivs[i].id];
+      layerDivs[i].parentNode.removeChild(layerDivs[i]);
+      return;
+    }
+  }
+}
+
+// Toggle un calque unique (VP background, -VP, /VP)
+function toggleUniqueBlock(iNum) {
+  var layerDivs = document.getElementsByClassName("divRec");
+  for (var i = layerDivs.length - 1; i >= 0; i--) {
+    var l = aLayers[layerDivs[i].id];
+    if (l && l.type === "block" && l.iNum === iNum) {
+      delete aLayers[layerDivs[i].id];
+      layerDivs[i].parentNode.removeChild(layerDivs[i]);
+      drawProject(); saveToHistory();
+      return true; // supprimé
+    }
+  }
+  return false; // pas trouvé, à ajouter
+}
+
+type2FuncList.block = addBlock;
+function addBlock(iNum, fromLoad) {
+  var myIndex = Number(iNum);
+  var thisBlock = blockList[myIndex];
+  if (!thisBlock) return {};
+
+  var isVP      = (myIndex >= 81 && myIndex <= 90);
+  var isVPExcl  = VP_EXCLUSIVE.indexOf(myIndex) !== -1;
+  var isVPBg    = myIndex === VP_BG_IDX;
+  var isToggle  = (myIndex === 89 || myIndex === 90 || isVPBg); // -VP, /VP, bg
+  var isReq     = REQ_INDICES.indexOf(myIndex) !== -1;
+
+  // Logique toggle pour VP et certains divers
+  if (!fromLoad && (isVP || isToggle)) {
+    if (isToggle) {
+      var removed = toggleUniqueBlock(myIndex);
+      if (removed) return {};
+    }
+    if (isVPExcl) removeExistingExclusiveVP();
+  }
+
+  // Logique remplacement prérequis
+  if (!fromLoad && isReq) removeExistingRequirement();
+
+  var layer = {type:"block", name:"", iNum:myIndex, x:0, y:0, width:0, height:0, params:"allimages"};
+  if (thisBlock.otherbg) { layer.params += " " + thisBlock.otherbg; layer.obg = false; }
+  if (blockDefaults[thisBlock.putUnder]) layer.params += " allpreset";
+
+  if (!fromLoad) {
+    applyDefaultPreset(layer, thisBlock.putUnder, myIndex);
+    // Décalage anti-superposition
+    var cat = thisBlock.putUnder;
+    if (!_insertOffsets[cat]) _insertOffsets[cat] = 0;
+    if (_insertOffsets[cat] > 0) { layer.x += _insertOffsets[cat] * 18; layer.y += _insertOffsets[cat] * 18; clampToCanvas(layer); }
+    _insertOffsets[cat]++;
+  }
+
+  // Position d'insertion dans la liste
+  var insertPos = null;
+  if (!fromLoad) {
+    if (thisBlock.putUnder === "tags" || thisBlock.putUnder === "VPs" || thisBlock.putUnder === "requisites" || thisBlock.putUnder === "globalparameters") {
+      insertPos = "aboveTemplate";
+    } else if (thisBlock.putUnder === "resources" || thisBlock.putUnder === "misc" || thisBlock.putUnder === "tiles" || thisBlock.putUnder === "parties") {
+      insertPos = "aboveTemplate";
+    }
+    // Images utilisateur : afterBase
+  }
+
+  var newLayer = addLayer(thisBlock.text, layer, fromLoad ? null : insertPos);
+
+  // Tuiles : appliquer preset standard immédiatement
+  if (!fromLoad && thisBlock.putUnder === "tiles" && blockDefaults.tiles && blockDefaults.tiles[0]) {
+    var tp = blockDefaults.tiles[0];
+    if (tp.x !== undefined) newLayer.x = tp.x;
+    if (tp.y !== undefined) newLayer.y = tp.y;
+    if (tp.width  !== undefined) newLayer.width  = tp.width;
+    if (tp.height !== undefined) newLayer.height = tp.height;
+  }
+
+  saveToHistory();
+  if (thisBlock.obj) {
+    if (!newLayer.width)  newLayer.width  = thisBlock.obj.width;
+    if (!newLayer.height) newLayer.height = thisBlock.obj.height;
+    drawProject();
+  } else {
+    fetchBlock(myIndex);
+  }
+  return newLayer;
+}
+
+type2FuncList.text = addTextBox;
+function addTextBox(data, fromLoad) {
+  var layer = {
+    type:"text", data:"", x:0, y:0, width:110, height:21,
+    color:"#000000", font:"Prototype", style:"normal", weight:"normal",
+    lineSpace:4, justify:"center", params:"allimages color alltext allpreset"
+  };
+  if (typeof data === "string") { layer.data = data; }
+  else { layer.data = "Texte ici"; }
+  if (!fromLoad) {
+    var c = document.getElementById("cmcanvas");
+    layer.x = Math.round(c.width / 2);
+    layer.y = Math.round(c.height / 2);
+    layer.width = Math.round(c.width * 0.7);
+    if (!_insertOffsets["text"]) _insertOffsets["text"] = 0;
+    layer.x += _insertOffsets["text"] * 15;
+    layer.y += _insertOffsets["text"] * 15;
+    clampToCanvas(layer);
+    _insertOffsets["text"]++;
+  }
+  var newLayer = addLayer("Text:" + (layer.data || "").substr(0, 10), layer);
+  drawProject();
+  return newLayer;
+}
+
+type2FuncList.production = addProduction;
+function addProduction(fromLoad) {
+  var c = document.getElementById("cmcanvas");
+  var layer = {type:"production", x: Math.round(c.width*0.2), y: Math.round(c.height*0.4), width:130, height:130, params:"allimages allpreset"};
+  var newLayer = addLayer("Production", layer);
+  var thisBlock = blockList[hiddenImage["prod_nxn"]];
+  if (thisBlock && thisBlock.obj) drawProject(); else if (hiddenImage["prod_nxn"] !== undefined) fetchBlock(hiddenImage["prod_nxn"]);
+  return newLayer;
+}
+
+type2FuncList.effect = addEffectBox;
+function addEffectBox(fromLoad) {
+  var c = document.getElementById("cmcanvas");
+  var layer = {type:"effect", x:Math.round(c.width*0.3), y:Math.round(c.height*0.25), width:Math.round(c.width*0.4), height:Math.round(c.height*0.3), params:"allimages allpreset"};
+  var newLayer = addLayer("Boîte Effet", layer);
+  drawProject();
+  return newLayer;
+}
+
+type2FuncList.line = addLine;
+function addLine(fromLoad) {
+  var c = document.getElementById("cmcanvas");
+  // Ligne par défaut : centrée horizontalement, juste au-dessus du flavor text
+  var layer = {
+    type:"line", x: Math.round(c.width * 0.1), y: Math.round(c.height * 0.85),
+    width:2, angle:0, len:Math.round(c.width * 0.8),
+    color:"#000000", params:"allangle alllen allpreset color"
+  };
+  var newLayer = addLayer("Ligne", layer);
+  drawProject();
+  return newLayer;
+}
+
+// ============================================================
+// IMAGES UTILISATEUR
+// ============================================================
+function addUserFile(th) {
+  if (!th.value) return;
+  try {
+    var file = th.files[0];
+    if (file.type && file.type.indexOf("image") === -1) { alert("Ce fichier n'est pas une image."); return; }
+    mostRecentFile = file;
+    var reader = new FileReader();
+    reader.addEventListener("load", function() {
+      var newI = new Image();
+      newI.onload = userImageLoaded;
+      newI.src = reader.result;
+      newI.crossOrigin = "Anonymous";
+    });
+    reader.readAsDataURL(file);
+  } catch(e) { projectLoad = false; alert("Erreur lors du chargement du fichier."); }
+  th.value = "";
+}
+
+function getImageFromUrl(url, callback) {
+  var img = new Image();
+  img.setAttribute("crossOrigin", "anonymous");
+  img.onload = function() {
+    var canvas = document.createElement("canvas");
+    canvas.width = this.width; canvas.height = this.height;
+    canvas.getContext("2d").drawImage(this, 0, 0);
+    canvas.toBlob(function(blob) { callback(blob); }, "image/png");
+  };
+  img.src = url;
+}
+
+function loadInitialProject(url) {
+  projectLoad = true;
+  try {
+    getImageFromUrl(url, function(blobImage) {
+      var reader = new FileReader();
+      reader.addEventListener("load", function() {
+        var newI = new Image();
+        newI.onload = userImageLoaded;
+        newI.src = reader.result;
+        newI.crossOrigin = "Anonymous";
+      });
+      reader.readAsDataURL(blobImage);
+    });
+  } catch(e) { projectLoad = false; alert("Erreur : " + e); }
+}
+
+var oLoadedProject;
+function userImageLoaded() {
+  if (projectLoad) {
+    try {
+      var c = document.getElementById("cmcanvas");
+      var ctx = c.getContext("2d");
+      c.width = this.width; c.height = this.height;
+      ctx.drawImage(this, 0, 0);
+      oLoadedProject = this;
+      setTimeout(function() {
+        try {
+          var c2 = document.getElementById("cmcanvas");
+          var ctx2 = c2.getContext("2d");
+          var imgData = ctx2.getImageData(0, 0, c2.width, c2.height);
+          var ob = array2string(imgData.data, 0, 8);
+          if (ob.str !== "tm_cmV01") throw "Pas un projet TM Card Maker";
+          var posOb = array2string(imgData.data, ob.pos, 0);
+          var layerOb = array2string(imgData.data, posOb.pos, 0);
+          var pos = JSON.parse(posOb.str);
+          var localCanvases = [];
+          for (var ii = 0; ii < pos.length; ii++) {
+            var cvs = document.createElement("canvas");
+            cvs.width = pos[ii].width; cvs.height = pos[ii].height;
+            cvs.getContext("2d").drawImage(oLoadedProject, pos[ii].x, pos[ii].y, pos[ii].width, pos[ii].height, 0, 0, pos[ii].width, pos[ii].height);
+            localCanvases.push(cvs);
+          }
+          var newLayers = JSON.parse(layerOb.str);
+          for (var jj = 0; jj < newLayers.length; jj++) {
+            if (newLayers[0] && newLayers[0].type === "base" && aLayers["dragdropdiv0"]) {
+              var base = aLayers["dragdropdiv0"];
+              base.width = newLayers[0].width; base.height = newLayers[0].height; base.color = newLayers[0].color;
+              newLayers.shift(); jj = 0; if (!newLayers.length) break;
+            }
+            if (newLayers[jj] && (newLayers[jj].type === "userFile" || newLayers[jj].type === "embedded")) {
+              newLayers[jj].iNum = userImageList.length;
+              userImageList.push(localCanvases.shift());
+              newLayers[jj].type = "embedded";
+            }
+          }
+          loadFrom(newLayers);
+          projectLoad = false;
+          setTimeout(drawProject, 100);
+        } catch(err) { projectLoad = false; console.warn("Erreur chargement projet :", err); }
+      }, 50);
+    } catch(e) { projectLoad = false; }
+  } else {
+    // Image locale insérée entre Base et template
+    var c = document.getElementById("cmcanvas");
+    var layer = {
+      type:"userFile", iNum:userImageList.length,
+      x:0, y:0, width:Math.min(this.width, c.width), height:Math.min(this.height, c.height),
+      alpha:100, sx:0, sy:0, swidth:this.width, sheight:this.height,
+      params:"allimages clipimages", filename: mostRecentFile.name
+    };
+    userImageList.push(this);
+    addLayer("Local:" + layer.filename, layer, "afterBase");
+    drawProject();
+  }
+}
+
+// ============================================================
+// IMAGES WEB
+// ============================================================
+function loadWebImage() {
+  var url = document.getElementById("url2load").value;
+  var img = new Image();
+  img.onload = function() { webImageLoaded(img); };
+  img.src = url; img.crossOrigin = "Anonymous";
+  closeOverlay("overlay");
+}
+
+function webImageLoaded(th) {
+  var c = document.getElementById("cmcanvas");
+  var layer = {
+    type:"webFile", iNum:userImageList.length,
+    x:0, y:0, width:Math.min(th.width, c.width), height:Math.min(th.height, c.height),
+    alpha:100, sx:0, sy:0, swidth:th.width, sheight:th.height,
+    filename:th.src, params:"allimages clipimages"
+  };
+  userImageList.push(th);
+  addLayer("Web image", layer, "afterBase");
+  drawProject();
+}
+
+function reloadWebImage(url) {
+  var img = new Image();
+  img.onload = function() {
+    var iNum = userImageList.length;
+    userImageList.push(img);
+    var keys = Object.keys(aLayers);
+    for (var k = 0; k < keys.length; k++) {
+      if (aLayers[keys[k]].type === "webFile" && aLayers[keys[k]].filename === url && aLayers[keys[k]].iNum === -1) {
+        aLayers[keys[k]].iNum = iNum;
+      }
+    }
+    drawProject();
+  };
+  img.src = url; img.crossOrigin = "Anonymous";
+}
+
+// ============================================================
+// POLICES
+// ============================================================
+function loadSpecifiedFont() {
+  var url = document.getElementById("fonturl2load").value;
+  closeOverlay("fontoverlay");
+  loadFont(url);
+}
+
+function loadFont(url) {
+  // Extraire URL proprement
+  if (!url.startsWith("http")) {
+    var httpPos = url.indexOf("http");
+    if (httpPos >= 0) {
+      var endChar = url.charAt(httpPos - 1);
+      var endPos  = url.indexOf(endChar, httpPos);
+      url = endPos > 0 ? url.slice(httpPos, endPos) : url.slice(httpPos);
+    }
+  }
+  var domLink = document.createElement("link");
+  domLink.href = url; domLink.rel = "stylesheet";
+  document.head.appendChild(domLink);
+
+  // Extraire le nom de la police
+  var famIdx = url.indexOf("family=");
+  if (famIdx === -1) return;
+  var fontName = url.slice(famIdx + 7);
+  // Couper à & ou : ou fin
+  var cutters = ["&", ":", "?", "/"];
+  var cut = fontName.length;
+  for (var ci = 0; ci < cutters.length; ci++) {
+    var pos = fontName.indexOf(cutters[ci]);
+    if (pos > 0 && pos < cut) cut = pos;
+  }
+  fontName = fontName.slice(0, cut).replace(/\+/g, " ");
+  if (!fontName) return;
+
+  var domOpt = document.createElement("option");
+  domOpt.value = fontName; domOpt.style.fontFamily = fontName; domOpt.textContent = fontName;
+  fontList[fontName] = url;
+  domInputfont.appendChild(domOpt);
+}
+
+// ============================================================
+// DRAG & DROP SUR LE CANVAS
+// ============================================================
+var layerToDrag = null, dragOffsetX = 0, dragOffsetY = 0, keyFocusLayer = null;
+
+function getMousePos(event) {
+  var c = document.getElementById("cmcanvas");
+  var rect = c.getBoundingClientRect();
+  return {
+    x: (event.clientX - rect.left) * (c.width  / rect.width),
+    y: (event.clientY - rect.top)  * (c.height / rect.height)
+  };
+}
+
+function dragStart(event) {
+  // Ignorer si on clique sur une poignée
+  if (event.target.classList.contains("resize-handle")) return;
+  var mouse = getMousePos(event);
+  var layerDivs = document.getElementsByClassName("divRec");
+  for (var i = layerDivs.length - 1; i >= 0; i--) {
+    var layer = aLayers[layerDivs[i].id];
+    if (layer.locked) continue; // ignorer les verrouillés
+    if (clickIsWithinLayer(layer, mouse.x, mouse.y)) {
+      var insideDiv = layerDivs[i].querySelector(".inside");
+      if (insideDiv) insideDiv.onclick.call(insideDiv);
+      layerToDrag = layer;
+      dragOffsetX = layer.x - mouse.x;
+      dragOffsetY = layer.y - mouse.y;
+      document.getElementById("cmcanvas").classList.add("dragging");
+      return;
+    }
+  }
+}
+
+function dragEnd() {
+  if (layerToDrag !== null) { autoSaveImmediately(); saveToHistory(); }
+  layerToDrag = null;
+  document.getElementById("cmcanvas").classList.remove("dragging");
+}
+
+function drag(event) {
+  if (layerToDrag === null) return;
+  var mouse = getMousePos(event);
+  layerToDrag.x = mouse.x + dragOffsetX;
+  layerToDrag.y = mouse.y + dragOffsetY;
+  drawProject();
+}
+
+var elem = document.getElementById("cmcanvas");
+elem.addEventListener("mousedown", dragStart, false);
+document.addEventListener("mouseup", dragEnd, false);
+elem.addEventListener("mousemove", drag, false);
+
+// ============================================================
+// DÉTECTION DE CLIC SUR LES CALQUES
+// ============================================================
+function clickIsWithinLayer(layer, x, y) {
+  if (layer.type === "text") return clickIsWithinText(layer, x - layer.x, (y - layer.y) + layer.height);
+  if (layer.type === "line") {
+    // Zone autour de la ligne
+    return (y >= layer.y - 8 && y <= layer.y + 8 && x >= layer.x && x <= layer.x + layer.len);
+  }
+  if (y < layer.y || y > layer.y + layer.height || x < layer.x || x > layer.x + layer.width) return false;
+  if (clickIsWithinTransparentArea(layer, x - layer.x, y - layer.y)) return false;
+  return true;
+}
+
+function clickIsWithinTransparentArea(layer, x, y) {
+  if (layer.type !== "block" || !blockList[layer.iNum] || !blockList[layer.iNum].obj || !blockList[layer.iNum].obj.complete) return false;
+  try {
+    _transparencyCanvas.width  = Math.max(1, layer.width);
+    _transparencyCanvas.height = Math.max(1, layer.height);
+    _transparencyCtx.clearRect(0, 0, layer.width, layer.height);
+    _transparencyCtx.drawImage(blockList[layer.iNum].obj, 0, 0, layer.width, layer.height);
+    return _transparencyCtx.getImageData(x, y, 1, 1).data[3] === 0;
+  } catch(e) { return false; }
+}
+
+function clickIsWithinText(layer, x, y) {
+  if (y < 0) return false;
+  var c = document.getElementById("cmcanvas");
+  var ctx = c.getContext("2d");
+  ctx.font = (layer.style||"normal") + " " + layer.weight + " " + layer.height + "px " + layer.font;
+  var lines = layer.data.split("\n"), cnt = 0;
+  for (var ln = 0; ln < lines.length; ln++) {
+    var spl = lines[ln].split(" "), o = "";
+    while (spl.length) {
+      o = spl.shift();
+      while (spl.length && ctx.measureText(o + " " + spl[0]).width < layer.width) o += " " + spl.shift();
+      cnt++;
+      if (y < (layer.height + layer.lineSpace) * cnt) {
+        var lw = ctx.measureText(o).width;
+        var lx = x;
+        if (layer.justify === "center") lx = x + lw / 2;
+        if (layer.justify === "right")  lx = x + lw;
+        return lx > 0 && lx < lw;
+      }
+    }
+  }
+  return false;
+}
+
+// ============================================================
+// DOUBLE-CLIC — ÉDITEUR INLINE + POIGNÉES
+// ============================================================
+elem.addEventListener("dblclick", function(event) {
+  var mouse = getMousePos(event);
+  var layerDivs = document.getElementsByClassName("divRec");
+  for (var i = layerDivs.length - 1; i >= 0; i--) {
+    var layer = aLayers[layerDivs[i].id];
+    if (!clickIsWithinLayer(layer, mouse.x, mouse.y)) continue;
+    if (layer.type === "text") {
+      showInlineEditor(layer, layerDivs[i].id);
+      showResizeHandles(layer, layerDivs[i].id, "text");
+      return;
+    }
+    if (layer.type === "production" || layer.type === "effect") {
+      showResizeHandles(layer, layerDivs[i].id, "box");
+      return;
+    }
+    if (layer.type === "line") {
+      showResizeHandles(layer, layerDivs[i].id, "line");
+      return;
+    }
+  }
+}, false);
+
+// ============================================================
+// ÉDITEUR INLINE TEXTE
+// ============================================================
+function showInlineEditor(layer, layerId) {
+  var existing = document.getElementById("tm-inline-editor");
+  if (existing) existing.remove();
+  var hint = document.getElementById("tm-inline-hint");
+  if (hint) hint.remove();
+
+  var c = document.getElementById("cmcanvas");
+  var rect = c.getBoundingClientRect();
+  var scaleX = rect.width  / c.width;
+  var scaleY = rect.height / c.height;
+  var screenX = rect.left + layer.x * scaleX - 10;
+  var screenY = rect.top  + (layer.y - layer.height) * scaleY - 30;
+
+  var hintEl = document.createElement("div");
+  hintEl.id = "tm-inline-hint";
+  hintEl.textContent = "Entrée = valider  •  Maj+Entrée = nouvelle ligne  •  Échap = annuler";
+  hintEl.style.cssText = "position:fixed;left:" + screenX + "px;top:" + screenY + "px;background:#E8651A;color:#fff;font-size:10px;padding:3px 8px;border-radius:4px 4px 0 0;z-index:9999;font-family:sans-serif;white-space:nowrap;";
+  document.body.appendChild(hintEl);
+
+  var editor = document.createElement("textarea");
+  editor.id = "tm-inline-editor";
+  editor.value = layer.data;
+  editor.style.cssText = "position:fixed;left:" + screenX + "px;top:" + (screenY + 24) + "px;min-width:200px;min-height:70px;background:rgba(10,20,40,0.96);color:#F0E6D3;border:2px solid #E8651A;border-radius:0 6px 6px 6px;padding:8px 10px;font-size:14px;z-index:9999;resize:both;box-shadow:0 4px 20px rgba(0,0,0,0.8);outline:none;font-family:sans-serif;line-height:1.5;";
+  document.body.appendChild(editor);
+  editor.focus(); editor.select();
+
+  // Mise à jour en temps réel
+  editor.addEventListener("input", function() {
+    layer.data = editor.value;
+    // Mettre à jour aussi le textarea du panneau
+    var ta = document.getElementById("inputdata");
+    if (ta) ta.value = layer.data;
+    drawProject();
+  });
+
+  function closeEditor(save) {
+    if (save) {
+      layer.data = editor.value;
+      var nameEl = document.getElementById("layername" + layerId.slice(11));
+      if (nameEl) nameEl.value = "Text:" + layer.data.substr(0, 10);
+      drawProject(); saveToHistory();
+    }
+    editor.remove(); hintEl.remove();
+  }
+
+  editor.addEventListener("keydown", function(e) {
+    if (e.key === "Escape") { closeEditor(false); e.preventDefault(); }
+    if (e.key === "Enter" && !e.shiftKey) { closeEditor(true); e.preventDefault(); }
+  });
+  editor.addEventListener("blur", function() {
+    setTimeout(function() { if (document.getElementById("tm-inline-editor")) closeEditor(true); }, 200);
+  });
+}
+
+// ============================================================
+// POIGNÉES DE REDIMENSIONNEMENT
+// ============================================================
+var activeResizeLayer = null;
+var activeResizeHandles = [];
+var resizingHandle = null;
+var resizeStartMouse = null;
+var resizeStartLayer = null;
+
+function removeResizeHandles() {
+  activeResizeHandles.forEach(function(h) { if (h.parentNode) h.parentNode.removeChild(h); });
+  activeResizeHandles = [];
+  activeResizeLayer = null;
+}
+
+function showResizeHandles(layer, layerId, mode) {
+  removeResizeHandles();
+  activeResizeLayer = layer;
+
+  var c = document.getElementById("cmcanvas");
+  var rect = c.getBoundingClientRect();
+  var scaleX = rect.width  / c.width;
+  var scaleY = rect.height / c.height;
+
+  function makeHandle(cx, cy, cursor, role) {
+    var h = document.createElement("div");
+    h.className = "resize-handle";
+    h.style.cursor = cursor;
+    h.dataset.role = role;
+    updateHandlePos(h, cx, cy, rect, scaleX, scaleY);
+    document.body.appendChild(h);
+    activeResizeHandles.push(h);
+
+    h.addEventListener("mousedown", function(e) {
+      e.stopPropagation(); e.preventDefault();
+      resizingHandle = role;
+      resizeStartMouse = {x: e.clientX, y: e.clientY};
+      resizeStartLayer = {x: layer.x, y: layer.y, width: layer.width, height: layer.height, len: layer.len};
+    });
+    return h;
+  }
+
+  if (mode === "line") {
+    // Poignée droite seulement
+    var lx1 = rect.left + layer.x * scaleX;
+    var lx2 = rect.left + (layer.x + layer.len) * scaleX;
+    var ly  = rect.top  + layer.y * scaleY;
+    makeHandle(lx1, ly, "ew-resize", "line-start");
+    makeHandle(lx2, ly, "ew-resize", "line-end");
+  } else {
+    // Coins pour box et text
+    var x1 = rect.left + layer.x * scaleX;
+    var y1 = rect.top  + layer.y * scaleY;
+    var x2 = rect.left + (layer.x + layer.width)  * scaleX;
+    var y2 = rect.top  + (layer.y + layer.height) * scaleY;
+    makeHandle(x1, y1, "nw-resize", "tl");
+    makeHandle(x2, y1, "ne-resize", "tr");
+    makeHandle(x1, y2, "sw-resize", "bl");
+    makeHandle(x2, y2, "se-resize", "br");
+    if (mode !== "text") {
+      // Milieux des côtés
+      makeHandle((x1+x2)/2, y1, "n-resize",  "tm");
+      makeHandle((x1+x2)/2, y2, "s-resize",  "bm");
+      makeHandle(x1, (y1+y2)/2, "w-resize",  "ml");
+      makeHandle(x2, (y1+y2)/2, "e-resize",  "mr");
+    }
+  }
+}
+
+function updateHandlePos(h, cx, cy) {
+  h.style.left = cx + "px";
+  h.style.top  = cy + "px";
+}
+
+function refreshHandles() {
+  if (!activeResizeLayer || !activeResizeHandles.length) return;
+  var c = document.getElementById("cmcanvas");
+  var rect = c.getBoundingClientRect();
+  var scaleX = rect.width  / c.width;
+  var scaleY = rect.height / c.height;
+  var layer = activeResizeLayer;
+
+  activeResizeHandles.forEach(function(h) {
+    var role = h.dataset.role;
+    var cx, cy;
+    if (role === "line-start") { cx = rect.left + layer.x * scaleX; cy = rect.top + layer.y * scaleY; }
+    else if (role === "line-end") { cx = rect.left + (layer.x + layer.len) * scaleX; cy = rect.top + layer.y * scaleY; }
+    else {
+      var x1 = rect.left + layer.x * scaleX, y1 = rect.top + layer.y * scaleY;
+      var x2 = rect.left + (layer.x + layer.width)  * scaleX;
+      var y2 = rect.top  + (layer.y + layer.height) * scaleY;
+      var map = {tl:[x1,y1],tr:[x2,y1],bl:[x1,y2],br:[x2,y2],tm:[(x1+x2)/2,y1],bm:[(x1+x2)/2,y2],ml:[x1,(y1+y2)/2],mr:[x2,(y1+y2)/2]};
+      if (map[role]) { cx = map[role][0]; cy = map[role][1]; }
+    }
+    if (cx !== undefined) { h.style.left = cx + "px"; h.style.top = cy + "px"; }
+  });
+}
+
+document.addEventListener("mousemove", function(e) {
+  if (!resizingHandle || !activeResizeLayer) return;
+  var layer = activeResizeLayer;
+  var c = document.getElementById("cmcanvas");
+  var rect = c.getBoundingClientRect();
+  var scaleX = c.width  / rect.width;
+  var scaleY = c.height / rect.height;
+  var dx = (e.clientX - resizeStartMouse.x) * scaleX;
+  var dy = (e.clientY - resizeStartMouse.y) * scaleY;
+
+  if (resizingHandle === "line-end")   { layer.len = Math.max(10, resizeStartLayer.len + dx); }
+  else if (resizingHandle === "line-start") { layer.x = resizeStartLayer.x + dx; layer.len = Math.max(10, resizeStartLayer.len - dx); }
+  else if (resizingHandle === "br") { layer.width  = Math.max(10, resizeStartLayer.width  + dx); layer.height = Math.max(10, resizeStartLayer.height + dy); }
+  else if (resizingHandle === "tr") { layer.width  = Math.max(10, resizeStartLayer.width  + dx); layer.y = resizeStartLayer.y + dy; layer.height = Math.max(10, resizeStartLayer.height - dy); }
+  else if (resizingHandle === "bl") { layer.x = resizeStartLayer.x + dx; layer.width  = Math.max(10, resizeStartLayer.width  - dx); layer.height = Math.max(10, resizeStartLayer.height + dy); }
+  else if (resizingHandle === "tl") { layer.x = resizeStartLayer.x + dx; layer.y = resizeStartLayer.y + dy; layer.width  = Math.max(10, resizeStartLayer.width  - dx); layer.height = Math.max(10, resizeStartLayer.height - dy); }
+  else if (resizingHandle === "mr") { layer.width  = Math.max(10, resizeStartLayer.width  + dx); }
+  else if (resizingHandle === "ml") { layer.x = resizeStartLayer.x + dx; layer.width = Math.max(10, resizeStartLayer.width - dx); }
+  else if (resizingHandle === "bm") { layer.height = Math.max(10, resizeStartLayer.height + dy); }
+  else if (resizingHandle === "tm") { layer.y = resizeStartLayer.y + dy; layer.height = Math.max(10, resizeStartLayer.height - dy); }
+
+  // Mettre à jour les champs du panneau
+  ["x","y","width","height","len"].forEach(function(f) {
+    var el = document.getElementById("input"+f);
+    if (el && layer[f] !== undefined) el.value = Math.round(layer[f]);
+  });
+  drawProject();
+  refreshHandles();
+});
+
+document.addEventListener("mouseup", function(e) {
+  if (resizingHandle) { resizingHandle = null; resizeStartMouse = null; resizeStartLayer = null; saveToHistory(); }
+});
+
+// ============================================================
+// CLAVIER — déplacement fin
+// ============================================================
+function focusKeyInput(layer) {
+  keyFocusLayer = layer;
+  document.addEventListener("keydown", moveLayerWithKey, false);
+}
+
+function removeKeyInputFocus() {
+  keyFocusLayer = null;
+  document.removeEventListener("keydown", moveLayerWithKey, false);
+}
+
+function moveLayerWithKey(event) {
+  if (!keyFocusLayer) return;
+  if (event.target.tagName === "INPUT" || event.target.tagName === "TEXTAREA") return;
+  if (keyFocusLayer.locked) return;
+  var aspectRatio = keyFocusLayer.height / (keyFocusLayer.width || 1);
+  var delta = getMoveDeltas(event, aspectRatio);
+  if (!delta.x && !delta.y && !delta.w && !delta.h) return;
+  if (keyFocusLayer.type === "text" && event.altKey) {
+    delta.x = 0; delta.y = 0;
+    if (event.key === "ArrowUp" || event.key === "ArrowDown") { delta.w = 0; delta.h = 2 * Math.sign(delta.h); delta.y = delta.h; }
+    else { delta.h = 0; }
+  }
+  var newW = (keyFocusLayer.width  || 0) + delta.w;
+  var newH = (keyFocusLayer.height || 0) + delta.h;
+  if (newW >= 8 && newH >= 8 || delta.w > 0) {
+    keyFocusLayer.x += delta.x; keyFocusLayer.y += delta.y;
+    keyFocusLayer.width = newW; keyFocusLayer.height = newH;
+    drawProject(); refreshHandles();
+  }
+  event.preventDefault();
+}
+
+function getMoveDeltas(event, aspectRatio) {
+  var delta = {x:0, y:0, w:0, h:0};
+  var magnitude = event.shiftKey ? 25 : 1;
+  switch (event.key) {
+    case "ArrowRight": delta.x =  magnitude; break;
+    case "ArrowLeft":  delta.x = -magnitude; break;
+    case "ArrowUp":    delta.y = -magnitude; break;
+    case "ArrowDown":  delta.y =  magnitude; break;
+    default: return delta;
+  }
+  if (event.altKey) {
+    delta.w = delta.x - 2 * delta.y; delta.h = delta.w * aspectRatio;
+    delta.x = 0; delta.y = 0;
+  }
+  return delta;
+}
+
+// ============================================================
+// DRAG & DROP LISTE DES CALQUES
+// ============================================================
+function sortable(section, onUpdate) {
+  var dragEl, nextEl, dragRect;
+  if (section._sortableListener) section.removeEventListener("dragstart", section._sortableListener, false);
+
+  function onDragStart(e) {
+    dragEl = e.target;
+    if (!dragEl.classList.contains("divRec")) return;
+    dragRect = dragEl.getBoundingClientRect();
+    nextEl   = dragEl.nextSibling;
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("Text", dragEl.textContent);
+    section.removeEventListener("dragover", onDragOver, false);
+    section.removeEventListener("dragend",  onDragEnd,  false);
+    section.addEventListener("dragover", onDragOver, false);
+    section.addEventListener("dragend",  onDragEnd,  false);
+    setTimeout(function() { if (dragEl) dragEl.classList.add("ghost"); }, 0);
+  }
+
+  function onDragOver(e) {
+    // Retirer params du calque sélectionné
+    var sel = document.getElementsByClassName("selected");
+    for (var si = sel.length - 1; si >= 0; si--) {
+      if (domParams.parentNode === sel[si]) sel[si].removeChild(domParams);
+      sel[si].classList.remove("selected");
+    }
+    e.preventDefault(); e.dataTransfer.dropEffect = "move";
+    var target = e.target;
+    if (target && target !== dragEl && target.nodeName === "DIV") {
+      if (target.classList.contains("inside")) { e.stopPropagation(); }
+      else {
+        var targetPos = target.getBoundingClientRect();
+        if (targetPos.top < dragRect.top) {
+          if (target.id === "dragdropdiv0") return;
+          section.insertBefore(dragEl, target);
+        } else { section.insertBefore(dragEl, target.nextSibling); }
+      }
+    }
+  }
+
+  function onDragEnd(e) {
+    e.preventDefault();
+    if (dragEl) dragEl.classList.remove("ghost");
+    section.removeEventListener("dragover", onDragOver, false);
+    section.removeEventListener("dragend",  onDragEnd,  false);
+    if (nextEl !== (dragEl && dragEl.nextSibling)) onUpdate(dragEl);
+    drawProject(); dragEl = null;
+  }
+
+  section._sortableListener = onDragStart;
+  section.addEventListener("dragstart", onDragStart, false);
+  var children = section.children;
+  for (var i = 0; i < children.length; i++) {
+    if (children[i].id !== "dragdropdiv0") children[i].draggable = true;
+  }
+}
+
+// ============================================================
+// MODE GROUPE
+// ============================================================
+function groupModeToggle() {
+  var checked = document.getElementById("groupmode").checked;
+  var c = document.getElementsByClassName("groupcheck");
+  for (var l = 0; l < c.length; l++) {
+    c[l].checked = false;
+    if (checked) { c[l].classList.remove("vis-hidden"); c[l].style.visibility = ""; }
+    else { c[l].classList.add("vis-hidden"); }
+  }
+}
+
+// ============================================================
+// NOUVEAU PROJET / CHARGEMENT
+// ============================================================
+function clickLoadNewProject() {
+  if (confirm("Supprimer le travail actuel et recommencer ?")) {
+    resetProject(false);
+    clickLoadProject();
+  }
+}
+
+function clickLoadProject() {
+  projectLoad = true;
+  document.getElementById("fileselection").click();
+}
+
+// ============================================================
+// STÉGANOGRAPHIE
+// ============================================================
+function array2string(arr, aPos, len) {
+  var str = "", pos = aPos;
+  do {
+    var n = 0;
+    for (var j = 0; j < 8; j++) { if (pos % 4 === 3) pos++; if (arr[pos] > 127) n |= 1 << j; pos++; }
+    if (!n) break;
+    str += String.fromCharCode(n);
+  } while (len ? str.length !== len : true);
+  return {str: str, pos: pos};
+}
+
+function string2array(str, arr, aPos, zeroTerminate) {
+  var pos = aPos;
+  for (var i = 0; i < str.length; i++) {
+    for (var j = 0; j < 8; j++) { if (pos % 4 === 3) pos++; arr[pos] = (str.charCodeAt(i) & (1 << j)) ? 0xff : 0; pos++; }
+  }
+  if (pos % 4 === 3) pos++;
+  if (zeroTerminate) { for (var jj = 0; jj < 8; jj++) { if (pos % 4 === 3) pos++; arr[pos] = 0; pos++; } }
+  return pos;
+}
+
+// ============================================================
+// UTILITAIRES URL
+// ============================================================
+function getParameterByName(name, url) {
+  url = url || window.location.href;
+  name = name.replace(/[\[\]]/g, "\\$&");
+  var results = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)").exec(url);
+  if (!results || !results[2]) return results ? "" : null;
+  return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+// ============================================================
+// DÉMARRAGE
+// ============================================================
+(function init() {
+  var projectUrl = getParameterByName("project");
+  var str = localStorage.getItem("loadedProjectUrl");
+  if (projectUrl && projectUrl !== "") {
+    localStorage.setItem("loadedProjectUrl", projectUrl);
+    window.location.assign(location.protocol + "//" + location.host + location.pathname);
+  } else if (str && str !== "") {
+    resetProject(false);
+    loadInitialProject(str);
+  } else {
+    resetProject(true);
+  }
+})();
+</script>
+</body>
+</html>
