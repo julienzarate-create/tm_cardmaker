@@ -1,5 +1,130 @@
 var aLayers = {};
 
+// ============================================================
+// HISTORIQUE — Ctrl+Z / Ctrl+Y
+// ============================================================
+var history = [];
+var historyIndex = -1;
+var MAX_HISTORY = 50;
+
+function saveToHistory() {
+  // Tronquer l'historique si on est au milieu
+  if (historyIndex < history.length - 1) {
+    history = history.slice(0, historyIndex + 1);
+  }
+  // Sauvegarder l'état actuel
+  let layerDivs = document.getElementsByClassName("divRec");
+  let state = {
+    layers: [],
+    order: []
+  };
+  for (let i = 0; i < layerDivs.length; i++) {
+    let id = layerDivs[i].id;
+    state.order.push(id);
+    state.layers.push({id: id, data: JSON.parse(JSON.stringify(aLayers[id]))});
+  }
+  history.push(JSON.stringify(state));
+  if (history.length > MAX_HISTORY) history.shift();
+  else historyIndex++;
+  updateUndoRedoButtons();
+}
+
+function undo() {
+  if (historyIndex <= 0) return;
+  historyIndex--;
+  restoreFromHistory(historyIndex);
+}
+
+function redo() {
+  if (historyIndex >= history.length - 1) return;
+  historyIndex++;
+  restoreFromHistory(historyIndex);
+}
+
+function restoreFromHistory(idx) {
+  let state = JSON.parse(history[idx]);
+  // Reconstruire aLayers dans le bon ordre
+  let newLayers = {};
+  let layerlist = document.getElementById("layerlist");
+
+  // Vider la liste des layers visuels sauf base
+  // Reconstruire depuis l'état sauvegardé
+  for (let item of state.layers) {
+    newLayers[item.id] = item.data;
+  }
+  aLayers = newLayers;
+
+  // Réordonner le DOM
+  for (let i = 0; i < state.order.length; i++) {
+    let el = document.getElementById(state.order[i]);
+    if (el) layerlist.appendChild(el);
+  }
+
+  drawProject();
+  updateUndoRedoButtons();
+}
+
+function updateUndoRedoButtons() {
+  let undoBtn = document.getElementById("btn-undo");
+  let redoBtn = document.getElementById("btn-redo");
+  if (undoBtn) undoBtn.disabled = historyIndex <= 0;
+  if (redoBtn) redoBtn.disabled = historyIndex >= history.length - 1;
+}
+
+// Écouter Ctrl+Z / Ctrl+Y globalement
+document.addEventListener("keydown", function(e) {
+  // Ne pas interférer si on est dans un input/textarea
+  if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+  if (e.ctrlKey && e.key === "z") { e.preventDefault(); undo(); }
+  if (e.ctrlKey && e.key === "y") { e.preventDefault(); redo(); }
+});
+
+
+// ============================================================
+// PLACEMENT AUTOMATIQUE DES PRESETS
+// ============================================================
+// Compteur de tags déjà placés pour auto-positionner
+var tagCount = 0;
+
+function applyDefaultPreset(layer, putUnder) {
+  if (!blockDefaults[putUnder] || !blockDefaults[putUnder].length) return;
+  
+  let preset = null;
+  
+  if (putUnder === "tags") {
+    // Premier tag, deuxième tag, troisième tag...
+    let idx = Math.min(tagCount, blockDefaults.tags.length - 1);
+    preset = blockDefaults.tags[idx];
+    tagCount++;
+  } else if (putUnder === "resources") {
+    preset = blockDefaults.resources[0]; // Standard
+  } else if (putUnder === "requisites") {
+    preset = blockDefaults.requisites[4]; // No Req par défaut
+  } else if (putUnder === "globalparameters") {
+    preset = blockDefaults.globalparameters[0];
+  } else if (putUnder === "misc") {
+    preset = blockDefaults.misc[0];
+  } else if (putUnder === "parties") {
+    preset = blockDefaults.parties[0];
+  } else if (putUnder === "VPs") {
+    preset = blockDefaults.VPs[0];
+  } else if (putUnder === "tiles") {
+    preset = blockDefaults.tiles[0];
+  }
+  
+  if (preset) {
+    if (preset.x !== undefined) layer.x = preset.x;
+    if (preset.y !== undefined) layer.y = preset.y;
+    if (preset.width !== undefined) layer.width = preset.width;
+    if (preset.height !== undefined) layer.height = preset.height;
+  }
+}
+
+// Réinitialiser le compteur de tags quand on remet à zéro le projet
+var _origResetProject = resetProject;
+
+
+
 var userImageList = [];
 var otherBgList = {};
 var type2FuncList = {};
@@ -347,6 +472,9 @@ function resetProject(loadautosave) {
   document.getElementById("layerlist").innerHTML = "";
   ddcount = 0;
   aLayers = {};
+  tagCount = 0;
+  history = [];
+  historyIndex = -1;
   document.getElementById("xcanvases").innerHTML = "";
   aCanvases = [];
   addLayer("Base",{type:"base", color:"#ffffff", height:1126, width:826, params:"color"});
@@ -504,6 +632,7 @@ function deleteListItem(e,th) {
   delete aLayers[toDelete.id];
   toDelete.parentNode.removeChild(toDelete);
   drawProject();
+  saveToHistory();
 }
 
 function selectLayer() {
@@ -789,6 +918,7 @@ function drawProject() {
     }
   }
   autoSave(imagesForSaving);
+  // history hook — sera appelé depuis les actions utilisateur
 }
 
 var lastAutoSave = "";
@@ -855,6 +985,7 @@ function updateValue(th) {
     aLayers[layerName][fieldName] = th.value;
   }
   drawProject();
+  saveToHistory();
 }
 
 
@@ -1085,7 +1216,9 @@ function addBlock(th) {
   }
   // layer.width = thisBlock.obj.width;
   // layer.height = thisBlock.obj.height;
+  applyDefaultPreset(layer, thisBlock.putUnder);
   let newLayer = addLayer(thisBlock.text, layer);
+  saveToHistory();
   if (thisBlock.obj) {
 
     if (!newLayer.width) newLayer.width = thisBlock.obj.width;
@@ -1106,6 +1239,7 @@ function addMegaTemplate() {
   document.getElementById("layerlist").innerHTML = "";
   ddcount = 0;
   aLayers = {};
+  tagCount = 0;
   addLayer("Base",{type:"base", color:"#ffffff", height:1126, width:826, params:"color"});
   loadFrom(megaTemplates[mega].layers);
 }
@@ -2018,6 +2152,7 @@ function clickIsWithinText(layer, x, y) {
 }
 
 function dragEnd(event) {
+  if (layerToDrag != null) saveToHistory();
   layerToDrag = null;
 }
 
@@ -2156,3 +2291,102 @@ elem.addEventListener("mousedown", dragStart, false);
 elem.addEventListener("mouseup", dragEnd, false);
 elem.addEventListener("mousemove", drag, false);
 
+
+
+// ============================================================
+// DOUBLE-CLIC POUR ÉDITER LE TEXTE DIRECTEMENT
+// ============================================================
+elem.addEventListener("dblclick", function(event) {
+  var mouse = getMousePos(event);
+  let layerDivs = document.getElementsByClassName("divRec");
+  for (let i = layerDivs.length - 1; i >= 0; i--) {
+    let layer = aLayers[layerDivs[i].id];
+    if (layer.type !== "text") continue;
+    if (clickIsWithinLayer(layer, mouse.x, mouse.y)) {
+      showInlineTextEditor(layer, layerDivs[i].id, mouse);
+      return;
+    }
+  }
+}, false);
+
+function showInlineTextEditor(layer, layerId, mouse) {
+  // Supprimer tout éditeur existant
+  let existing = document.getElementById("inline-text-editor");
+  if (existing) existing.remove();
+
+  let c = document.getElementById("cmcanvas");
+  let rect = c.getBoundingClientRect();
+  let scaleX = c.width / rect.width;
+  let scaleY = c.height / rect.height;
+
+  // Calculer la position sur l'écran
+  let screenX = rect.left + layer.x / scaleX;
+  let screenY = rect.top + (layer.y - layer.height) / scaleY;
+
+  let editor = document.createElement("textarea");
+  editor.id = "inline-text-editor";
+  editor.value = layer.data;
+  editor.style.cssText = `
+    position: fixed;
+    left: ${screenX}px;
+    top: ${screenY}px;
+    min-width: 180px;
+    min-height: 60px;
+    background: rgba(10, 20, 40, 0.95);
+    color: #F0E6D3;
+    border: 2px solid #E8651A;
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-family: ${layer.font === 'Prototype' ? 'Prototype' : layer.font === 'Pagella' ? 'Pagella' : 'Times New Roman'}, sans-serif;
+    font-size: 14px;
+    z-index: 9999;
+    resize: both;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.7);
+    outline: none;
+  `;
+
+  let hint = document.createElement("div");
+  hint.id = "inline-text-hint";
+  hint.innerText = "Entrée pour confirmer • Échap pour annuler";
+  hint.style.cssText = `
+    position: fixed;
+    left: ${screenX}px;
+    top: ${screenY - 24}px;
+    background: #E8651A;
+    color: #fff;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px 4px 0 0;
+    z-index: 9999;
+    font-family: Montserrat, sans-serif;
+    white-space: nowrap;
+  `;
+
+  document.body.appendChild(hint);
+  document.body.appendChild(editor);
+  editor.focus();
+  editor.select();
+
+  function closeEditor(save) {
+    if (save) {
+      layer.data = editor.value;
+      // Mettre à jour le nom du layer dans la liste
+      let nameInput = document.getElementById("layername" + layerId.slice(11));
+      if (nameInput) nameInput.value = "Text:" + layer.data.substr(0, 10);
+      drawProject();
+      saveToHistory();
+    }
+    editor.remove();
+    hint.remove();
+  }
+
+  editor.addEventListener("keydown", function(e) {
+    if (e.key === "Escape") { closeEditor(false); e.preventDefault(); }
+    // Shift+Enter = nouvelle ligne, Enter seul = confirmer
+    if (e.key === "Enter" && !e.shiftKey) { closeEditor(true); e.preventDefault(); }
+  });
+
+  editor.addEventListener("blur", function() {
+    setTimeout(() => { if (document.getElementById("inline-text-editor")) closeEditor(true); }, 150);
+  });
+}
