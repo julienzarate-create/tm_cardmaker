@@ -1,4 +1,4 @@
-﻿@font-face {
+@font-face {
   font-family: Prototype;
   src: url(./fonts/Prototype.ttf);
 }
@@ -347,4 +347,32 @@ section { */
     transform: scale(2);
     margin: 0px 8px;
   } 
+
+
+/* ============================================================
+   AMÉLIORATIONS TM CARD MAKER — Ajouts v2
+============================================================ */
+
+/* Éditeur inline (double-clic) */
+#inline-text-editor {
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+}
+
+/* Layer sélectionné dans la liste */
+div.selected > .inside {
+  background: rgba(232,101,26,0.08);
+}
+
+/* Curseur sur le canvas */
+#cmcanvas { cursor: default; }
+#cmcanvas:active { cursor: grabbing; }
+
+/* Boutons undo dans sidebar */
+.undo-btn:disabled { opacity: 0.3 !important; cursor: not-allowed !important; }
+
+/* Hint "double-clic pour éditer" au survol */
+#cmcanvas[data-hovering-text="1"] {
+  cursor: text;
+}
 
