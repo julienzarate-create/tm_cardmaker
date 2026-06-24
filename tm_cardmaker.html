@@ -8,387 +8,191 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,600,700,800">
 
 <style>
-/* ============================================================
-   VARIABLES & RESET
-============================================================ */
 :root {
-  --mars:    #C1440E;
-  --rust:    #E8651A;
-  --gold:    #E8A838;
-  --space:   #12141A;
-  --navy:    #181C28;
-  --panel:   #1E2436;
-  --border:  rgba(232,101,26,0.22);
-  --text:    #F0E6D3;
-  --muted:   #8A7E6E;
-  --sidebar: 270px;
-  --topbar:  52px;
-  --green:   #3A7D44;
-  --blue:    #1A6B9E;
-  --red:     #C1440E;
+  --mars:#C1440E; --rust:#E8651A; --gold:#E8A838;
+  --space:#12141A; --navy:#181C28; --panel:#1E2436;
+  --border:rgba(232,101,26,0.22); --text:#F0E6D3; --muted:#8A7E6E;
+  --sidebar:260px;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--space);color:var(--text);font-family:"Roboto",sans-serif;font-size:14px;overflow-x:hidden;}
+body{background:var(--space);color:var(--text);font-family:"Roboto",sans-serif;font-size:14px;max-width:1800px;}
 
-/* ============================================================
-   ÉCRAN DE DÉMARRAGE
-============================================================ */
-#start-screen {
+/* === ÉCRAN DE DÉMARRAGE === */
+#start-screen{
   position:fixed;inset:0;background:var(--space);z-index:1000;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:30px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;
+  overflow-y:auto;
 }
-.start-logo {
-  display:flex;align-items:center;gap:14px;margin-bottom:8px;
-}
-.start-planet {
-  width:56px;height:56px;
-  background:radial-gradient(circle at 35% 30%, #ff9966, #C1440E 55%, #5a1000);
-  border-radius:50%;border:3px solid var(--gold);
-  box-shadow:0 0 24px rgba(193,68,14,0.5);
-  flex-shrink:0;
-}
-.start-title {
-  font-family:"Montserrat",sans-serif;
-  font-size:28px;font-weight:800;
-  color:#fff;letter-spacing:0.06em;text-transform:uppercase;
-  line-height:1.1;
-}
-.start-title span{display:block;font-size:13px;font-weight:400;color:var(--gold);letter-spacing:0.12em;margin-top:2px;}
-.start-subtitle {
-  color:var(--muted);font-size:13px;margin-bottom:36px;letter-spacing:0.04em;
-}
-.start-actions {
-  display:flex;gap:12px;margin-bottom:44px;flex-wrap:wrap;justify-content:center;
-}
-.start-btn {
-  padding:10px 22px;border-radius:6px;border:none;
-  font-family:"Montserrat",sans-serif;font-size:13px;font-weight:700;
-  cursor:pointer;transition:all 0.15s;letter-spacing:0.04em;
-}
-.start-btn-primary {
-  background:linear-gradient(135deg,var(--mars),var(--rust));color:#fff;
-  box-shadow:0 4px 16px rgba(193,68,14,0.35);
-}
-.start-btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(193,68,14,0.5);}
-.start-btn-ghost {
-  background:transparent;color:var(--muted);border:1px solid var(--border);
-}
-.start-btn-ghost:hover{color:var(--text);border-color:var(--muted);}
+.start-planet{width:52px;height:52px;background:radial-gradient(circle at 35% 30%,#ff9966,#C1440E 55%,#5a1000);
+  border-radius:50%;border:3px solid var(--gold);box-shadow:0 0 24px rgba(193,68,14,0.5);flex-shrink:0;}
+.start-logo{display:flex;align-items:center;gap:14px;margin-bottom:6px;}
+.start-title{font-family:"Montserrat",sans-serif;font-size:26px;font-weight:800;color:#fff;
+  letter-spacing:0.06em;text-transform:uppercase;line-height:1.1;}
+.start-title span{display:block;font-size:12px;font-weight:400;color:var(--gold);letter-spacing:0.1em;margin-top:2px;}
+.start-sub{color:var(--muted);font-size:13px;margin-bottom:32px;}
+.start-actions{display:flex;gap:10px;margin-bottom:36px;flex-wrap:wrap;justify-content:center;}
+.sbtn{padding:9px 20px;border-radius:6px;border:none;font-family:"Montserrat",sans-serif;
+  font-size:12px;font-weight:700;cursor:pointer;transition:all 0.15s;letter-spacing:0.04em;}
+.sbtn-primary{background:linear-gradient(135deg,var(--mars),var(--rust));color:#fff;
+  box-shadow:0 4px 14px rgba(193,68,14,0.35);}
+.sbtn-primary:hover{filter:brightness(1.1);}
+.sbtn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);}
+.sbtn-ghost:hover{color:var(--text);border-color:var(--muted);}
+.tpl-label{font-family:"Montserrat",sans-serif;font-size:11px;font-weight:700;
+  letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;text-align:center;}
+.tpl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+  gap:12px;max-width:900px;width:100%;}
+.tpl-card{background:var(--panel);border:2px solid var(--border);border-radius:10px;
+  padding:12px 8px 10px;cursor:pointer;transition:all 0.18s;text-align:center;
+  display:flex;flex-direction:column;align-items:center;gap:7px;}
+.tpl-card:hover{border-color:var(--rust);transform:translateY(-3px);
+  box-shadow:0 8px 24px rgba(0,0,0,0.5);}
+.tpl-card:hover .tpl-name{color:var(--rust);}
+.tpl-thumb{width:66px;height:92px;border-radius:5px;display:flex;align-items:center;
+  justify-content:center;font-size:28px;border:1px solid rgba(255,255,255,0.1);overflow:hidden;}
+.tpl-thumb img{width:100%;height:100%;object-fit:cover;}
+.tc-green{background:linear-gradient(160deg,#2d6a35,#1a3d1e);}
+.tc-blue{background:linear-gradient(160deg,#1a4f7a,#0d2b45);}
+.tc-red{background:linear-gradient(160deg,#7a2010,#3d1008);}
+.tc-purple{background:linear-gradient(160deg,#6b3070,#3a1a40);}
+.tc-dark{background:linear-gradient(160deg,#3a3a3a,#1a1a1a);}
+.tpl-name{font-family:"Montserrat",sans-serif;font-size:11px;font-weight:700;
+  color:var(--text);transition:color 0.15s;}
+.tpl-sub{font-size:10px;color:var(--muted);}
 
-/* Grille des templates */
-.templates-label {
-  font-family:"Montserrat",sans-serif;font-size:11px;font-weight:700;
-  letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);
-  margin-bottom:16px;text-align:center;
-}
-.template-grid {
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
-  gap:14px;
-  max-width:960px;
-  width:100%;
-}
-.template-card {
-  background:var(--panel);
-  border:2px solid var(--border);
-  border-radius:10px;
-  padding:14px 10px 12px;
-  cursor:pointer;
-  transition:all 0.18s;
-  text-align:center;
-  display:flex;flex-direction:column;align-items:center;gap:8px;
-}
-.template-card:hover {
-  border-color:var(--rust);
-  transform:translateY(-3px);
-  box-shadow:0 8px 24px rgba(0,0,0,0.5);
-}
-.template-card:hover .tc-label{color:var(--rust);}
-.tc-thumb {
-  width:70px;height:97px;border-radius:5px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:28px;font-weight:800;
-  color:rgba(255,255,255,0.9);
-  position:relative;overflow:hidden;
-  border:1px solid rgba(255,255,255,0.12);
-}
-.tc-thumb img{width:100%;height:100%;object-fit:cover;border-radius:4px;}
-.tc-green  {background:linear-gradient(160deg,#2d6a35,#1a3d1e);}
-.tc-blue   {background:linear-gradient(160deg,#1a4f7a,#0d2b45);}
-.tc-red    {background:linear-gradient(160deg,#7a2010,#3d1008);}
-.tc-prelude{background:linear-gradient(160deg,#6b3070,#3a1a40);}
-.tc-corp   {background:linear-gradient(160deg,#3a3a3a,#1a1a1a);}
-.tc-label {
-  font-family:"Montserrat",sans-serif;font-size:11px;font-weight:700;
-  letter-spacing:0.05em;color:var(--text);transition:color 0.15s;
-}
-.tc-sub {font-size:10px;color:var(--muted);}
-
-/* ============================================================
-   SIDEBAR
-============================================================ */
-#mySidebar {
-  position:fixed;top:0;left:0;width:var(--sidebar);height:100vh;
+/* === SIDEBAR === */
+#mySidebar{position:fixed;top:0;left:0;width:var(--sidebar);height:100vh;
   background:var(--navy);border-right:1px solid var(--border);
-  overflow-y:auto;overflow-x:hidden;z-index:50;
-  display:flex;flex-direction:column;
-}
-.sidebar-header {
-  padding:14px 16px 12px;
-  background:linear-gradient(135deg,#7a1800,var(--mars));
-  border-bottom:2px solid var(--rust);
-  display:flex;align-items:center;gap:10px;
-  flex-shrink:0;
-}
-.sh-planet {
-  width:28px;height:28px;
-  background:radial-gradient(circle at 35% 30%,#ff9966,var(--mars) 60%,#5a1000);
-  border-radius:50%;border:2px solid var(--gold);flex-shrink:0;
-}
-.sh-title{font-family:"Montserrat",sans-serif;font-size:12px;font-weight:800;
+  overflow-y:auto;overflow-x:hidden;z-index:50;display:flex;flex-direction:column;}
+.sb-head{padding:12px 14px;background:linear-gradient(135deg,#7a1800,var(--mars));
+  border-bottom:2px solid var(--rust);display:flex;align-items:center;gap:9px;flex-shrink:0;}
+.sb-planet{width:26px;height:26px;background:radial-gradient(circle at 35% 30%,#ff9966,var(--mars) 60%,#5a1000);
+  border-radius:50%;border:2px solid var(--gold);flex-shrink:0;}
+.sb-title{font-family:"Montserrat",sans-serif;font-size:12px;font-weight:800;
   color:#fff;letter-spacing:0.06em;text-transform:uppercase;line-height:1.2;}
-.sh-title span{display:block;font-size:9px;color:rgba(255,255,255,0.55);font-weight:400;letter-spacing:0.03em;}
-
-/* Boutons undo/redo */
-.undo-bar{display:flex;gap:6px;padding:10px 12px;border-bottom:1px solid var(--border);background:rgba(0,0,0,0.2);}
-.undo-btn{
-  flex:1;padding:6px;border-radius:5px;border:1px solid var(--border);
-  background:var(--panel);color:var(--muted);font-size:16px;cursor:pointer;
-  transition:all 0.15s;font-family:monospace;
-}
+.sb-title span{display:block;font-size:9px;color:rgba(255,255,255,0.55);font-weight:400;}
+.undo-bar{display:flex;gap:6px;padding:8px 10px;border-bottom:1px solid var(--border);background:rgba(0,0,0,0.2);}
+.undo-btn{flex:1;padding:6px 4px;border-radius:5px;border:1px solid var(--border);
+  background:var(--panel);color:var(--muted);font-size:13px;cursor:pointer;transition:all 0.15s;}
 .undo-btn:hover:not(:disabled){background:var(--mars);color:#fff;border-color:var(--rust);}
 .undo-btn:disabled{opacity:0.3;cursor:not-allowed;}
-
-/* Bouton Nouvelle carte */
-.new-card-btn {
-  margin:12px;padding:9px;border-radius:6px;
+.new-btn{margin:10px;padding:8px;border-radius:6px;
   background:linear-gradient(135deg,var(--mars),var(--rust));
   border:none;color:#fff;font-family:"Montserrat",sans-serif;
-  font-size:12px;font-weight:700;letter-spacing:0.05em;
-  cursor:pointer;transition:all 0.15s;text-align:center;
-}
-.new-card-btn:hover{filter:brightness(1.1);}
-
-/* Sections de la sidebar */
-.sb-section{border-bottom:1px solid var(--border);}
-.sb-section-btn {
-  display:flex;align-items:center;justify-content:space-between;
-  width:100%;padding:9px 14px;background:transparent;border:none;
-  color:var(--gold);font-family:"Montserrat",sans-serif;
-  font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
-  cursor:pointer;transition:background 0.12s;text-align:left;
-}
-.sb-section-btn:hover{background:rgba(232,101,26,0.1);}
-.sb-section-btn .arr{font-size:9px;color:var(--muted);transition:transform 0.2s;}
-.sb-section-btn.open .arr{transform:rotate(180deg);}
+  font-size:11px;font-weight:700;letter-spacing:0.05em;cursor:pointer;transition:all 0.15s;}
+.new-btn:hover{filter:brightness(1.1);}
+.sb-sec{border-bottom:1px solid var(--border);}
+.sb-sec-btn{display:flex;align-items:center;justify-content:space-between;
+  width:100%;padding:8px 13px;background:transparent;border:none;
+  color:var(--gold);font-family:"Montserrat",sans-serif;font-size:10px;
+  font-weight:700;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:background 0.12s;}
+.sb-sec-btn:hover{background:rgba(232,101,26,0.1);}
+.sb-sec-btn .arr{font-size:9px;color:var(--muted);transition:transform 0.2s;}
+.sb-sec-btn.open .arr{transform:rotate(180deg);}
 .sb-content{display:none;background:rgba(0,0,0,0.15);}
 .sb-content.open{display:block;}
-
-/* Items icônes dans la sidebar */
-.sb-icon-grid{
-  display:grid;grid-template-columns:repeat(4,1fr);
-  gap:6px;padding:10px;
-}
-.sb-icon-item {
-  display:flex;flex-direction:column;align-items:center;gap:4px;
-  padding:7px 4px;border-radius:6px;
-  background:var(--panel);border:1px solid var(--border);
-  cursor:pointer;transition:all 0.15s;text-decoration:none;
-}
-.sb-icon-item:hover{background:var(--mars);border-color:var(--rust);}
-.sb-icon-item:hover .sbi-label{color:#fff;}
-.sb-icon-img{width:36px;height:36px;object-fit:contain;border-radius:4px;}
-.sbi-label{font-size:9px;color:var(--muted);text-align:center;line-height:1.2;font-weight:500;}
-.sb-icon-item:hover .sbi-label{color:#fff;}
-
-/* Items texte simples */
-.sb-item {
-  display:block;padding:8px 20px;color:var(--text);font-size:12px;
+.sb-icon-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:8px;}
+.sb-icon{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 3px;
+  border-radius:5px;background:var(--panel);border:1px solid var(--border);
+  cursor:pointer;transition:all 0.15s;text-decoration:none;}
+.sb-icon:hover{background:var(--mars);border-color:var(--rust);}
+.sb-icon img{width:34px;height:34px;object-fit:contain;border-radius:3px;}
+.sb-icon span{font-size:8px;color:var(--muted);text-align:center;line-height:1.2;}
+.sb-icon:hover span{color:#fff;}
+.sb-item{display:block;padding:7px 18px;color:var(--text);font-size:12px;
   text-decoration:none;cursor:pointer;border:none;background:transparent;
-  width:100%;text-align:left;transition:all 0.12s;font-family:"Roboto",sans-serif;
-}
-.sb-item:hover{background:rgba(193,68,14,0.18);color:var(--rust);padding-left:24px;}
+  width:100%;text-align:left;transition:all 0.12s;font-family:"Roboto",sans-serif;}
+.sb-item:hover{background:rgba(193,68,14,0.18);color:var(--rust);padding-left:22px;}
 
-/* Sub-sections */
-.sb-sub-btn {
-  display:flex;align-items:center;justify-content:space-between;
-  width:100%;padding:7px 18px;background:transparent;border:none;
-  color:var(--muted);font-size:11px;font-weight:500;cursor:pointer;
-  text-align:left;transition:color 0.12s;font-family:"Roboto",sans-serif;
-}
-.sb-sub-btn:hover{color:var(--text);}
-.sb-sub-content{display:none;}
-.sb-sub-content.open{display:block;}
-
-/* ============================================================
-   TOPBAR MOBILE
-============================================================ */
-#topbar{
-  display:none;position:fixed;top:0;left:0;right:0;height:var(--topbar);
+/* === TOPBAR MOBILE === */
+#topbar{display:none;position:fixed;top:0;left:0;right:0;height:52px;
   background:var(--navy);border-bottom:2px solid var(--mars);
-  align-items:center;padding:0 16px;z-index:200;gap:12px;
-}
-#topbar .menu-btn{background:none;border:none;color:var(--text);font-size:22px;cursor:pointer;}
-#topbar .title{font-family:"Montserrat",sans-serif;font-size:13px;font-weight:800;
-  color:var(--gold);letter-spacing:0.06em;text-transform:uppercase;}
+  align-items:center;padding:0 14px;z-index:200;gap:10px;}
+#topbar .mbtn{background:none;border:none;color:var(--text);font-size:22px;cursor:pointer;}
+#topbar .mtitle{font-family:"Montserrat",sans-serif;font-size:13px;font-weight:800;
+  color:var(--gold);letter-spacing:0.06em;text-transform:uppercase;flex:1;}
 #myOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:49;}
 
-/* ============================================================
-   CONTENU PRINCIPAL
-============================================================ */
-#main-content{
-  margin-left:var(--sidebar);min-height:100vh;
-  background:var(--space);padding:20px;
-}
-#canvas-area{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;}
-
-#cmcanvas{
-  border:2px solid var(--border);border-radius:4px;flex-shrink:0;
-  box-shadow:0 0 40px rgba(193,68,14,0.12),0 4px 24px rgba(0,0,0,0.6);
-  background:#111;cursor:crosshair;
-}
-
-/* Panneau layers */
-#layer-panel{
-  background:var(--navy);border:1px solid var(--border);border-radius:8px;
-  padding:14px;min-width:240px;flex:1;max-width:300px;
-}
-#layer-panel h2{
-  font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;
-  color:var(--gold);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);
-}
-#layerlist{min-height:60px;}
-
-.layer-hint{
-  color:var(--muted);font-size:11px;padding:10px 4px;text-align:center;
-  font-style:italic;
-}
-
-/* Layer items */
-.divRec{
-  cursor:move;border:1px solid var(--border);border-radius:5px;
-  margin-bottom:5px;background:var(--panel);transition:border-color 0.12s;
-  font-size:13px;
-}
+/* === CONTENU PRINCIPAL === */
+#main-content{margin-left:var(--sidebar);min-height:100vh;background:var(--space);padding:18px;}
+#canvas-area{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap;}
+#cmcanvas{border:2px solid var(--border);border-radius:4px;flex-shrink:0;
+  box-shadow:0 0 36px rgba(193,68,14,0.1),0 4px 20px rgba(0,0,0,0.6);background:#111;}
+#layer-panel{background:var(--navy);border:1px solid var(--border);border-radius:8px;
+  padding:13px;min-width:230px;flex:1;max-width:290px;}
+#layer-panel h2{font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:9px;padding-bottom:7px;border-bottom:1px solid var(--border);}
+.divRec{cursor:move;border:1px solid var(--border);border-radius:5px;margin-bottom:4px;
+  background:var(--panel);transition:border-color 0.12s;font-size:13px;}
 .divRec:hover{border-color:var(--muted);}
-.divRec.selected{border:2px solid var(--rust) !important;background:rgba(232,101,26,0.08);}
-.inside{
-  display:flex;align-items:center;padding:5px 8px;gap:6px;
-  background:transparent;cursor:pointer;
-}
-.inside input[type=text]{
-  flex:1;background:transparent;border:none;color:var(--text);
-  font-size:12px;font-family:"Roboto",sans-serif;outline:none;
-  min-width:0;
-}
+div.selected{border:2px solid var(--rust) !important;background:rgba(232,101,26,0.07);}
+.inside{display:flex;align-items:center;padding:5px 8px;gap:5px;cursor:pointer;}
+.inside input[type=text]{flex:1;background:transparent;border:none;color:var(--text);
+  font-size:12px;font-family:"Roboto",sans-serif;outline:none;min-width:0;}
 .inside input[type=text]:focus{color:var(--rust);}
-.inside button{
-  background:rgba(193,68,14,0.3);border:none;color:var(--muted);
-  border-radius:3px;padding:2px 6px;font-size:11px;cursor:pointer;
-  flex-shrink:0;transition:all 0.12s;
-}
+.inside button{background:rgba(193,68,14,0.3);border:none;color:var(--muted);
+  border-radius:3px;padding:2px 5px;font-size:10px;cursor:pointer;flex-shrink:0;transition:all 0.12s;}
 .inside button:hover{background:var(--mars);color:#fff;}
 .ghost{opacity:0.4;border:1px dashed var(--rust) !important;}
+.group-row{margin-top:9px;padding-top:9px;border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:7px;color:var(--muted);font-size:11px;}
+.group-row input{accent-color:var(--rust);}
 
-/* Group mode */
-.group-mode-row{
-  margin-top:10px;padding-top:10px;border-top:1px solid var(--border);
-  display:flex;align-items:center;gap:8px;color:var(--muted);font-size:11px;
-}
-.group-mode-row input{accent-color:var(--rust);}
-
-/* ============================================================
-   PANNEAU PARAMS
-============================================================ */
-#params{
-  margin-top:16px;background:var(--navy);border:1px solid var(--border);
-  border-radius:8px;padding:18px 20px;
-}
+/* === PARAMS === */
+#params{margin-top:14px;background:var(--navy);border:1px solid var(--border);
+  border-radius:8px;padding:16px 18px;}
 #params.w3-hide{display:none;}
+.pt{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--rust);margin:12px 0 7px;padding-bottom:3px;border-bottom:1px solid var(--border);}
+.pt:first-child{margin-top:0;}
+.pr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:7px;}
+.pl{color:var(--muted);font-size:11px;font-weight:500;white-space:nowrap;min-width:78px;}
+.pi{background:#0a1828;border:1px solid var(--border);border-radius:4px;color:var(--text);
+  padding:5px 8px;font-size:12px;font-family:"Roboto",sans-serif;width:135px;transition:border-color 0.15s;}
+.pi:focus{outline:none;border-color:var(--rust);box-shadow:0 0 0 2px rgba(232,101,26,0.15);}
+select.pi{cursor:pointer;}
+textarea.pi{width:135px;height:68px;resize:vertical;line-height:1.4;}
+input[type=color].pi{padding:2px 4px;height:29px;cursor:pointer;}
+input[type=checkbox].pc{accent-color:var(--rust);width:14px;height:14px;cursor:pointer;}
+.pbar{display:flex;align-items:center;justify-content:flex-end;
+  margin-bottom:10px;padding-bottom:9px;border-bottom:1px solid var(--border);gap:7px;}
+.pbar label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;}
 
-.params-title{
-  font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
-  color:var(--rust);margin:14px 0 8px;padding-bottom:4px;border-bottom:1px solid var(--border);
-}
-.params-title:first-child{margin-top:0;}
-
-.param-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;gap:8px;}
-.param-label{color:var(--muted);font-size:11px;font-weight:500;white-space:nowrap;min-width:80px;}
-.param-input{
-  background:#0a1828;border:1px solid var(--border);border-radius:4px;
-  color:var(--text);padding:5px 8px;font-size:12px;
-  font-family:"Roboto",sans-serif;width:140px;transition:border-color 0.15s;
-}
-.param-input:focus{outline:none;border-color:var(--rust);box-shadow:0 0 0 2px rgba(232,101,26,0.15);}
-select.param-input{cursor:pointer;}
-textarea.param-input{width:140px;height:70px;resize:vertical;line-height:1.4;}
-input[type=color].param-input{padding:2px 4px;height:30px;cursor:pointer;}
-input[type=checkbox].param-check{accent-color:var(--rust);width:14px;height:14px;cursor:pointer;}
-
-.presets-bar{
-  display:flex;align-items:center;justify-content:flex-end;
-  margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border);gap:8px;
-}
-.presets-bar label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;}
-
-/* ============================================================
-   LOADING
-============================================================ */
-#loadprogress{
-  background:var(--panel);border:1px solid var(--border);border-radius:6px;
-  padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px;
-  flex-wrap:wrap;
-}
+/* === LOADING === */
+#loadprogress{background:var(--panel);border:1px solid var(--border);border-radius:6px;
+  padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
 #loadprogress label{color:var(--muted);font-size:11px;}
 #files{flex:1;min-width:100px;accent-color:var(--rust);height:5px;}
-#fontload{display:flex;gap:14px;font-size:10px;color:var(--muted);}
+#fontload{display:flex;gap:12px;font-size:10px;color:var(--muted);}
 
-/* ============================================================
-   OVERLAYS / MODALES
-============================================================ */
+/* === OVERLAYS === */
 .overlay{position:fixed;inset:0;background:rgba(5,8,15,0.88);z-index:500;
   display:flex;align-items:center;justify-content:center;}
 .overlay.w3-nodisplay{display:none;}
-.modal{
-  background:var(--navy);border:1px solid var(--rust);border-radius:10px;
-  padding:30px 36px;box-shadow:0 8px 48px rgba(0,0,0,0.8);min-width:300px;
-}
+.modal{background:var(--navy);border:1px solid var(--rust);border-radius:10px;
+  padding:28px 34px;box-shadow:0 8px 48px rgba(0,0,0,0.8);min-width:290px;}
 .modal h3{font-family:"Montserrat",sans-serif;font-size:14px;font-weight:700;
-  color:var(--gold);margin-bottom:14px;letter-spacing:0.05em;}
-.modal p{color:var(--muted);font-size:12px;margin-bottom:10px;}
-.modal input[type=url],.modal input[type=text]{
-  width:100%;padding:8px 12px;background:#0a1828;border:1px solid var(--border);
-  border-radius:4px;color:var(--text);font-size:13px;margin-bottom:14px;
-  font-family:"Roboto",sans-serif;
-}
+  color:var(--gold);margin-bottom:12px;letter-spacing:0.05em;}
+.modal p{color:var(--muted);font-size:12px;margin-bottom:9px;}
+.modal input{width:100%;padding:7px 11px;background:#0a1828;border:1px solid var(--border);
+  border-radius:4px;color:var(--text);font-size:13px;margin-bottom:13px;font-family:"Roboto",sans-serif;}
 .modal input:focus{outline:none;border-color:var(--rust);}
-.modal-actions{display:flex;gap:10px;justify-content:flex-end;}
-.btn{
-  padding:8px 18px;border-radius:5px;border:none;font-size:12px;
-  font-family:"Montserrat",sans-serif;font-weight:700;cursor:pointer;
-  transition:all 0.15s;letter-spacing:0.04em;
-}
-.btn-primary{background:linear-gradient(135deg,var(--mars),var(--rust));color:#fff;}
-.btn-primary:hover{filter:brightness(1.1);}
-.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);}
-.btn-ghost:hover{color:var(--text);border-color:var(--muted);}
+.mact{display:flex;gap:9px;justify-content:flex-end;}
+.btn{padding:7px 16px;border-radius:5px;border:none;font-size:12px;
+  font-family:"Montserrat",sans-serif;font-weight:700;cursor:pointer;transition:all 0.15s;letter-spacing:0.04em;}
+.btn-p{background:linear-gradient(135deg,var(--mars),var(--rust));color:#fff;}
+.btn-p:hover{filter:brightness(1.1);}
+.btn-g{background:transparent;color:var(--muted);border:1px solid var(--border);}
+.btn-g:hover{color:var(--text);border-color:var(--muted);}
 
-/* ============================================================
-   SCROLLBAR
-============================================================ */
 ::-webkit-scrollbar{width:5px;height:5px;}
 ::-webkit-scrollbar-track{background:var(--space);}
 ::-webkit-scrollbar-thumb{background:var(--mars);border-radius:3px;}
-::-webkit-scrollbar-thumb:hover{background:var(--rust);}
 
-/* ============================================================
-   RESPONSIVE
-============================================================ */
 @media(max-width:900px){
   #mySidebar{transform:translateX(-100%);transition:transform 0.25s;}
   #mySidebar.open{transform:translateX(0);}
-  #main-content{margin-left:0;padding-top:calc(var(--topbar) + 16px);}
+  #main-content{margin-left:0;padding-top:68px;}
   #topbar{display:flex;}
   #canvas-area{flex-direction:column;}
   #layer-panel{max-width:100%;}
@@ -399,253 +203,168 @@ input[type=checkbox].param-check{accent-color:var(--rust);width:14px;height:14px
 .w3-hide-large{display:none;}
 @media(max-width:900px){.w3-hide-large{display:block;}}
 #xcanvases{width:100%;}
-input[type=checkbox]{transform:none !important;}
+input[type=checkbox]{transform:none!important;}
 input[type=number]{width:auto;}
 </style>
 
 <body>
 
-<!-- ===== ÉCRAN DE DÉMARRAGE ===== -->
+<!-- ÉCRAN DE DÉMARRAGE -->
 <div id="start-screen">
   <div class="start-logo">
     <div class="start-planet"></div>
-    <div class="start-title">TM Card Maker
-      <span>Terraforming Mars — Outil Fan Made</span>
-    </div>
+    <div class="start-title">TM Card Maker<span>Terraforming Mars — Outil Fan Made</span></div>
   </div>
-  <p class="start-subtitle">Crée tes propres cartes pour Terraforming Mars</p>
-
+  <p class="start-sub">Crée tes propres cartes pour Terraforming Mars</p>
   <div class="start-actions">
-    <button class="start-btn start-btn-ghost" onclick="startLoadProject()">📂 Charger un projet</button>
+    <button class="sbtn sbtn-ghost" onclick="startLoad()">📂 Charger un projet</button>
   </div>
-
-  <div class="templates-label">Choisir un type de carte pour commencer</div>
-
-  <div class="template-grid">
-    <div class="template-card" onclick="startWithTemplate('green_normal')">
-      <div class="tc-thumb tc-green"><img src="templates/green_normal.png" alt="Carte Verte" onerror="this.style.display='none'">
-        <span style="position:absolute;font-size:32px;">🟢</span>
-      </div>
-      <div class="tc-label">Carte Verte</div>
-      <div class="tc-sub">Standard</div>
+  <div class="tpl-label">Choisir un type de carte</div>
+  <div class="tpl-grid">
+    <div class="tpl-card" onclick="startTemplate('green_normal')">
+      <div class="tpl-thumb tc-green"><img src="templates/green_normal.png" alt="" onerror="this.style.display='none'"></div>
+      <div class="tpl-name">Carte Verte</div><div class="tpl-sub">Standard</div>
     </div>
-    <div class="template-card" onclick="startWithTemplate('green_small_bottom')">
-      <div class="tc-thumb tc-green">
-        <span style="font-size:28px;">🟢</span>
-      </div>
-      <div class="tc-label">Carte Verte</div>
-      <div class="tc-sub">Petit bas</div>
+    <div class="tpl-card" onclick="startTemplate('green_small_bottom')">
+      <div class="tpl-thumb tc-green">🟢</div>
+      <div class="tpl-name">Carte Verte</div><div class="tpl-sub">Petit bas</div>
     </div>
-    <div class="template-card" onclick="startWithTemplate('green_big_bottom')">
-      <div class="tc-thumb tc-green">
-        <span style="font-size:28px;">🟢</span>
-      </div>
-      <div class="tc-label">Carte Verte</div>
-      <div class="tc-sub">Grand bas</div>
+    <div class="tpl-card" onclick="startTemplate('green_big_bottom')">
+      <div class="tpl-thumb tc-green">🟢</div>
+      <div class="tpl-name">Carte Verte</div><div class="tpl-sub">Grand bas</div>
     </div>
-    <div class="template-card" onclick="startWithTemplate('blue_normal')">
-      <div class="tc-thumb tc-blue">
-        <span style="font-size:28px;">🔵</span>
-      </div>
-      <div class="tc-label">Carte Bleue</div>
-      <div class="tc-sub">Standard</div>
+    <div class="tpl-card" onclick="startTemplate('blue_normal')">
+      <div class="tpl-thumb tc-blue">🔵</div>
+      <div class="tpl-name">Carte Bleue</div><div class="tpl-sub">Standard</div>
     </div>
-    <div class="template-card" onclick="startWithTemplate('blue_big_bottom')">
-      <div class="tc-thumb tc-blue">
-        <span style="font-size:28px;">🔵</span>
-      </div>
-      <div class="tc-label">Carte Bleue</div>
-      <div class="tc-sub">Grand bas</div>
+    <div class="tpl-card" onclick="startTemplate('blue_big_bottom')">
+      <div class="tpl-thumb tc-blue">🔵</div>
+      <div class="tpl-name">Carte Bleue</div><div class="tpl-sub">Grand bas</div>
     </div>
-    <div class="template-card" onclick="startWithTemplate('blue_big_top')">
-      <div class="tc-thumb tc-blue">
-        <span style="font-size:28px;">🔵</span>
-      </div>
-      <div class="tc-label">Carte Bleue</div>
-      <div class="tc-sub">Grand haut</div>
+    <div class="tpl-card" onclick="startTemplate('blue_big_top')">
+      <div class="tpl-thumb tc-blue">🔵</div>
+      <div class="tpl-name">Carte Bleue</div><div class="tpl-sub">Grand haut</div>
     </div>
-    <div class="template-card" onclick="startWithTemplate('red_normal')">
-      <div class="tc-thumb tc-red">
-        <span style="font-size:28px;">🔴</span>
-      </div>
-      <div class="tc-label">Carte Rouge</div>
-      <div class="tc-sub">Standard</div>
+    <div class="tpl-card" onclick="startTemplate('red_normal')">
+      <div class="tpl-thumb tc-red">🔴</div>
+      <div class="tpl-name">Carte Rouge</div><div class="tpl-sub">Standard</div>
     </div>
-    <div class="template-card" onclick="startWithTemplate('red_small_bottom')">
-      <div class="tc-thumb tc-red">
-        <span style="font-size:28px;">🔴</span>
-      </div>
-      <div class="tc-label">Carte Rouge</div>
-      <div class="tc-sub">Petit bas</div>
+    <div class="tpl-card" onclick="startTemplate('red_small_bottom')">
+      <div class="tpl-thumb tc-red">🔴</div>
+      <div class="tpl-name">Carte Rouge</div><div class="tpl-sub">Petit bas</div>
     </div>
-    <div class="template-card" onclick="startWithTemplate('prelude')">
-      <div class="tc-thumb tc-prelude">
-        <span style="font-size:28px;">💜</span>
-      </div>
-      <div class="tc-label">Prélude</div>
-      <div class="tc-sub">Horizontale</div>
+    <div class="tpl-card" onclick="startTemplate('prelude')">
+      <div class="tpl-thumb tc-purple">💜</div>
+      <div class="tpl-name">Prélude</div><div class="tpl-sub">Horizontale</div>
     </div>
-    <div class="template-card" onclick="startWithTemplate('corporation')">
-      <div class="tc-thumb tc-corp">
-        <span style="font-size:28px;">🏢</span>
-      </div>
-      <div class="tc-label">Corporation</div>
-      <div class="tc-sub">Horizontale</div>
+    <div class="tpl-card" onclick="startTemplate('corporation')">
+      <div class="tpl-thumb tc-dark">🏢</div>
+      <div class="tpl-name">Corporation</div><div class="tpl-sub">Horizontale</div>
     </div>
   </div>
 </div>
 
-<!-- ===== MODALES ===== -->
+<!-- OVERLAYS -->
 <div class="overlay w3-nodisplay" id="overlay">
   <div class="modal">
     <h3>Charger une image web</h3>
-    <p>Colle l'URL d'une image :</p>
+    <p>URL de l'image :</p>
     <input id="url2load" type="url" placeholder="https://exemple.com/image.png">
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="cancelOverlay()">Annuler</button>
-      <button class="btn btn-primary" onclick="loadWebImage()">Charger</button>
+    <div class="mact">
+      <button class="btn btn-g" onclick="cancelOverlay()">Annuler</button>
+      <button class="btn btn-p" onclick="loadWebImage()">Charger</button>
     </div>
   </div>
 </div>
-
 <div class="overlay w3-nodisplay" id="fontoverlay">
   <div class="modal">
     <h3>Charger une police web</h3>
-    <p>Colle une URL Google Fonts :</p>
+    <p>URL Google Fonts :</p>
     <input id="fonturl2load" type="text" placeholder="https://fonts.googleapis.com/css2?family=...">
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="cancelFontOverlay()">Annuler</button>
-      <button class="btn btn-primary" onclick="loadSpecifiedFont()">Charger</button>
+    <div class="mact">
+      <button class="btn btn-g" onclick="cancelFontOverlay()">Annuler</button>
+      <button class="btn btn-p" onclick="loadSpecifiedFont()">Charger</button>
     </div>
   </div>
 </div>
 
-<!-- ===== TOPBAR MOBILE ===== -->
+<!-- TOPBAR MOBILE -->
 <header id="topbar">
-  <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-  <span class="title">TM Card Maker</span>
-  <button id="btn-undo" class="undo-btn" onclick="undo()" disabled title="Annuler (Ctrl+Z)" style="width:36px;flex:none;">↩</button>
-  <button id="btn-redo-top" class="undo-btn" onclick="redo()" disabled title="Rétablir (Ctrl+Y)" style="width:36px;flex:none;">↪</button>
+  <button class="mbtn" onclick="toggleSB()">☰</button>
+  <span class="mtitle">TM Card Maker</span>
+  <button id="btn-undo-top" class="undo-btn" onclick="undo()" disabled style="width:34px;flex:none;">↩</button>
+  <button id="btn-redo-top" class="undo-btn" onclick="redo()" disabled style="width:34px;flex:none;">↪</button>
 </header>
-<div id="myOverlay" onclick="closeSidebar()"></div>
+<div id="myOverlay" onclick="closeSB()"></div>
 
-<!-- ===== SIDEBAR ===== -->
+<!-- SIDEBAR -->
 <nav id="mySidebar">
-  <div class="sidebar-header">
-    <div class="sh-planet"></div>
-    <div class="sh-title">TM Card Maker<span>Fan Made Tool</span></div>
+  <div class="sb-head">
+    <div class="sb-planet"></div>
+    <div class="sb-title">TM Card Maker<span>Fan Made Tool</span></div>
   </div>
-
-  <!-- Undo/Redo -->
   <div class="undo-bar">
-    <button id="btn-undo" class="undo-btn" onclick="undo()" disabled title="Annuler (Ctrl+Z)">↩ Annuler</button>
-    <button id="btn-redo" class="undo-btn" onclick="redo()" disabled title="Rétablir (Ctrl+Y)">Refaire ↪</button>
+    <button id="btn-undo" class="undo-btn" onclick="undo()" disabled title="Ctrl+Z">↩ Annuler</button>
+    <button id="btn-redo" class="undo-btn" onclick="redo()" disabled title="Ctrl+Y">Refaire ↪</button>
   </div>
+  <button class="new-btn" onclick="showStart()">＋ Nouvelle carte</button>
 
-  <!-- Nouvelle carte -->
-  <button class="new-card-btn" onclick="showStartScreen()">＋ Nouvelle carte</button>
-
-  <!-- FICHIER -->
-  <div class="sb-section">
-    <button class="sb-section-btn" onclick="toggleSection(this,'sec-file')">
-      Fichier <span class="arr">▼</span>
-    </button>
-    <div class="sb-content" id="sec-file">
+  <!-- Fichier -->
+  <div class="sb-sec">
+    <button class="sb-sec-btn" onclick="toggleSec(this,'sf')">Fichier <span class="arr">▼</span></button>
+    <div class="sb-content" id="sf">
       <a onclick="saveProjectCont(false)" href="#" class="sb-item">💾 Sauvegarder</a>
-      <a onclick="clickLoadNewProject()" href="#" class="sb-item">📂 Ouvrir un projet</a>
-      <a onclick="clickSaveProject()" href="#" class="sb-item">📦 Exporter le projet</a>
+      <a onclick="clickLoadNewProject()" href="#" class="sb-item">📂 Ouvrir projet</a>
+      <a onclick="clickSaveProject()" href="#" class="sb-item">📦 Exporter projet</a>
     </div>
   </div>
-
-  <!-- TAGS -->
-  <div class="sb-section">
-    <button class="sb-section-btn" onclick="toggleSection(this,'sec-tags')">
-      Tags <span class="arr">▼</span>
-    </button>
-    <div class="sb-content open" id="sec-tags">
-      <div class="sb-icon-grid" id="tags"></div>
-    </div>
+  <!-- Tags -->
+  <div class="sb-sec">
+    <button class="sb-sec-btn open" onclick="toggleSec(this,'st')">Tags <span class="arr">▼</span></button>
+    <div class="sb-content open" id="st"><div class="sb-icon-grid" id="tags"></div></div>
   </div>
-
-  <!-- RESSOURCES -->
-  <div class="sb-section">
-    <button class="sb-section-btn" onclick="toggleSection(this,'sec-resources')">
-      Ressources <span class="arr">▼</span>
-    </button>
-    <div class="sb-content open" id="sec-resources">
-      <div class="sb-icon-grid" id="resources"></div>
-    </div>
+  <!-- Ressources -->
+  <div class="sb-sec">
+    <button class="sb-sec-btn open" onclick="toggleSec(this,'sr')">Ressources <span class="arr">▼</span></button>
+    <div class="sb-content open" id="sr"><div class="sb-icon-grid" id="resources"></div></div>
   </div>
-
-  <!-- TUILES -->
-  <div class="sb-section">
-    <button class="sb-section-btn" onclick="toggleSection(this,'sec-tiles')">
-      Tuiles <span class="arr">▼</span>
-    </button>
-    <div class="sb-content" id="sec-tiles">
-      <div class="sb-icon-grid" id="tiles"></div>
-    </div>
+  <!-- Tuiles -->
+  <div class="sb-sec">
+    <button class="sb-sec-btn" onclick="toggleSec(this,'sti')">Tuiles <span class="arr">▼</span></button>
+    <div class="sb-content" id="sti"><div class="sb-icon-grid" id="tiles"></div></div>
   </div>
-
   <!-- PV -->
-  <div class="sb-section">
-    <button class="sb-section-btn" onclick="toggleSection(this,'sec-vps')">
-      Points de victoire <span class="arr">▼</span>
-    </button>
-    <div class="sb-content" id="sec-vps">
-      <div class="sb-icon-grid" id="VPs"></div>
-    </div>
+  <div class="sb-sec">
+    <button class="sb-sec-btn" onclick="toggleSec(this,'sv')">Points de victoire <span class="arr">▼</span></button>
+    <div class="sb-content" id="sv"><div class="sb-icon-grid" id="VPs"></div></div>
   </div>
-
-  <!-- PRÉREQUIS -->
-  <div class="sb-section">
-    <button class="sb-section-btn" onclick="toggleSection(this,'sec-req')">
-      Prérequis <span class="arr">▼</span>
-    </button>
-    <div class="sb-content" id="sec-req">
-      <div class="sb-icon-grid" id="requisites"></div>
-    </div>
+  <!-- Prérequis -->
+  <div class="sb-sec">
+    <button class="sb-sec-btn" onclick="toggleSec(this,'sq')">Prérequis <span class="arr">▼</span></button>
+    <div class="sb-content" id="sq"><div class="sb-icon-grid" id="requisites"></div></div>
   </div>
-
-  <!-- PARAMÈTRES GLOBAUX -->
-  <div class="sb-section">
-    <button class="sb-section-btn" onclick="toggleSection(this,'sec-global')">
-      Paramètres globaux <span class="arr">▼</span>
-    </button>
-    <div class="sb-content" id="sec-global">
-      <div class="sb-icon-grid" id="globalparameters"></div>
-    </div>
+  <!-- Params globaux -->
+  <div class="sb-sec">
+    <button class="sb-sec-btn" onclick="toggleSec(this,'sg')">Params globaux <span class="arr">▼</span></button>
+    <div class="sb-content" id="sg"><div class="sb-icon-grid" id="globalparameters"></div></div>
   </div>
-
-  <!-- PARTIS -->
-  <div class="sb-section">
-    <button class="sb-section-btn" onclick="toggleSection(this,'sec-parties')">
-      Partis <span class="arr">▼</span>
-    </button>
-    <div class="sb-content" id="sec-parties">
-      <div class="sb-icon-grid" id="parties"></div>
-    </div>
+  <!-- Partis -->
+  <div class="sb-sec">
+    <button class="sb-sec-btn" onclick="toggleSec(this,'sp')">Partis <span class="arr">▼</span></button>
+    <div class="sb-content" id="sp"><div class="sb-icon-grid" id="parties"></div></div>
   </div>
-
-  <!-- DIVERS -->
-  <div class="sb-section">
-    <button class="sb-section-btn" onclick="toggleSection(this,'sec-misc')">
-      Divers <span class="arr">▼</span>
-    </button>
-    <div class="sb-content" id="sec-misc">
-      <div class="sb-icon-grid" id="misc"></div>
-    </div>
+  <!-- Divers -->
+  <div class="sb-sec">
+    <button class="sb-sec-btn" onclick="toggleSec(this,'sm')">Divers <span class="arr">▼</span></button>
+    <div class="sb-content" id="sm"><div class="sb-icon-grid" id="misc"></div></div>
   </div>
-
-  <!-- TEXTE & OUTILS -->
-  <div class="sb-section">
-    <button class="sb-section-btn" onclick="toggleSection(this,'sec-tools')">
-      Texte &amp; outils <span class="arr">▼</span>
-    </button>
-    <div class="sb-content" id="sec-tools">
+  <!-- Texte & outils -->
+  <div class="sb-sec">
+    <button class="sb-sec-btn" onclick="toggleSec(this,'so')">Texte &amp; outils <span class="arr">▼</span></button>
+    <div class="sb-content" id="so">
       <a onclick="addTextBox()" href="#" class="sb-item">🔤 Zone de texte</a>
-      <a onclick="addProduction()" href="#" class="sb-item">⬛ Boîte de production</a>
-      <a onclick="addEffectBox()" href="#" class="sb-item">✦ Boîte d'effet</a>
+      <a onclick="addProduction()" href="#" class="sb-item">⬛ Boîte production</a>
+      <a onclick="addEffectBox()" href="#" class="sb-item">✦ Boîte effet</a>
       <a onclick="addLine()" href="#" class="sb-item">— Ligne</a>
       <a onclick="clickLoadWebImage()" href="#" class="sb-item">🌐 Image web</a>
       <a onclick="document.getElementById('fileselection').click()" href="#" class="sb-item">📁 Image locale</a>
@@ -653,20 +372,17 @@ input[type=number]{width:auto;}
       <input type="file" id="fileselection" class="w3-nodisplay" onchange="addUserFile(this)">
     </div>
   </div>
-
-  <!-- TEMPLATES (caché, gardé pour compatibilité JS) -->
+  <!-- Caché pour compat JS -->
   <div style="display:none">
     <div id="templates"></div>
     <div id="fromTemplate"></div>
   </div>
-
 </nav>
 
-<!-- ===== CONTENU PRINCIPAL ===== -->
+<!-- CONTENU PRINCIPAL -->
 <div id="main-content">
-
   <div id="loadprogress" style="display:none;">
-    <label>Chargement des assets :</label>
+    <label>Chargement :</label>
     <progress id="files" value="0" max="100"></progress>
     <div id="fontload">
       <div style="font-family:Prototype;">Prototype</div>
@@ -680,303 +396,184 @@ input[type=number]{width:auto;}
       <canvas id="cmcanvas" height="1050px" width="750px"></canvas>
       <a id="projectlink"></a>
     </div>
-
     <div id="layer-panel">
-      <h2>Calques</h2>
-      <div class="layer-hint">Clique sur un élément de la carte pour le sélectionner</div>
+      <h2>Calques — <small style="color:var(--muted);font-size:9px;">Double-clic sur texte = éditer</small></h2>
       <section id="layerlist"></section>
-      <div class="group-mode-row">
+      <div class="group-row">
         <input id="groupmode" type="checkbox" onchange="groupModeToggle()">
         <label for="groupmode">Mode groupe</label>
       </div>
       <button onclick="copyToClipboard()" style="display:none;">Copy</button>
     </div>
   </div>
-
   <div id="xcanvases" width="100%"></div>
 
-  <!-- PANNEAU PARAMÈTRES -->
+  <!-- PARAMS -->
   <div id="params" class="w3-hide">
     <div id="allpreset" class="w3-hide">
-      <div class="presets-bar">
+      <div class="pbar">
         <label>Preset :</label>
-        <select id="presets" class="param-input" onchange="setPresets(this)">
+        <select id="presets" class="pi" onchange="setPresets(this)">
           <option value="">Sélectionner…</option>
           <option value="defselect0"></option>
           <option value="defselect1"></option>
         </select>
       </div>
     </div>
-
     <div id="allall" class="w3-hide">
-      <div class="params-title">Position &amp; Taille</div>
-      <div class="param-row">
-        <span class="param-label">X</span>
-        <input id="inputx" type="number" class="param-input" onchange="updateValue(this)">
-      </div>
-      <div class="param-row">
-        <span class="param-label">Y</span>
-        <input id="inputy" type="number" class="param-input" onchange="updateValue(this)">
-      </div>
-      <div class="param-row">
-        <span class="param-label">Largeur</span>
-        <input id="inputwidth" type="number" min="1" class="param-input" onchange="updateValue(this)">
-      </div>
+      <div class="pt">Position &amp; Taille</div>
+      <div class="pr"><span class="pl">X</span><input id="inputx" type="number" class="pi" onchange="updateValue(this)"></div>
+      <div class="pr"><span class="pl">Y</span><input id="inputy" type="number" class="pi" onchange="updateValue(this)"></div>
+      <div class="pr"><span class="pl">Largeur</span><input id="inputwidth" type="number" min="1" class="pi" onchange="updateValue(this)"></div>
     </div>
-
     <div id="allimages" class="w3-hide">
-      <div class="param-row">
-        <span class="param-label">Ratio fixe</span>
-        <input id="lar" type="checkbox" class="param-check" onchange="updateValue(this)" checked>
-      </div>
-      <div class="param-row">
-        <span class="param-label">Hauteur</span>
-        <input id="inputheight" type="number" min="1" class="param-input" onchange="updateValue(this)">
-      </div>
+      <div class="pr"><span class="pl">Ratio fixe</span><input id="lar" type="checkbox" class="pc" onchange="updateValue(this)" checked></div>
+      <div class="pr"><span class="pl">Hauteur</span><input id="inputheight" type="number" min="1" class="pi" onchange="updateValue(this)"></div>
     </div>
-
     <div id="allangle" class="w3-hide">
-      <div class="param-row">
-        <span class="param-label">Angle</span>
-        <input id="inputangle" type="number" min="0" max="359" class="param-input" onchange="updateValue(this)">
-      </div>
+      <div class="pr"><span class="pl">Angle</span><input id="inputangle" type="number" min="0" max="359" class="pi" onchange="updateValue(this)"></div>
     </div>
-
     <div id="alllen" class="w3-hide">
-      <div class="param-row">
-        <span class="param-label">Longueur</span>
-        <input id="inputlen" type="number" min="1" class="param-input" onchange="updateValue(this)">
-      </div>
+      <div class="pr"><span class="pl">Longueur</span><input id="inputlen" type="number" min="1" class="pi" onchange="updateValue(this)"></div>
     </div>
-
     <div id="clipimages" class="w3-hide">
-      <div class="params-title">Recadrage image</div>
-      <div class="param-row">
-        <span class="param-label">Opacité %</span>
-        <input id="inputalpha" type="number" min="0" max="100" class="param-input" onchange="updateValue(this)">
-      </div>
-      <div class="param-row">
-        <span class="param-label">Source X</span>
-        <input id="inputsx" type="number" min="0" class="param-input" onchange="updateValue(this)">
-      </div>
-      <div class="param-row">
-        <span class="param-label">Source Y</span>
-        <input id="inputsy" type="number" min="0" class="param-input" onchange="updateValue(this)">
-      </div>
-      <div class="param-row">
-        <span class="param-label">Source L</span>
-        <input id="inputswidth" type="number" min="1" class="param-input" onchange="updateValue(this)">
-      </div>
-      <div class="param-row">
-        <span class="param-label">Ratio fixe</span>
-        <input id="slar" type="checkbox" class="param-check" onchange="updateValue(this)" checked>
-      </div>
-      <div class="param-row">
-        <span class="param-label">Source H</span>
-        <input id="inputsheight" type="number" min="1" class="param-input" onchange="updateValue(this)">
-      </div>
+      <div class="pt">Recadrage image</div>
+      <div class="pr"><span class="pl">Opacité %</span><input id="inputalpha" type="number" min="0" max="100" class="pi" onchange="updateValue(this)"></div>
+      <div class="pr"><span class="pl">Source X</span><input id="inputsx" type="number" min="0" class="pi" onchange="updateValue(this)"></div>
+      <div class="pr"><span class="pl">Source Y</span><input id="inputsy" type="number" min="0" class="pi" onchange="updateValue(this)"></div>
+      <div class="pr"><span class="pl">Source L</span><input id="inputswidth" type="number" min="1" class="pi" onchange="updateValue(this)"></div>
+      <div class="pr"><span class="pl">Ratio fixe</span><input id="slar" type="checkbox" class="pc" onchange="updateValue(this)" checked></div>
+      <div class="pr"><span class="pl">Source H</span><input id="inputsheight" type="number" min="1" class="pi" onchange="updateValue(this)"></div>
     </div>
-
     <div id="otherbg" class="w3-hide">
-      <div class="param-row">
-        <span class="param-label">Fond "autres"</span>
-        <input id="inputobg" type="checkbox" class="param-check" onchange="updateValue(this)">
-      </div>
+      <div class="pr"><span class="pl">Fond autres</span><input id="inputobg" type="checkbox" class="pc" onchange="updateValue(this)"></div>
     </div>
-
     <div id="alltext" class="w3-hide">
-      <div class="params-title">Texte</div>
-      <div class="param-row">
-        <span class="param-label">Contenu</span>
-        <textarea id="inputdata" class="param-input" onchange="updateValue(this)"></textarea>
-      </div>
-      <div class="param-row">
-        <span class="param-label">Interligne</span>
-        <input id="inputlineSpace" type="number" class="param-input" onchange="updateValue(this)">
-      </div>
-      <div class="param-row">
-        <span class="param-label">Police</span>
-        <select id="inputfont" class="param-input" onchange="updateValue(this)">
+      <div class="pt">Texte</div>
+      <div class="pr"><span class="pl">Contenu</span><textarea id="inputdata" class="pi" onchange="updateValue(this)"></textarea></div>
+      <div class="pr"><span class="pl">Interligne</span><input id="inputlineSpace" type="number" class="pi" onchange="updateValue(this)"></div>
+      <div class="pr"><span class="pl">Police</span>
+        <select id="inputfont" class="pi" onchange="updateValue(this)">
           <option value="Prototype">Prototype</option>
           <option value="Pagella">Palatino</option>
           <option value="times">Times New Roman</option>
         </select>
       </div>
-      <div class="param-row">
-        <span class="param-label">Style</span>
-        <select id="inputstyle" class="param-input" onchange="updateValue(this)">
+      <div class="pr"><span class="pl">Style</span>
+        <select id="inputstyle" class="pi" onchange="updateValue(this)">
           <option value="normal">Normal</option>
           <option value="italic">Italique</option>
         </select>
       </div>
-      <div class="param-row">
-        <span class="param-label">Graisse</span>
-        <select id="inputweight" class="param-input" onchange="updateValue(this)">
+      <div class="pr"><span class="pl">Graisse</span>
+        <select id="inputweight" class="pi" onchange="updateValue(this)">
           <option value="normal">Normal</option>
           <option value="bold">Gras</option>
         </select>
       </div>
-      <div class="param-row">
-        <span class="param-label">Alignement</span>
-        <select id="inputjustify" class="param-input" onchange="updateValue(this)">
+      <div class="pr"><span class="pl">Alignement</span>
+        <select id="inputjustify" class="pi" onchange="updateValue(this)">
           <option value="center">Centré</option>
           <option value="left">Gauche</option>
           <option value="right">Droite</option>
         </select>
       </div>
     </div>
-
     <div id="color" class="w3-hide">
-      <div class="params-title">Couleur</div>
-      <div class="param-row">
-        <span class="param-label">Couleur</span>
-        <input id="inputcolor" type="color" class="param-input" onchange="updateValue(this)">
-      </div>
+      <div class="pt">Couleur</div>
+      <div class="pr"><span class="pl">Couleur</span><input id="inputcolor" type="color" class="pi" onchange="updateValue(this)"></div>
     </div>
   </div>
-
-</div><!-- fin #main-content -->
+</div>
 
 <script>
-// ============================================================
-// ÉCRAN DE DÉMARRAGE
-// ============================================================
-function showStartScreen() {
-  if (document.getElementById("layerlist").children.length > 1) {
-    if (!confirm("Abandonner la carte en cours ?")) return;
-  }
+// Écran de démarrage
+function showStart() {
   document.getElementById("start-screen").style.display = "flex";
 }
-
-function hideStartScreen() {
+function hideStart() {
   document.getElementById("start-screen").style.display = "none";
 }
-
-function startWithTemplate(templateName) {
-  hideStartScreen();
-  // Utiliser addMegaTemplate en simulant un clic sur l'élément
-  let btn = document.getElementById("mega" + templateName);
-  if (btn) {
-    // Simuler sans confirm puisqu'on vient de l'écran de démarrage
-    let mega = templateName;
-    if (!megaTemplates[mega]) return;
-    document.getElementById("layerlist").innerHTML = "";
-    ddcount = 0;
-    aLayers = {};
-    tagCount = 0;
-    history = [];
-    historyIndex = -1;
-    addLayer("Base",{type:"base", color:"#ffffff", height:1126, width:826, params:"color"});
-    loadFrom(megaTemplates[mega].layers);
-    saveToHistory();
-  }
+function startTemplate(name) {
+  hideStart();
+  if (!megaTemplates || !megaTemplates[name]) return;
+  document.getElementById("layerlist").innerHTML = "";
+  ddcount = 0; aLayers = {}; tagCount = 0; undoHistory = []; undoIndex = -1;
+  addLayer("Base",{type:"base",color:"#ffffff",height:1126,width:826,params:"color"});
+  loadFrom(megaTemplates[name].layers);
+  saveToHistory();
 }
-
-function startLoadProject() {
-  hideStartScreen();
+function startLoad() {
+  hideStart();
   clickLoadNewProject();
 }
 
-// ============================================================
-// SIDEBAR — accordéons
-// ============================================================
-function toggleSection(btn, id) {
-  let el = document.getElementById(id);
+// Sidebar
+function toggleSec(btn, id) {
+  var el = document.getElementById(id);
   if (!el) return;
-  let open = el.classList.toggle('open');
-  btn.classList.toggle('open', open);
+  var o = el.classList.toggle("open");
+  btn.classList.toggle("open", o);
+}
+function toggleSB() {
+  var sb = document.getElementById("mySidebar");
+  var ov = document.getElementById("myOverlay");
+  var o = sb.classList.toggle("open");
+  ov.style.display = o ? "block" : "none";
+}
+function closeSB() {
+  document.getElementById("mySidebar").classList.remove("open");
+  document.getElementById("myOverlay").style.display = "none";
 }
 
-function toggleSidebar() {
-  let sb = document.getElementById('mySidebar');
-  let ov = document.getElementById('myOverlay');
-  let o = sb.classList.toggle('open');
-  ov.style.display = o ? 'block' : 'none';
-}
-
-function closeSidebar() {
-  document.getElementById('mySidebar').classList.remove('open');
-  document.getElementById('myOverlay').style.display = 'none';
-}
-
-// Legacy shims pour tm_cm.js
+// Shims pour tm_cm.js
 function myAccFunc(id) {
-  // mapping anciens IDs → nouveaux
-  const map = {
-    'file': 'sec-file', 'design': null,
-    'fromTemplate': null, 'backgrounds': 'sec-tools',
-    'templates': null, 'tags': 'sec-tags',
-    'globalparameters': 'sec-global', 'misc': 'sec-misc',
-    'parties': 'sec-parties', 'requisites': 'sec-req',
-    'resources': 'sec-resources', 'tiles': 'sec-tiles',
-    'VPs': 'sec-vps',
-  };
-  let newId = map[id];
+  var map = {file:"sf",design:null,fromTemplate:null,backgrounds:"so",
+    templates:null,tags:"st",globalparameters:"sg",misc:"sm",
+    parties:"sp",requisites:"sq",resources:"sr",tiles:"sti",VPs:"sv"};
+  var newId = map[id];
   if (newId) {
-    let el = document.getElementById(newId);
-    if (el) el.classList.toggle('open');
+    var el = document.getElementById(newId);
+    if (el) el.classList.toggle("open");
   }
 }
+function w3_open() { toggleSB(); }
+function w3_close() { closeSB(); }
 
-function w3_open() { toggleSidebar(); }
-function w3_close() { closeSidebar(); }
-
-// ============================================================
-// OVERRIDE addBlockMenuItem pour afficher icônes dans la sidebar
-// ============================================================
-// On va patcher après le chargement du JS principal
-window.addEventListener('load', function() {
-  // Transformer les liens texte en items icônes dans les grilles
-  const iconSections = ['tags','resources','tiles','VPs','requisites','globalparameters','misc','parties'];
-  iconSections.forEach(function(secId) {
-    let container = document.getElementById(secId);
+// Transformer les liens en icônes après chargement
+window.addEventListener("load", function() {
+  var iconSecs = ["tags","resources","tiles","VPs","requisites","globalparameters","misc","parties"];
+  iconSecs.forEach(function(secId) {
+    var container = document.getElementById(secId);
     if (!container) return;
-    // Convertir chaque lien existant en item icône
-    let links = container.querySelectorAll('a.w3-bar-item');
+    var links = Array.from(container.querySelectorAll("a.w3-bar-item"));
     links.forEach(function(link) {
-      let iconItem = document.createElement('a');
-      iconItem.href = '#';
-      iconItem.className = 'sb-icon-item';
-      iconItem.onclick = link.onclick;
-      iconItem.id = link.id;
-      
-      // Essayer de trouver l'image correspondante
-      let imgNum = link.id.replace('image','');
-      let imgSrc = '';
-      if (!isNaN(imgNum) && blockList[imgNum]) {
-        imgSrc = blockList[imgNum].putUnder + '/' + blockList[imgNum].src + '.png';
+      var icon = document.createElement("a");
+      icon.href = "#";
+      icon.className = "sb-icon";
+      icon.onclick = link.onclick;
+      icon.id = link.id;
+      var num = link.id.replace("image","");
+      var imgSrc = "";
+      if (!isNaN(num) && blockList && blockList[num]) {
+        imgSrc = blockList[num].putUnder + "/" + blockList[num].src + ".png";
       }
-      
-      let img = document.createElement('img');
-      img.className = 'sb-icon-img';
+      var img = document.createElement("img");
       img.src = imgSrc;
       img.alt = link.innerText;
-      img.onerror = function() {
-        this.style.display = 'none';
-        iconItem.style.fontSize = '22px';
-        iconItem.insertBefore(document.createTextNode('⬜'), iconItem.firstChild);
-      };
-      
-      let lbl = document.createElement('span');
-      lbl.className = 'sbi-label';
+      img.onerror = function() { this.style.display="none"; };
+      var lbl = document.createElement("span");
       lbl.innerText = link.innerText;
-      
-      iconItem.appendChild(img);
-      iconItem.appendChild(lbl);
-      link.parentNode.replaceChild(iconItem, link);
+      icon.appendChild(img);
+      icon.appendChild(lbl);
+      link.parentNode.replaceChild(icon, link);
     });
   });
-
-  // Initialiser les boutons undo/redo
-  updateUndoRedoButtons();
-  
-  // Masquer l'écran de démarrage si un autosave existe
-  // (le JS principal gère ça via resetProject)
+  updateUndoButtons();
 });
 </script>
 
 <script src="imageFit.js"></script>
 <script src="tm_cm.js"></script>
-
 </body>
 </html>

@@ -3,103 +3,84 @@ var aLayers = {};
 // ============================================================
 // HISTORIQUE — Ctrl+Z / Ctrl+Y
 // ============================================================
-var history = [];
-var historyIndex = -1;
+var undoHistory = [];
+var undoIndex = -1;
 var MAX_HISTORY = 50;
 
 function saveToHistory() {
-  // Tronquer l'historique si on est au milieu
-  if (historyIndex < history.length - 1) {
-    history = history.slice(0, historyIndex + 1);
+  if (undoIndex < undoHistory.length - 1) {
+    undoHistory = undoHistory.slice(0, undoIndex + 1);
   }
-  // Sauvegarder l'état actuel
-  let layerDivs = document.getElementsByClassName("divRec");
-  let state = {
-    layers: [],
-    order: []
-  };
-  for (let i = 0; i < layerDivs.length; i++) {
-    let id = layerDivs[i].id;
+  var layerDivs = document.getElementsByClassName("divRec");
+  var state = { layers: [], order: [] };
+  for (var i = 0; i < layerDivs.length; i++) {
+    var id = layerDivs[i].id;
     state.order.push(id);
-    state.layers.push({id: id, data: JSON.parse(JSON.stringify(aLayers[id]))});
+    state.layers.push({ id: id, data: JSON.parse(JSON.stringify(aLayers[id])) });
   }
-  history.push(JSON.stringify(state));
-  if (history.length > MAX_HISTORY) history.shift();
-  else historyIndex++;
-  updateUndoRedoButtons();
+  undoHistory.push(JSON.stringify(state));
+  if (undoHistory.length > MAX_HISTORY) undoHistory.shift();
+  else undoIndex++;
+  updateUndoButtons();
 }
 
 function undo() {
-  if (historyIndex <= 0) return;
-  historyIndex--;
-  restoreFromHistory(historyIndex);
+  if (undoIndex <= 0) return;
+  undoIndex--;
+  restoreHistory(undoIndex);
 }
 
 function redo() {
-  if (historyIndex >= history.length - 1) return;
-  historyIndex++;
-  restoreFromHistory(historyIndex);
+  if (undoIndex >= undoHistory.length - 1) return;
+  undoIndex++;
+  restoreHistory(undoIndex);
 }
 
-function restoreFromHistory(idx) {
-  let state = JSON.parse(history[idx]);
-  // Reconstruire aLayers dans le bon ordre
-  let newLayers = {};
-  let layerlist = document.getElementById("layerlist");
-
-  // Vider la liste des layers visuels sauf base
-  // Reconstruire depuis l'état sauvegardé
-  for (let item of state.layers) {
-    newLayers[item.id] = item.data;
+function restoreHistory(idx) {
+  var state = JSON.parse(undoHistory[idx]);
+  var newLayers = {};
+  var layerlist = document.getElementById("layerlist");
+  for (var i = 0; i < state.layers.length; i++) {
+    newLayers[state.layers[i].id] = state.layers[i].data;
   }
   aLayers = newLayers;
-
-  // Réordonner le DOM
-  for (let i = 0; i < state.order.length; i++) {
-    let el = document.getElementById(state.order[i]);
+  for (var i = 0; i < state.order.length; i++) {
+    var el = document.getElementById(state.order[i]);
     if (el) layerlist.appendChild(el);
   }
-
   drawProject();
-  updateUndoRedoButtons();
+  updateUndoButtons();
 }
 
-function updateUndoRedoButtons() {
-  let undoBtn = document.getElementById("btn-undo");
-  let redoBtn = document.getElementById("btn-redo");
-  if (undoBtn) undoBtn.disabled = historyIndex <= 0;
-  if (redoBtn) redoBtn.disabled = historyIndex >= history.length - 1;
+function updateUndoButtons() {
+  var u = document.getElementById("btn-undo");
+  var r = document.getElementById("btn-redo");
+  if (u) u.disabled = undoIndex <= 0;
+  if (r) r.disabled = undoIndex >= undoHistory.length - 1;
 }
 
-// Écouter Ctrl+Z / Ctrl+Y globalement
 document.addEventListener("keydown", function(e) {
-  // Ne pas interférer si on est dans un input/textarea
   if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
   if (e.ctrlKey && e.key === "z") { e.preventDefault(); undo(); }
   if (e.ctrlKey && e.key === "y") { e.preventDefault(); redo(); }
 });
 
-
 // ============================================================
 // PLACEMENT AUTOMATIQUE DES PRESETS
 // ============================================================
-// Compteur de tags déjà placés pour auto-positionner
 var tagCount = 0;
 
 function applyDefaultPreset(layer, putUnder) {
   if (!blockDefaults[putUnder] || !blockDefaults[putUnder].length) return;
-  
-  let preset = null;
-  
+  var preset = null;
   if (putUnder === "tags") {
-    // Premier tag, deuxième tag, troisième tag...
-    let idx = Math.min(tagCount, blockDefaults.tags.length - 1);
+    var idx = Math.min(tagCount, blockDefaults.tags.length - 1);
     preset = blockDefaults.tags[idx];
     tagCount++;
   } else if (putUnder === "resources") {
-    preset = blockDefaults.resources[0]; // Standard
+    preset = blockDefaults.resources[0];
   } else if (putUnder === "requisites") {
-    preset = blockDefaults.requisites[4]; // No Req par défaut
+    preset = blockDefaults.requisites[4];
   } else if (putUnder === "globalparameters") {
     preset = blockDefaults.globalparameters[0];
   } else if (putUnder === "misc") {
@@ -111,7 +92,6 @@ function applyDefaultPreset(layer, putUnder) {
   } else if (putUnder === "tiles") {
     preset = blockDefaults.tiles[0];
   }
-  
   if (preset) {
     if (preset.x !== undefined) layer.x = preset.x;
     if (preset.y !== undefined) layer.y = preset.y;
@@ -119,10 +99,6 @@ function applyDefaultPreset(layer, putUnder) {
     if (preset.height !== undefined) layer.height = preset.height;
   }
 }
-
-// Réinitialiser le compteur de tags quand on remet à zéro le projet
-var _origResetProject = resetProject;
-
 
 
 var userImageList = [];
@@ -473,8 +449,8 @@ function resetProject(loadautosave) {
   ddcount = 0;
   aLayers = {};
   tagCount = 0;
-  history = [];
-  historyIndex = -1;
+  undoHistory = [];
+  undoIndex = -1;
   document.getElementById("xcanvases").innerHTML = "";
   aCanvases = [];
   addLayer("Base",{type:"base", color:"#ffffff", height:1126, width:826, params:"color"});
@@ -918,7 +894,6 @@ function drawProject() {
     }
   }
   autoSave(imagesForSaving);
-  // history hook — sera appelé depuis les actions utilisateur
 }
 
 var lastAutoSave = "";
@@ -1240,6 +1215,8 @@ function addMegaTemplate() {
   ddcount = 0;
   aLayers = {};
   tagCount = 0;
+  undoHistory = [];
+  undoIndex = -1;
   addLayer("Base",{type:"base", color:"#ffffff", height:1126, width:826, params:"color"});
   loadFrom(megaTemplates[mega].layers);
 }
@@ -2294,99 +2271,76 @@ elem.addEventListener("mousemove", drag, false);
 
 
 // ============================================================
-// DOUBLE-CLIC POUR ÉDITER LE TEXTE DIRECTEMENT
+// DOUBLE-CLIC POUR ÉDITER LE TEXTE DIRECTEMENT SUR LA CARTE
 // ============================================================
 elem.addEventListener("dblclick", function(event) {
   var mouse = getMousePos(event);
-  let layerDivs = document.getElementsByClassName("divRec");
-  for (let i = layerDivs.length - 1; i >= 0; i--) {
-    let layer = aLayers[layerDivs[i].id];
+  var layerDivs = document.getElementsByClassName("divRec");
+  for (var i = layerDivs.length - 1; i >= 0; i--) {
+    var layer = aLayers[layerDivs[i].id];
     if (layer.type !== "text") continue;
     if (clickIsWithinLayer(layer, mouse.x, mouse.y)) {
-      showInlineTextEditor(layer, layerDivs[i].id, mouse);
+      showInlineEditor(layer, layerDivs[i].id);
       return;
     }
   }
 }, false);
 
-function showInlineTextEditor(layer, layerId, mouse) {
-  // Supprimer tout éditeur existant
-  let existing = document.getElementById("inline-text-editor");
+function showInlineEditor(layer, layerId) {
+  var existing = document.getElementById("tm-inline-editor");
   if (existing) existing.remove();
+  var hint = document.getElementById("tm-inline-hint");
+  if (hint) hint.remove();
 
-  let c = document.getElementById("cmcanvas");
-  let rect = c.getBoundingClientRect();
-  let scaleX = c.width / rect.width;
-  let scaleY = c.height / rect.height;
+  var c = document.getElementById("cmcanvas");
+  var rect = c.getBoundingClientRect();
+  var scaleX = rect.width / c.width;
+  var scaleY = rect.height / c.height;
 
-  // Calculer la position sur l'écran
-  let screenX = rect.left + layer.x / scaleX;
-  let screenY = rect.top + (layer.y - layer.height) / scaleY;
+  var screenX = rect.left + layer.x * scaleX - 10;
+  var screenY = rect.top + (layer.y - layer.height) * scaleY - 30;
 
-  let editor = document.createElement("textarea");
-  editor.id = "inline-text-editor";
+  // Bulle hint
+  var hintEl = document.createElement("div");
+  hintEl.id = "tm-inline-hint";
+  hintEl.innerText = "Entrée = valider  •  Maj+Entrée = nouvelle ligne  •  Échap = annuler";
+  hintEl.style.cssText = "position:fixed;left:" + screenX + "px;top:" + screenY + "px;" +
+    "background:#E8651A;color:#fff;font-size:10px;padding:3px 8px;" +
+    "border-radius:4px 4px 0 0;z-index:9999;font-family:sans-serif;white-space:nowrap;";
+  document.body.appendChild(hintEl);
+
+  // Zone de texte
+  var editor = document.createElement("textarea");
+  editor.id = "tm-inline-editor";
   editor.value = layer.data;
-  editor.style.cssText = `
-    position: fixed;
-    left: ${screenX}px;
-    top: ${screenY}px;
-    min-width: 180px;
-    min-height: 60px;
-    background: rgba(10, 20, 40, 0.95);
-    color: #F0E6D3;
-    border: 2px solid #E8651A;
-    border-radius: 6px;
-    padding: 8px 10px;
-    font-family: ${layer.font === 'Prototype' ? 'Prototype' : layer.font === 'Pagella' ? 'Pagella' : 'Times New Roman'}, sans-serif;
-    font-size: 14px;
-    z-index: 9999;
-    resize: both;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.7);
-    outline: none;
-  `;
-
-  let hint = document.createElement("div");
-  hint.id = "inline-text-hint";
-  hint.innerText = "Entrée pour confirmer • Échap pour annuler";
-  hint.style.cssText = `
-    position: fixed;
-    left: ${screenX}px;
-    top: ${screenY - 24}px;
-    background: #E8651A;
-    color: #fff;
-    font-size: 11px;
-    padding: 2px 8px;
-    border-radius: 4px 4px 0 0;
-    z-index: 9999;
-    font-family: Montserrat, sans-serif;
-    white-space: nowrap;
-  `;
-
-  document.body.appendChild(hint);
+  editor.style.cssText = "position:fixed;left:" + screenX + "px;top:" + (screenY + 24) + "px;" +
+    "min-width:200px;min-height:70px;background:rgba(10,20,40,0.96);" +
+    "color:#F0E6D3;border:2px solid #E8651A;border-radius:0 6px 6px 6px;" +
+    "padding:8px 10px;font-size:14px;z-index:9999;resize:both;" +
+    "box-shadow:0 4px 20px rgba(0,0,0,0.8);outline:none;font-family:sans-serif;line-height:1.5;";
   document.body.appendChild(editor);
   editor.focus();
   editor.select();
 
-  function closeEditor(save) {
+  function close(save) {
     if (save) {
       layer.data = editor.value;
-      // Mettre à jour le nom du layer dans la liste
-      let nameInput = document.getElementById("layername" + layerId.slice(11));
-      if (nameInput) nameInput.value = "Text:" + layer.data.substr(0, 10);
+      var nameEl = document.getElementById("layername" + layerId.slice(11));
+      if (nameEl) nameEl.value = "Text:" + layer.data.substr(0, 10);
       drawProject();
       saveToHistory();
     }
     editor.remove();
-    hint.remove();
+    hintEl.remove();
   }
 
   editor.addEventListener("keydown", function(e) {
-    if (e.key === "Escape") { closeEditor(false); e.preventDefault(); }
-    // Shift+Enter = nouvelle ligne, Enter seul = confirmer
-    if (e.key === "Enter" && !e.shiftKey) { closeEditor(true); e.preventDefault(); }
+    if (e.key === "Escape") { close(false); e.preventDefault(); }
+    if (e.key === "Enter" && !e.shiftKey) { close(true); e.preventDefault(); }
   });
-
   editor.addEventListener("blur", function() {
-    setTimeout(() => { if (document.getElementById("inline-text-editor")) closeEditor(true); }, 150);
+    setTimeout(function() {
+      if (document.getElementById("tm-inline-editor")) close(true);
+    }, 200);
   });
 }
