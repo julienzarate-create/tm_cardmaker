@@ -345,43 +345,43 @@ input[type=number] { width: auto; }
   <div class="tpl-label">Choisir un type de carte</div>
   <div class="tpl-grid">
     <div class="tpl-card" onclick="startTemplate('green_normal')">
-      <div class="tpl-thumb tc-green"><img src="templates/green_normal.png" alt="" onerror="this.style.display='none'"></div>
+      <div class="tpl-thumb tc-green"><img src="templates/green_normal.png" alt="" onerror="this.parentNode.innerHTML='🟢'"></div>
       <div class="tpl-name">Carte Verte</div><div class="tpl-sub">Standard</div>
     </div>
     <div class="tpl-card" onclick="startTemplate('green_small_bottom')">
-      <div class="tpl-thumb tc-green">🟢</div>
+      <div class="tpl-thumb tc-green"><img src="templates/green_small_bottom.png" alt="" onerror="this.parentNode.innerHTML='🟢'"></div>
       <div class="tpl-name">Carte Verte</div><div class="tpl-sub">Petit bas</div>
     </div>
     <div class="tpl-card" onclick="startTemplate('green_big_bottom')">
-      <div class="tpl-thumb tc-green">🟢</div>
+      <div class="tpl-thumb tc-green"><img src="templates/green_big_bottom.png" alt="" onerror="this.parentNode.innerHTML='🟢'"></div>
       <div class="tpl-name">Carte Verte</div><div class="tpl-sub">Grand bas</div>
     </div>
     <div class="tpl-card" onclick="startTemplate('blue_normal')">
-      <div class="tpl-thumb tc-blue">🔵</div>
+      <div class="tpl-thumb tc-blue"><img src="templates/blue_normal.png" alt="" onerror="this.parentNode.innerHTML='🔵'"></div>
       <div class="tpl-name">Carte Bleue</div><div class="tpl-sub">Standard</div>
     </div>
     <div class="tpl-card" onclick="startTemplate('blue_big_bottom')">
-      <div class="tpl-thumb tc-blue">🔵</div>
+      <div class="tpl-thumb tc-blue"><img src="templates/blue_big_bottom.png" alt="" onerror="this.parentNode.innerHTML='🔵'"></div>
       <div class="tpl-name">Carte Bleue</div><div class="tpl-sub">Grand bas</div>
     </div>
     <div class="tpl-card" onclick="startTemplate('blue_big_top')">
-      <div class="tpl-thumb tc-blue">🔵</div>
+      <div class="tpl-thumb tc-blue"><img src="templates/blue_big_top.png" alt="" onerror="this.parentNode.innerHTML='🔵'"></div>
       <div class="tpl-name">Carte Bleue</div><div class="tpl-sub">Grand haut</div>
     </div>
     <div class="tpl-card" onclick="startTemplate('red_normal')">
-      <div class="tpl-thumb tc-red">🔴</div>
+      <div class="tpl-thumb tc-red"><img src="templates/red_normal.png" alt="" onerror="this.parentNode.innerHTML='🔴'"></div>
       <div class="tpl-name">Carte Rouge</div><div class="tpl-sub">Standard</div>
     </div>
     <div class="tpl-card" onclick="startTemplate('red_small_bottom')">
-      <div class="tpl-thumb tc-red">🔴</div>
+      <div class="tpl-thumb tc-red"><img src="templates/red_small_bottom.png" alt="" onerror="this.parentNode.innerHTML='🔴'"></div>
       <div class="tpl-name">Carte Rouge</div><div class="tpl-sub">Petit bas</div>
     </div>
     <div class="tpl-card" onclick="startTemplate('prelude')">
-      <div class="tpl-thumb tc-purple">💜</div>
+      <div class="tpl-thumb tc-purple"><img src="templates/prelude.png" alt="" onerror="this.parentNode.innerHTML='💜'"></div>
       <div class="tpl-name">Prélude</div><div class="tpl-sub">Horizontale</div>
     </div>
     <div class="tpl-card" onclick="startTemplate('corporation')">
-      <div class="tpl-thumb tc-dark">🏢</div>
+      <div class="tpl-thumb tc-dark"><img src="templates/corporation.png" alt="" onerror="this.parentNode.innerHTML='🏢'"></div>
       <div class="tpl-name">Corporation</div><div class="tpl-sub">Horizontale</div>
     </div>
   </div>
@@ -567,7 +567,7 @@ input[type=number] { width: auto; }
     </div>
     <div id="otherbg" class="hidden">
       <div class="pr"><span class="pl">Fond autres</span><input id="inputobg" type="checkbox" class="pc" onchange="updateValue(this)"></div>
-      <div class="pr"><span class="pl">Épaisseur</span><input id="inputobgSize" type="number" min="1" max="50" class="pi" onchange="updateValue(this)" value="15"></div>
+      <div class="pr"><span class="pl">Épaisseur</span><input id="inputobgSize" type="number" min="1" max="50" class="pi" onchange="updateValue(this)" value="6"></div>
     </div>
     <div id="alltext" class="hidden">
       <div class="pt">Texte</div>
@@ -817,9 +817,7 @@ var blockList = [
   {putUnder:"parties",          text:"",                      src:"unity"},
   {putUnder:"productionboxes",  text:"prod_nxn",              src:"nxn",  hidden:true},
   {putUnder:"requisites",       text:"Max Requirement",       src:"max_big"},
-  {putUnder:"requisites",       text:"Min Requirement (big)", src:"min_big"},
   {putUnder:"requisites",       text:"Min Requirement",       src:"min_medium"},
-  {putUnder:"requisites",       text:"Min Requirement (small)",src:"min_small"},
   {putUnder:"requisites",       text:"No Requirement",        src:"normal"},
   {putUnder:"resources",        text:"",                      src:"animal",    otherbg:"res_otherbg"},
   {putUnder:"resources",        text:"",                      src:"card",      otherbg:"res_otherbg"},
@@ -898,9 +896,9 @@ var blockDefaults = {
   tags: [
     {label:"First Tag",    x:642, y:67, width:110, height:110},
     {label:"Second Tag",   x:531, y:67, width:110, height:110},
-    {label:"Third Tag",    x:410, y:67, width:110, height:110},
-    // Tags 4+ : centre carte (sans superposition, décalage +120 en x)
-    {label:"Extra Tag",    x:413, y:400, width:110, height:110},
+    {label:"Third Tag",    x:420, y:67, width:110, height:110},
+    {label:"Small Tag",    x:413, y:400, width:82, height:82},
+    {label:"Prérequis",    x:276, y:82,  width:82, height:82},
     {label:"First (Prel)", x:937, y:67, width:110, height:110},
     {label:"Second (Prel)",x:822, y:67, width:110, height:110},
     {label:"Third (Prel)", x:708, y:67, width:110, height:110},
@@ -924,19 +922,21 @@ var blockDefaults = {
   resources: [
     {label:"Standard", x:413, y:643, width:92,  height:92},
     {label:"Card",     x:413, y:643, width:88,  height:122},
-    {label:"TR",       x:413, y:643, width:151, height:112}
+    {label:"TR",       x:413, y:643, width:151, height:112},
+    {label:"Prérequis",x:284, y:92,  width:66,  height:66,  obg:true, obgSize:5}
   ],
   VPs: [
     {label:"Standard", x:542, y:836, width:223, height:223},
     {label:"Negative", x:652, y:836, width:223, height:223}
   ],
-  tiles: [{label:"Standard tile", height:142}],
+  tiles: [
+    {label:"Standard tile", height:142},
+    {label:"Prérequis",     x:284, y:92,  width:66, height:66, obg:true, obgSize:6}
+  ],
   requisites: [
-    {label:"Max",       x:180, y:92, width:200, height:60},
-    {label:"Min Large", x:180, y:92, width:176, height:60},
-    {label:"Min Medium",x:180, y:92, width:147, height:60},
-    {label:"Min Small", x:180, y:92, width:130, height:60},
-    {label:"No Req",    x:180, y:92, width:21,  height:60}
+    {label:"Max",    x:180, y:92, width:200, height:60},
+    {label:"Min",    x:180, y:92, width:147, height:60},
+    {label:"No Req", x:180, y:92, width:21,  height:60}
   ],
   // Presets globalparameters : "Corps de carte" et "Prérequis" pour chaque icône
   globalparameters: [
@@ -969,6 +969,10 @@ var blockDefaults = {
     {label:"2x width",    width:235},
     {label:"2.5x width",  width:279},
     {label:"3x width",    width:325}
+  ],
+  line: [
+    {label:"Flavor 1 ligne",  x:240, y:1012, width:2, angle:0, len:350},
+    {label:"Flavor 2 lignes", x:240, y:986,  width:2, angle:0, len:350}
   ]
 };
 
@@ -1093,34 +1097,108 @@ var megaTemplates = {
 // ============================================================
 // PLACEMENT AUTOMATIQUE DES PRESETS
 // ============================================================
-function applyDefaultPreset(layer, putUnder) {
+
+// Compteurs pour anti-superposition (Point 7)
+var antiOverlapCounters = {};
+
+function getAntiOverlapOffset(putUnder) {
+  if (!antiOverlapCounters[putUnder]) antiOverlapCounters[putUnder] = 0;
+  var offset = antiOverlapCounters[putUnder];
+  antiOverlapCounters[putUnder]++;
+  return offset;
+}
+
+function applyDefaultPreset(layer, putUnder, srcName) {
   if (!blockDefaults[putUnder] || !blockDefaults[putUnder].length) return;
   var preset = null;
+
   if (putUnder === "tags") {
     if (tagCount < 3) {
-      // Les 3 premiers tags ont des positions fixes en haut à droite
       preset = blockDefaults.tags[tagCount];
     } else {
-      // Tags supplémentaires : centre de la carte, décalé pour éviter la superposition
+      // À partir du 4ème tag : Small Tag (82x82)
       var extraIdx = tagCount - 3;
       preset = {
-        x: 200 + (extraIdx % 4) * 120,
-        y: 400 + Math.floor(extraIdx / 4) * 130,
-        width: 110, height: 110
+        x: 200 + (extraIdx % 4) * 100,
+        y: 400 + Math.floor(extraIdx / 4) * 100,
+        width: 82, height: 82
       };
     }
     tagCount++;
+  } else if (putUnder === "resources") {
+    // Preset automatique selon le type de ressource (Point 6)
+    var resPreset = null;
+    if (srcName === "card") {
+      resPreset = blockDefaults.resources[1]; // Card
+    } else if (srcName === "TR") {
+      resPreset = blockDefaults.resources[2]; // TR
+    } else {
+      // Anti-superposition pour ressources (Point 7)
+      var off = getAntiOverlapOffset("resources");
+      resPreset = {
+        x: 413 + (off % 5) * 100,
+        y: 643 + Math.floor(off / 5) * 110,
+        width: blockDefaults.resources[0].width,
+        height: blockDefaults.resources[0].height
+      };
+    }
+    preset = resPreset;
+  } else if (putUnder === "tiles") {
+    // Anti-superposition pour tuiles (Point 7), preset Standard tile
+    var offT = getAntiOverlapOffset("tiles");
+    preset = {
+      x: 300 + (offT % 4) * 160,
+      y: 500 + Math.floor(offT / 4) * 160,
+      width: 142,
+      height: 142
+    };
+  } else if (putUnder === "globalparameters") {
+    // Anti-superposition pour params globaux (Point 7)
+    var offG = getAntiOverlapOffset("globalparameters");
+    // Trouver le bon preset "Corps de carte" selon la src
+    var gpPreset = null;
+    if (srcName === "oxygen")      gpPreset = blockDefaults.globalparameters[0];
+    else if (srcName === "temperature") gpPreset = blockDefaults.globalparameters[2];
+    else if (srcName === "venus")   gpPreset = blockDefaults.globalparameters[4];
+    else gpPreset = blockDefaults.globalparameters[0];
+    preset = {
+      x: gpPreset.x + (offG % 4) * 130,
+      y: gpPreset.y + Math.floor(offG / 4) * 130,
+      width: gpPreset.width,
+      height: gpPreset.height
+    };
+  } else if (putUnder === "parties") {
+    // Anti-superposition pour partis (Point 7)
+    var offP = getAntiOverlapOffset("parties");
+    preset = {
+      x: 413 + (offP % 4) * 180,
+      y: 643 + Math.floor(offP / 4) * 130,
+      width: blockDefaults.parties[0].width,
+      height: blockDefaults.parties[0].height
+    };
+  } else if (putUnder === "misc") {
+    // Anti-superposition pour divers (Point 7)
+    var offM = getAntiOverlapOffset("misc");
+    preset = {
+      x: 413 + (offM % 5) * 110,
+      y: 643 + Math.floor(offM / 5) * 110,
+      width: blockDefaults.misc[0].width,
+      height: blockDefaults.misc[0].height
+    };
   } else if (putUnder === "VPs" || putUnder === "requisites") {
-    // Toujours position fixe [0], jamais de décalage
     preset = blockDefaults[putUnder][0];
   } else {
     preset = blockDefaults[putUnder][0];
   }
+
   if (preset) {
     if (preset.x      !== undefined) layer.x      = Math.round(preset.x);
     if (preset.y      !== undefined) layer.y      = Math.round(preset.y);
     if (preset.width  !== undefined) layer.width  = Math.round(preset.width);
     if (preset.height !== undefined) layer.height = Math.round(preset.height);
+    if (preset.obg    !== undefined) { layer.obg = preset.obg; layer.obgSize = preset.obgSize || 6; }
+    // Mémoriser le preset appliqué (Point 5)
+    layer._appliedPreset = preset.label || null;
   }
 }
 
@@ -1147,8 +1225,31 @@ function startTemplate(name) {
   if (!megaTemplates || !megaTemplates[name]) return;
   document.getElementById("layerlist").innerHTML = "";
   ddcount = 0; aLayers = {}; tagCount = 0; undoHistory = []; undoIndex = -1;
+  antiOverlapCounters = {}; // Reset des compteurs anti-superposition
   addLayer("Base", {type:"base", color:"#ffffff", height:1126, width:826, params:"color"});
   loadFrom(megaTemplates[name].layers);
+  // Point 11 : verrouiller tous les calques sauf Card description
+  var layerDivs = document.getElementsByClassName("divRec");
+  for (var i = 0; i < layerDivs.length; i++) {
+    var lid = layerDivs[i].id;
+    var lyr = aLayers[lid];
+    if (!lyr) continue;
+    if (lid === "dragdropdiv0") continue; // Base toujours non-verrouillée (gérée séparément)
+    // Chercher si c'est le calque de description
+    var nameEl = layerDivs[i].querySelector("input[type=text]");
+    var layerName = nameEl ? nameEl.value : "";
+    if (lyr.type === "text" && (layerName.indexOf("descr") !== -1 || (lyr.data && lyr.data.indexOf("Card description") === 0))) {
+      lyr.locked = false;
+    } else {
+      lyr.locked = true;
+    }
+    // Mettre à jour l'icône de verrou
+    var lockIcon = layerDivs[i].querySelector(".layer-lock");
+    if (lockIcon) {
+      lockIcon.innerText = lyr.locked ? "🔒" : "🔓";
+      lockIcon.title = lyr.locked ? "Déverrouiller" : "Verrouiller";
+    }
+  }
   saveToHistory();
 }
 
@@ -1322,7 +1423,9 @@ function selectLayer() {
             if (thisLayer.type === "block")      defType = blockList[thisLayer.iNum].putUnder;
             else if (thisLayer.type === "text")  defType = "text";
             else if (thisLayer.type === "production") defType = "production";
+            else if (thisLayer.type === "line")  defType = "line";
             if (defType && blockDefaults[defType]) {
+              // Point 5 : afficher le preset appliqué si mémorisé
               sub.value = "";
               while (opts.length < blockDefaults[defType].length + 1) {
                 var cNode = opts[1].cloneNode(false);
@@ -1337,6 +1440,15 @@ function selectLayer() {
                   opts[oi].classList.add("hidden");
                 }
               }
+              // Restaurer le preset sélectionné si mémorisé
+              if (thisLayer._appliedPreset) {
+                for (var oi2 = 1; oi2 < opts.length; oi2++) {
+                  if (opts[oi2].innerText === thisLayer._appliedPreset) {
+                    sub.value = opts[oi2].value;
+                    break;
+                  }
+                }
+              }
             }
           }
         }
@@ -1344,6 +1456,35 @@ function selectLayer() {
     }
   }
   clickedNode.appendChild(domParams);
+
+  // Point 6/10/14 : masquer le menu preset pour certaines catégories
+  var allpresetDiv = document.getElementById("allpreset");
+  if (allpresetDiv) {
+    if (thisLayer._hidePresetMenu) {
+      allpresetDiv.classList.add("hidden");
+    }
+  }
+
+  // Point 10/14 : boutons Normal / Prérequis pour globalparameters et tiles
+  var gpBtnDiv = document.getElementById("gp-mode-btns");
+  if (gpBtnDiv) gpBtnDiv.remove();
+  if (thisLayer.type === "block" && (thisLayer._gpSrc || thisLayer._tileSrc)) {
+    var gpDiv = document.createElement("div");
+    gpDiv.id = "gp-mode-btns";
+    gpDiv.style.cssText = "display:flex;gap:8px;margin-bottom:10px;padding-bottom:9px;border-bottom:1px solid var(--border);";
+    var btnNorm = document.createElement("button");
+    btnNorm.className = "btn btn-g"; btnNorm.innerText = "Corps de carte";
+    btnNorm.style.flex = "1";
+    btnNorm.onclick = function() { applyGPMode(clickedNode.id, false); };
+    var btnReq = document.createElement("button");
+    btnReq.className = "btn btn-g"; btnReq.innerText = "Prérequis";
+    btnReq.style.flex = "1";
+    btnReq.onclick = function() { applyGPMode(clickedNode.id, true); };
+    gpDiv.appendChild(btnNorm);
+    gpDiv.appendChild(btnReq);
+    domParams.insertBefore(gpDiv, domParams.firstChild);
+  }
+
   focusKeyInput(thisLayer);
   drawProject(); // redessiner pour afficher le contour de sélection
 }
@@ -1375,14 +1516,17 @@ function drawProject() {
         if (i === 0) { c.height = layer.height; c.width = layer.width; }
         if (layer.obg) {
           var bgKey = blockList[layer.iNum].otherbg;
+          // Point 18 : Greenery et Off-World City utilisent le fond de leur tuile de base
+          var tileSrc = blockList[layer.iNum].src;
+          if (tileSrc === "greenery") bgKey = "tiles_otherbg";       // Greenery → fond greenery_no_O2 (même fond)
+          if (tileSrc === "off-world_city") bgKey = "tiles_otherbg"; // Off-world city → fond city
           var bgImg = otherBgList[bgKey];
           if (!bgImg) {
-            // charger l'image bg manquante
             for (var j = 0; j < blockList.length; j++) {
               if (blockList[j].text === bgKey) { fetchBlock(j); break; }
             }
           } else if (bgImg.complete) {
-            var brdr = layer.obgSize !== undefined ? Number(layer.obgSize) : 15;
+            var brdr = layer.obgSize !== undefined ? Number(layer.obgSize) : 6;
             ctx.drawImage(bgImg, layer.x-brdr, layer.y-brdr, layer.width+2*brdr, layer.height+2*brdr);
           }
         }
@@ -1644,6 +1788,8 @@ function resetProject(loadautosave) {
   document.getElementById("layerlist").innerHTML = "";
   ddcount = 0; aLayers = {}; tagCount = 0;
   undoHistory = []; undoIndex = -1;
+  antiOverlapCounters = {};
+  groupSelection = [];
   document.getElementById("xcanvases").innerHTML = "";
   aCanvases = [];
   addLayer("Base", {type:"base", color:"#ffffff", height:1126, width:826, params:"color"});
@@ -1845,6 +1991,13 @@ function updateValue(th) {
 
   if (th.type === "number") {
     var newValue = Number(th.value);
+    // Point 5 : effacer le preset mémorisé dès qu'une valeur est modifiée manuellement
+    if (aLayers[layerName]._appliedPreset !== undefined) {
+      aLayers[layerName]._appliedPreset = null;
+      // Remettre le select à "Sélectionner..."
+      var presetsEl = document.getElementById("presets");
+      if (presetsEl) presetsEl.value = "";
+    }
     // Déplacement groupé
     if (fieldName === "x" || fieldName === "y") {
       var gc = layer.getElementsByClassName("groupcheck")[0];
@@ -1888,6 +2041,7 @@ function setPresets(th) {
   if      (layer.type === "block")      dName = blockList[layer.iNum].putUnder;
   else if (layer.type === "text")       dName = "text";
   else if (layer.type === "production") dName = "production";
+  else if (layer.type === "line")       dName = "line";
   if (!dName || !blockDefaults[dName]) return;
 
   reloading = true;
@@ -1904,27 +2058,183 @@ function setPresets(th) {
     aLayers["dragdropdiv0"].width  = blockDefaults[dName][sel].width;
   }
   reloading = false;
+  // Point 5 : mémoriser le preset appliqué
+  layer._appliedPreset = blockDefaults[dName][sel].label;
   drawProject();
 }
 
-// ============================================================
-// AJOUT DE BLOCS / CALQUES
-// ============================================================
-type2FuncList.block = addBlock;
+// Point 10/14 : appliquer mode Normal ou Prérequis pour globalparameters et tiles
+function applyGPMode(layerId, isRequisite) {
+  var layer = aLayers[layerId];
+  if (!layer) return;
+  var preset = null;
+  if (layer._gpSrc) {
+    // Paramètre global
+    var idx = 0;
+    if (layer._gpSrc === "temperature") idx = 2;
+    else if (layer._gpSrc === "venus")  idx = 4;
+    preset = isRequisite ? blockDefaults.globalparameters[idx+1] : blockDefaults.globalparameters[idx];
+  } else if (layer._tileSrc !== undefined) {
+    // Tuile
+    preset = isRequisite ? blockDefaults.tiles[1] : null;
+    if (!isRequisite) {
+      // Standard tile : utiliser les dims de l'image ou 142
+      layer.x = 300; layer.y = 500;
+      layer.width = 142; layer.height = 142;
+      layer._appliedPreset = "Standard tile";
+      var ixEl = document.getElementById("inputx"); if (ixEl) ixEl.value = layer.x;
+      var iyEl = document.getElementById("inputy"); if (iyEl) iyEl.value = layer.y;
+      var iwEl = document.getElementById("inputwidth"); if (iwEl) iwEl.value = layer.width;
+      var ihEl = document.getElementById("inputheight"); if (ihEl) ihEl.value = layer.height;
+      drawProject(); saveToHistory(); return;
+    }
+  }
+  if (preset) {
+    if (preset.x      !== undefined) { layer.x      = preset.x;      var el = document.getElementById("inputx");      if(el) el.value = preset.x; }
+    if (preset.y      !== undefined) { layer.y      = preset.y;      var el2 = document.getElementById("inputy");     if(el2) el2.value = preset.y; }
+    if (preset.width  !== undefined) { layer.width  = preset.width;  var el3 = document.getElementById("inputwidth"); if(el3) el3.value = preset.width; }
+    if (preset.height !== undefined) { layer.height = preset.height; var el4 = document.getElementById("inputheight");if(el4) el4.value = preset.height; }
+    if (preset.obg    !== undefined) { layer.obg = preset.obg; layer.obgSize = preset.obgSize || 6; }
+    layer._appliedPreset = preset.label;
+  }
+  drawProject();
+  saveToHistory();
+}
+
+
 function addBlock(th) {
   var layer = {type:"block", name:"", iNum:0, x:0, y:0, width:0, height:0, params:"allimages"};
   var myIndex = (typeof th === "string" || typeof th === "number") ? th : this.id.slice(5);
   layer.iNum = Number(myIndex);
   var thisBlock = blockList[layer.iNum];
-  if (thisBlock.otherbg)             { layer.params += " " + thisBlock.otherbg; layer.obg = false; layer.obgSize = 15; }
+
+  if (thisBlock.otherbg) {
+    layer.params += " " + thisBlock.otherbg;
+    layer.obg = false;
+    layer.obgSize = 6; // Point 17 : défaut = 6
+  }
   if (blockDefaults[thisBlock.putUnder]) layer.params += " allpreset";
-  // Verrouiller automatiquement VPs et prérequis
-  if (thisBlock.putUnder === "VPs" || thisBlock.putUnder === "requisites") {
+
+  // Point 8 : Exclusivité pour les prérequis (un seul à la fois)
+  if (thisBlock.putUnder === "requisites") {
+    var layerDivs2 = document.getElementsByClassName("divRec");
+    for (var ri = layerDivs2.length - 1; ri >= 0; ri--) {
+      var rl = aLayers[layerDivs2[ri].id];
+      if (rl && rl.type === "block" && blockList[rl.iNum] && blockList[rl.iNum].putUnder === "requisites") {
+        // Retirer le domParams si attaché à ce calque
+        if (domParams.parentNode === layerDivs2[ri]) layerDivs2[ri].removeChild(domParams);
+        delete aLayers[layerDivs2[ri].id];
+        layerDivs2[ri].parentNode.removeChild(layerDivs2[ri]);
+        break;
+      }
+    }
     layer.locked = true;
   }
-  applyDefaultPreset(layer, thisBlock.putUnder);
+
+  // Point 15 : Logique VP
+  if (thisBlock.putUnder === "VPs") {
+    var vpSrc = thisBlock.src;
+    var isVPValue = ["1_for","1","2_for","2","3","4","5"].indexOf(vpSrc) !== -1;
+    var isVPBg    = vpSrc === "blank";
+    var isVPSign  = vpSrc === "VPnegative" || vpSrc === "n_for";
+
+    var layerDivs3 = document.getElementsByClassName("divRec");
+    for (var vi = layerDivs3.length - 1; vi >= 0; vi--) {
+      var vl = aLayers[layerDivs3[vi].id];
+      if (!vl || vl.type !== "block" || !blockList[vl.iNum]) continue;
+      var existingSrc = blockList[vl.iNum].src;
+      var existIsValue = ["1_for","1","2_for","2","3","4","5"].indexOf(existingSrc) !== -1;
+      var existIsBg    = existingSrc === "blank";
+      var existIsSign  = existingSrc === "VPnegative" || existingSrc === "n_for";
+
+      // Groupe 1 exclusif : remplacer l'ancien VP valeur
+      if (isVPValue && existIsValue) {
+        if (domParams.parentNode === layerDivs3[vi]) layerDivs3[vi].removeChild(domParams);
+        delete aLayers[layerDivs3[vi].id];
+        layerDivs3[vi].parentNode.removeChild(layerDivs3[vi]);
+        break;
+      }
+      // Groupe 2 on/off : si même type bg, supprimer
+      if (isVPBg && existIsBg) {
+        if (domParams.parentNode === layerDivs3[vi]) layerDivs3[vi].removeChild(domParams);
+        delete aLayers[layerDivs3[vi].id];
+        layerDivs3[vi].parentNode.removeChild(layerDivs3[vi]);
+        break;
+      }
+      // Groupe 3 on/off : si même src exacte (-VP ou /VP), supprimer
+      if (isVPSign && existingSrc === vpSrc) {
+        if (domParams.parentNode === layerDivs3[vi]) layerDivs3[vi].removeChild(domParams);
+        delete aLayers[layerDivs3[vi].id];
+        layerDivs3[vi].parentNode.removeChild(layerDivs3[vi]);
+        break;
+      }
+    }
+    layer.locked = true;
+  }
+
+  // Point 6 & 8 & 10 & 14 : masquer le menu preset pour ressources, tuiles, globalparameters
+  // (on laisse allpreset dans params mais on le masque via un flag)
+  var noPresetMenu = ["resources","tiles","globalparameters","requisites"].indexOf(thisBlock.putUnder) !== -1;
+  if (noPresetMenu) {
+    layer._hidePresetMenu = true;
+  }
+
+  applyDefaultPreset(layer, thisBlock.putUnder, thisBlock.src);
+
+  // Point 6 : presets auto pour Card et TR dans ressources
+  if (thisBlock.putUnder === "resources") {
+    if (thisBlock.src === "card") {
+      var cardP = blockDefaults.resources[1];
+      layer.x = cardP.x; layer.y = cardP.y; layer.width = cardP.width; layer.height = cardP.height;
+      layer._appliedPreset = "Card";
+    } else if (thisBlock.src === "TR") {
+      var trP = blockDefaults.resources[2];
+      layer.x = trP.x; layer.y = trP.y; layer.width = trP.width; layer.height = trP.height;
+      layer._appliedPreset = "TR";
+    }
+  }
+
+  // Point 8 : presets auto pour prérequis
+  if (thisBlock.putUnder === "requisites") {
+    if (thisBlock.src === "max_big") {
+      var mp = blockDefaults.requisites[0];
+      layer.x = mp.x; layer.y = mp.y; layer.width = mp.width; layer.height = mp.height;
+      layer._appliedPreset = "Max";
+    } else if (thisBlock.src === "min_medium") {
+      var mnp = blockDefaults.requisites[1];
+      layer.x = mnp.x; layer.y = mnp.y; layer.width = mnp.width; layer.height = mnp.height;
+      layer._appliedPreset = "Min";
+    } else if (thisBlock.src === "normal") {
+      var nrp = blockDefaults.requisites[2];
+      layer.x = nrp.x; layer.y = nrp.y; layer.width = nrp.width; layer.height = nrp.height;
+      layer._appliedPreset = "No Req";
+    }
+  }
+
+  // Point 10 : presets auto pour paramètres globaux (Corps de carte par défaut)
+  if (thisBlock.putUnder === "globalparameters") {
+    var gpIdx = 0;
+    if (thisBlock.src === "temperature") gpIdx = 2;
+    else if (thisBlock.src === "venus")  gpIdx = 4;
+    var gp = blockDefaults.globalparameters[gpIdx];
+    layer.x = gp.x; layer.y = gp.y; layer.width = gp.width; layer.height = gp.height;
+    layer._appliedPreset = gp.label;
+    // Ajouter boutons Normal/Prérequis via flag
+    layer._gpSrc = thisBlock.src;
+  }
+
+  // Point 14 : preset auto pour tuiles
+  if (thisBlock.putUnder === "tiles") {
+    // Dimensions depuis l'image ou preset (height fixe = 142)
+    if (!layer.width)  layer.width  = 142;
+    if (!layer.height) layer.height = 142;
+    layer._appliedPreset = "Standard tile";
+    layer._tileSrc = thisBlock.src;
+  }
+
   var newLayer = addLayer(thisBlock.text, layer);
   saveToHistory();
+
   if (thisBlock.obj) {
     if (!newLayer.width)  newLayer.width  = thisBlock.obj.width;
     if (!newLayer.height) newLayer.height = thisBlock.obj.height;
@@ -1932,6 +2242,15 @@ function addBlock(th) {
   } else {
     fetchBlock(layer.iNum);
   }
+
+  // Point 2 : sélectionner automatiquement le calque nouvellement ajouté
+  var newDivId = "dragdropdiv" + (ddcount - 1);
+  var newDiv = document.getElementById(newDivId);
+  if (newDiv) {
+    var insideDiv = newDiv.querySelector(".inside");
+    if (insideDiv) insideDiv.onclick.call(insideDiv);
+  }
+
   return newLayer;
 }
 
@@ -1961,6 +2280,12 @@ function addTextBox(th) {
   layer.width = c.width;
   var newLayer = addLayer("Text:" + layer.data.substr(0, 10), layer);
   drawProject();
+  // Point 2 : sélection auto (sauf si appelé depuis loadFrom)
+  if (!reloading) {
+    var newDivId = "dragdropdiv" + (ddcount - 1);
+    var newDiv = document.getElementById(newDivId);
+    if (newDiv) { var ins = newDiv.querySelector(".inside"); if (ins) ins.onclick.call(ins); }
+  }
   return newLayer;
 }
 
@@ -1970,6 +2295,12 @@ function addProduction() {
   var newLayer = addLayer("Production", layer);
   var thisBlock = blockList[hiddenImage["prod_nxn"]];
   if (thisBlock.obj) drawProject(); else fetchBlock(hiddenImage["prod_nxn"]);
+  // Point 2 : sélection auto
+  if (!reloading) {
+    var newDivId = "dragdropdiv" + (ddcount - 1);
+    var newDiv = document.getElementById(newDivId);
+    if (newDiv) { var ins = newDiv.querySelector(".inside"); if (ins) ins.onclick.call(ins); }
+  }
   return newLayer;
 }
 
@@ -1978,6 +2309,12 @@ function addEffectBox() {
   var layer = {type:"effect", x:600, y:300, width:400, height:300, params:"allimages allpreset"};
   var newLayer = addLayer("Effect Box", layer);
   drawProject();
+  // Point 2 : sélection auto
+  if (!reloading) {
+    var newDivId = "dragdropdiv" + (ddcount - 1);
+    var newDiv = document.getElementById(newDivId);
+    if (newDiv) { var ins = newDiv.querySelector(".inside"); if (ins) ins.onclick.call(ins); }
+  }
   return newLayer;
 }
 
@@ -1991,9 +2328,15 @@ function addLine() {
       return aLayers[layerDivs[i].id];
     }
   }
-  var layer = {type:"line", x:60, y:1012, width:2, angle:0, len:706, color:"#000000", opacity:1, locked:true, params:"allangle alllen allpreset color"};
+  // Point 12 : valeurs par défaut corrigées + preset allpreset pour ligne
+  var layer = {type:"line", x:240, y:1012, width:2, angle:0, len:350, color:"#000000", opacity:1, locked:true, params:"allangle alllen allpreset color"};
+  layer._appliedPreset = "Flavor 1 ligne";
   var newLayer = addLayer("Ligne", layer);
   drawProject();
+  // Point 2 : sélection auto
+  var newDivId = "dragdropdiv" + (ddcount - 1);
+  var newDiv = document.getElementById(newDivId);
+  if (newDiv) { var ins = newDiv.querySelector(".inside"); if (ins) ins.onclick.call(ins); }
   return newLayer;
 }
 
@@ -2202,9 +2545,11 @@ function loadFont(url) {
 // FIX PRINCIPAL : mouseup sur document, pas sur elem
 // ============================================================
 var layerToDrag  = null;
+var layerToDragId = null;
 var dragOffsetX  = 0;
 var dragOffsetY  = 0;
 var keyFocusLayer = null;
+var groupSelection = []; // liste des layerId dans le groupe courant (Point 16)
 
 function getMousePos(event) {
   var c    = document.getElementById("cmcanvas");
@@ -2219,15 +2564,17 @@ function getMousePos(event) {
 }
 
 function dragStart(event) {
+  if (event.ctrlKey) return; // Ctrl+clic géré séparément
   var mouse = getMousePos(event);
   var layerDivs = document.getElementsByClassName("divRec");
   for (var i = layerDivs.length - 1; i >= 0; i--) {
     var layer = aLayers[layerDivs[i].id];
-    if (layer.locked) continue; // ne pas déplacer les calques verrouillés
+    if (layer.locked) continue;
     if (clickIsWithinLayer(layer, mouse.x, mouse.y)) {
       var insideDiv = layerDivs[i].querySelector(".inside");
       if (insideDiv) insideDiv.onclick.call(insideDiv);
       layerToDrag = layer;
+      layerToDragId = layerDivs[i].id;
       dragOffsetX = layer.x - mouse.x;
       dragOffsetY = layer.y - mouse.y;
       document.getElementById("cmcanvas").classList.add("dragging");
@@ -2236,22 +2583,57 @@ function dragStart(event) {
   }
 }
 
-// FIX : mouseup sur document entier → relâchement garanti
 function dragEnd(event) {
   if (layerToDrag !== null) {
-    autoSaveImmediately(); // sauvegarder maintenant que le drag est fini
+    autoSaveImmediately();
     saveToHistory();
   }
   layerToDrag = null;
+  layerToDragId = null;
   document.getElementById("cmcanvas").classList.remove("dragging");
 }
 
 function drag(event) {
   if (layerToDrag === null) return;
   var mouse = getMousePos(event);
-  layerToDrag.x = Math.round(mouse.x + dragOffsetX);
-  layerToDrag.y = Math.round(mouse.y + dragOffsetY);
-  // Mettre à jour les champs X/Y en temps réel dans le panneau de droite
+  var newX = Math.round(mouse.x + dragOffsetX);
+  var newY = Math.round(mouse.y + dragOffsetY);
+  var dx = newX - layerToDrag.x;
+  var dy = newY - layerToDrag.y;
+
+  // Point 16 : déplacement groupé
+  var groupChecked = document.getElementById("groupmode").checked;
+  if (groupChecked && groupSelection.length > 1 && groupSelection.indexOf(layerToDragId) !== -1) {
+    for (var g = 0; g < groupSelection.length; g++) {
+      var gl = aLayers[groupSelection[g]];
+      if (gl && !gl.locked) {
+        gl.x = Math.round(gl.x + dx);
+        gl.y = Math.round(gl.y + dy);
+      }
+    }
+  } else {
+    // Aussi vérifier les checkboxes classiques du panneau
+    var allGroups = document.getElementsByClassName("groupcheck");
+    var anyGroupChecked = false;
+    for (var ag = 0; ag < allGroups.length; ag++) {
+      if (allGroups[ag].checked) { anyGroupChecked = true; break; }
+    }
+    if (anyGroupChecked) {
+      for (var ag2 = 0; ag2 < allGroups.length; ag2++) {
+        if (!allGroups[ag2].checked) continue;
+        var gl2 = aLayers[allGroups[ag2].parentNode.id];
+        if (gl2 && !gl2.locked) {
+          gl2.x = Math.round(gl2.x + dx);
+          gl2.y = Math.round(gl2.y + dy);
+        }
+      }
+    } else {
+      layerToDrag.x = newX;
+      layerToDrag.y = newY;
+    }
+  }
+
+  // Mettre à jour les champs X/Y en temps réel
   var ix = document.getElementById("inputx");
   var iy = document.getElementById("inputy");
   if (ix) ix.value = layerToDrag.x;
@@ -2489,8 +2871,9 @@ elem.addEventListener("dblclick", function(event) {
 }, false);
 
 // ============================================================
-// MODE GROUPE
+// MODE GROUPE — Point 16
 // ============================================================
+
 function groupModeToggle() {
   var checked = document.getElementById("groupmode").checked;
   var c = document.getElementsByClassName("groupcheck");
@@ -2503,7 +2886,40 @@ function groupModeToggle() {
       c[l].classList.add("vis-hidden");
     }
   }
+  if (!checked) groupSelection = [];
 }
+
+// Ctrl+clic sur canvas : ajouter/retirer du groupe
+elem.addEventListener("click", function(event) {
+  if (!event.ctrlKey) return;
+  event.preventDefault();
+  var mouse = getMousePos(event);
+  var layerDivs = document.getElementsByClassName("divRec");
+  for (var i = layerDivs.length - 1; i >= 0; i--) {
+    var layer = aLayers[layerDivs[i].id];
+    if (!layer || layer.type === "base") continue;
+    if (clickIsWithinLayer(layer, mouse.x, mouse.y)) {
+      var lid = layerDivs[i].id;
+      var idx = groupSelection.indexOf(lid);
+      if (idx === -1) {
+        groupSelection.push(lid);
+      } else {
+        groupSelection.splice(idx, 1);
+      }
+      // Mettre à jour visuellement la checkbox si en mode groupe
+      var cb = layerDivs[i].querySelector(".groupcheck");
+      if (cb) cb.checked = (groupSelection.indexOf(lid) !== -1);
+      // Activer le mode groupe visuellement
+      document.getElementById("groupmode").checked = true;
+      var allCbs = document.getElementsByClassName("groupcheck");
+      for (var g = 0; g < allCbs.length; g++) {
+        allCbs[g].classList.remove("vis-hidden");
+      }
+      drawProject();
+      return;
+    }
+  }
+}, false);
 
 // ============================================================
 // NOUVEAU PROJET
