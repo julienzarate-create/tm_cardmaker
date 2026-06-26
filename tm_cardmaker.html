@@ -65,7 +65,7 @@ textarea { overflow: auto; }
   --border: rgba(232,101,26,0.22);
   --text: #F0E6D3;
   --muted: #8A7E6E;
-  --sidebar: 480px;
+  --sidebar: 360px;
 }
 
 body {
@@ -466,12 +466,8 @@ input[type=number] { width: auto; }
         <div class="sb-content open" id="st"><div class="sb-icon-grid" id="tags"></div></div>
       </div>
       <div class="sb-sec">
-        <button class="sb-sec-btn open" onclick="toggleSec(this,'sr')">Ressources <span class="arr">▼</span></button>
-        <div class="sb-content open" id="sr"><div class="sb-icon-grid" id="resources"></div></div>
-      </div>
-      <div class="sb-sec">
-        <button class="sb-sec-btn" onclick="toggleSec(this,'sti')">Tuiles <span class="arr">▼</span></button>
-        <div class="sb-content" id="sti"><div class="sb-icon-grid" id="tiles"></div></div>
+        <button class="sb-sec-btn" onclick="toggleSec(this,'sp')">Partis <span class="arr">▼</span></button>
+        <div class="sb-content" id="sp"><div class="sb-icon-grid" id="parties"></div></div>
       </div>
       <div class="sb-sec">
         <button class="sb-sec-btn" onclick="toggleSec(this,'sv')">Points de victoire <span class="arr">▼</span></button>
@@ -480,16 +476,20 @@ input[type=number] { width: auto; }
     </div>
     <div class="sb-col">
       <div class="sb-sec">
+        <button class="sb-sec-btn open" onclick="toggleSec(this,'sr')">Ressources <span class="arr">▼</span></button>
+        <div class="sb-content open" id="sr"><div class="sb-icon-grid" id="resources"></div></div>
+      </div>
+      <div class="sb-sec">
+        <button class="sb-sec-btn" onclick="toggleSec(this,'sti')">Tuiles <span class="arr">▼</span></button>
+        <div class="sb-content" id="sti"><div class="sb-icon-grid" id="tiles"></div></div>
+      </div>
+      <div class="sb-sec">
         <button class="sb-sec-btn" onclick="toggleSec(this,'sq')">Prérequis <span class="arr">▼</span></button>
         <div class="sb-content" id="sq"><div class="sb-icon-grid" id="requisites"></div></div>
       </div>
       <div class="sb-sec">
         <button class="sb-sec-btn" onclick="toggleSec(this,'sg')">Params globaux <span class="arr">▼</span></button>
         <div class="sb-content" id="sg"><div class="sb-icon-grid" id="globalparameters"></div></div>
-      </div>
-      <div class="sb-sec">
-        <button class="sb-sec-btn" onclick="toggleSec(this,'sp')">Partis <span class="arr">▼</span></button>
-        <div class="sb-content" id="sp"><div class="sb-icon-grid" id="parties"></div></div>
       </div>
       <div class="sb-sec">
         <button class="sb-sec-btn" onclick="toggleSec(this,'sm')">Divers <span class="arr">▼</span></button>
@@ -568,6 +568,7 @@ input[type=number] { width: auto; }
     <div id="allimages" class="hidden">
       <div class="pr"><span class="pl">Ratio fixe</span><input id="lar" type="checkbox" class="pc" onchange="updateValue(this)" checked></div>
       <div class="pr"><span class="pl">Hauteur</span><input id="inputheight" type="number" min="1" class="pi" onchange="updateValue(this)"></div>
+      <div class="pr" id="locked-height-row" style="display:none;"><span class="pl">Figer hauteur</span><input id="inputlockedHeight" type="checkbox" class="pc" onchange="updateValue(this)"></div>
     </div>
     <div id="allangle" class="hidden">
       <div class="pr"><span class="pl">Angle</span><input id="inputangle" type="number" min="0" max="359" class="pi" onchange="updateValue(this)"></div>
@@ -725,7 +726,11 @@ function saveToHistory() {
   for (var i = 0; i < layerDivs.length; i++) {
     var id = layerDivs[i].id;
     state.order.push(id);
-    state.layers.push({ id: id, data: JSON.parse(JSON.stringify(aLayers[id])) });
+    var layerCopy = JSON.parse(JSON.stringify(aLayers[id]));
+    // Sauvegarder aussi le nom affiché
+    var nameEl = layerDivs[i].querySelector("input[type=text]");
+    if (nameEl) layerCopy.name = nameEl.value;
+    state.layers.push({ id: id, data: layerCopy });
   }
   undoHistory.push(JSON.stringify(state));
   if (undoHistory.length > MAX_HISTORY) { undoHistory.shift(); }
@@ -747,16 +752,86 @@ function redo() {
 
 function restoreHistory(idx) {
   var state = JSON.parse(undoHistory[idx]);
-  var newLayers = {};
   var layerlist = document.getElementById("layerlist");
-  for (var i = 0; i < state.layers.length; i++) {
-    newLayers[state.layers[i].id] = state.layers[i].data;
+
+  // Détacher domParams avant de vider le DOM
+  if (domParams.parentNode && domParams.parentNode !== document.getElementById("main-content")) {
+    domParams.parentNode.removeChild(domParams);
   }
-  aLayers = newLayers;
+  selectedLayerId = null;
+
+  // Vider complètement le DOM de la liste de calques
+  layerlist.innerHTML = "";
+
+  // Reconstruire ddcount à partir des IDs sauvegardés
+  var maxId = -1;
   for (var i = 0; i < state.order.length; i++) {
-    var el = document.getElementById(state.order[i]);
-    if (el) layerlist.appendChild(el);
+    var numPart = parseInt(state.order[i].replace("dragdropdiv",""), 10);
+    if (numPart > maxId) maxId = numPart;
   }
+  ddcount = maxId + 1;
+
+  // Recréer aLayers et reconstruire les divs DOM
+  aLayers = {};
+  for (var i = 0; i < state.layers.length; i++) {
+    var savedId   = state.layers[i].id;
+    var savedData = state.layers[i].data;
+    aLayers[savedId] = savedData;
+
+    // Recréer le div DOM pour ce calque
+    var isBase = (savedId === "dragdropdiv0");
+    var toAdd = document.createElement("div");
+    toAdd.id = savedId;
+    toAdd.classList.add("divRec");
+    if (!isBase) toAdd.draggable = true;
+
+    if (!isBase) {
+      var cb = document.createElement("input");
+      cb.type = "checkbox"; cb.classList.add("groupcheck"); cb.classList.add("vis-hidden"); cb.checked = false;
+      toAdd.appendChild(cb);
+    }
+
+    var childAdd = document.createElement("div");
+    childAdd.classList.add("inside");
+    childAdd.onclick = selectLayer;
+
+    var nameInput = document.createElement("input");
+    nameInput.type = "text";
+    nameInput.id = "layername" + savedId.replace("dragdropdiv","");
+    nameInput.maxLength = 20; nameInput.size = 15;
+    nameInput.value = savedData.name || (isBase ? "Base" : savedData.type || "");
+    nameInput.onchange = function() { updateLayerName(this); };
+    childAdd.appendChild(nameInput);
+
+    if (!isBase) {
+      var lk = document.createElement("span");
+      lk.className = "layer-lock";
+      lk.title = savedData.locked ? "Déverrouiller" : "Verrouiller";
+      lk.innerText = savedData.locked ? "🔒" : "🔓";
+      lk.style.cssText = "cursor:pointer;font-size:11px;flex-shrink:0;opacity:0.7;";
+      lk.onclick = function(e) {
+        e.stopPropagation();
+        var divId = this.parentNode.parentNode.id;
+        aLayers[divId].locked = !aLayers[divId].locked;
+        this.innerText = aLayers[divId].locked ? "🔒" : "🔓";
+        this.title = aLayers[divId].locked ? "Déverrouiller" : "Verrouiller";
+        saveToHistory();
+      };
+      childAdd.appendChild(lk);
+
+      var delBtn = document.createElement("button");
+      delBtn.innerHTML = "X"; delBtn.style.float = "right";
+      delBtn.onclick = function(e) { deleteListItem(e, this); };
+      childAdd.appendChild(delBtn);
+    }
+
+    toAdd.appendChild(childAdd);
+    layerlist.appendChild(toAdd);
+  }
+
+  // Réappliquer le tri drag&drop
+  sortable(layerlist, function() {});
+
   drawProject();
   updateUndoButtons();
 }
@@ -911,9 +986,7 @@ var blockList = [
   {putUnder:"tags",             text:"",                      src:"mercury",   otherbg:"tag_otherbg"},
   {putUnder:"resources",        text:"",                      src:"asteroid",  otherbg:"res_otherbg"},
   {putUnder:"resources",        text:"",                      src:"ore",       otherbg:"res_otherbg"},
-  {putUnder:"misc",             text:"",                      src:"asset"},
-  {putUnder:"misc",             text:"Colony Tile",           src:"colonytile"},
-  {putUnder:"misc",             text:"",                      src:"population"}
+
 ];
 
 var hiddenImage = {};
@@ -978,10 +1051,12 @@ var blockDefaults = {
     {label:"Arrow",       x:413, y:429, width:116, height:55},
     {label:"Asterisk",    x:413, y:643, width:55,  height:55},
     {label:"Slash",       x:413, y:643, width:55,  height:146},
+    {label:"Chairman",    x:413, y:643, width:82,  height:82},
     {label:"Colon",       x:413, y:643, width:11,  height:55},
     {label:"Delegate",    x:413, y:643, width:77,  height:99},
     {label:"Effect (bg)", x:631, y:307, width:346, height:36},
     {label:"Influence",   x:413, y:643, width:117, height:122},
+    {label:"Party Leader",x:413, y:643, width:82,  height:122},
     {label:"Tag Holder 0",x:969, y:103, width:257, height:89},
     {label:"Tag Holder 1",x:898, y:103, width:257, height:89},
     {label:"Tag Holder 2",x:794, y:103, width:257, height:89}
@@ -997,8 +1072,8 @@ var blockDefaults = {
     {label:"3x width",    width:325}
   ],
   line: [
-    {label:"Flavor 1 ligne",  x:240, y:1012, width:2, angle:0, len:350},
-    {label:"Flavor 2 lignes", x:240, y:986,  width:2, angle:0, len:350}
+    {label:"Flavor 1 ligne",  x:60,  y:1012, width:2, angle:0, len:706},
+    {label:"Flavor 2 lignes", x:60,  y:986,  width:2, angle:0, len:706}
   ]
 };
 
@@ -1006,7 +1081,7 @@ var megaTemplates = {
   green_normal: { layers: [
     {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
     {type:"block", iNum:0,  x:0,   y:0,   width:826, height:1126, params:"allimages"},
-    {type:"text",  data:"Cost",        x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
+    {type:"text",  data:"10",        x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
     {type:"text",  data:"CARD NAME",   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",    x:413, y:612,  width:826, height:24, color:"#24770d", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
@@ -1017,7 +1092,7 @@ var megaTemplates = {
   green_big_bottom: { layers: [
     {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
     {type:"block", iNum:2,  x:0,   y:0,   width:826, height:1126, params:"allimages"},
-    {type:"text",  data:"Cost",        x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
+    {type:"text",  data:"10",        x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
     {type:"text",  data:"CARD NAME",   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",    x:413, y:562,  width:826, height:24, color:"#24770d", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
@@ -1028,7 +1103,7 @@ var megaTemplates = {
   green_small_bottom: { layers: [
     {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
     {type:"block", iNum:1,  x:0,   y:0,   width:826, height:1126, params:"allimages"},
-    {type:"text",  data:"Cost",        x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
+    {type:"text",  data:"10",        x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
     {type:"text",  data:"CARD NAME",   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",    x:413, y:664,  width:826, height:24, color:"#24770d", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
@@ -1039,7 +1114,7 @@ var megaTemplates = {
   blue_normal: { layers: [
     {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
     {type:"block", iNum:3,  x:0,   y:0,   width:826, height:1126, params:"allimages"},
-    {type:"text",  data:"Cost",              x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
+    {type:"text",  data:"10",              x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
     {type:"text",  data:"CARD NAME",         x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",          x:413, y:798,  width:826, height:24, color:"#0c5e84", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
@@ -1052,7 +1127,7 @@ var megaTemplates = {
   blue_big_bottom: { layers: [
     {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
     {type:"block", iNum:4,  x:0,   y:0,   width:826, height:1126, params:"allimages"},
-    {type:"text",  data:"Cost",              x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
+    {type:"text",  data:"10",              x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
     {type:"text",  data:"CARD NAME",         x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",          x:413, y:753,  width:702, height:24, color:"#0c5e84", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
@@ -1065,7 +1140,7 @@ var megaTemplates = {
   blue_big_top: { layers: [
     {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
     {type:"block", iNum:5,  x:0,   y:0,   width:826, height:1126, params:"allimages"},
-    {type:"text",  data:"Cost",              x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
+    {type:"text",  data:"10",              x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
     {type:"text",  data:"CARD NAME",         x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",          x:413, y:849,  width:702, height:24, color:"#0c5e84", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
@@ -1078,7 +1153,7 @@ var megaTemplates = {
   red_normal: { layers: [
     {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
     {type:"block", iNum:6,  x:0,   y:0,   width:826, height:1126, params:"allimages"},
-    {type:"text",  data:"Cost",        x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
+    {type:"text",  data:"10",        x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
     {type:"text",  data:"CARD NAME",   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",    x:413, y:685,  width:826, height:24, color:"#c36a17", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
@@ -1089,7 +1164,7 @@ var megaTemplates = {
   red_small_bottom: { layers: [
     {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
     {type:"block", iNum:7,  x:0,   y:0,   width:826, height:1126, params:"allimages"},
-    {type:"text",  data:"Cost",        x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
+    {type:"text",  data:"10",        x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
     {type:"text",  data:"CARD NAME",   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",    x:413, y:718,  width:826, height:24, color:"#c36a17", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
@@ -1100,7 +1175,6 @@ var megaTemplates = {
   prelude: { layers: [
     {type:"base",  color:"#ffffff", height:826, width:1126, params:"color"},
     {type:"block", iNum:92, x:0,   y:0,   width:1126, height:826, params:"allimages"},
-    {type:"block", iNum:94, x:937, y:67,  width:257,  height:89,  params:"allimages allpreset", locked:true, _appliedPreset:"Tag Holder 0"},
     {type:"text",  data:"CARD NAME",   x:563, y:218, width:826, height:48, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"text",  data:"FAN MADE",    x:563, y:500, width:826, height:24, color:"#ce809f", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"text",  data:"P R E L U D E", x:563, y:99, width:826, height:24, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
@@ -1125,8 +1199,35 @@ var megaTemplates = {
 // PLACEMENT AUTOMATIQUE DES PRESETS
 // ============================================================
 
-// Compteurs pour anti-superposition (Point 7)
+// Compteurs pour anti-superposition
 var antiOverlapCounters = {};
+// Positions courantes pour le système wrap
+var wrapPositions = {}; // { putUnder: {x, y, rowMaxH} }
+
+var WRAP_START_X = 80;
+var WRAP_START_Y = 300;
+var WRAP_GAP     = 8;
+var WRAP_CARD_W  = 826; // largeur de la carte (mise à jour dynamiquement)
+var WRAP_MARGIN  = 60;  // marge droite
+
+function getWrapPosition(putUnder, elemW, elemH) {
+  if (!wrapPositions[putUnder]) {
+    wrapPositions[putUnder] = { x: WRAP_START_X, y: WRAP_START_Y, rowMaxH: 0 };
+  }
+  var wp = wrapPositions[putUnder];
+  var cardW = WRAP_CARD_W;
+  // Si l'élément dépasse le bord droit, retour à la ligne
+  if (wp.x + elemW > cardW - WRAP_MARGIN) {
+    wp.x = WRAP_START_X;
+    wp.y = wp.y + wp.rowMaxH + WRAP_GAP;
+    wp.rowMaxH = 0;
+  }
+  var posX = wp.x;
+  var posY = wp.y;
+  wp.x += elemW + WRAP_GAP;
+  if (elemH > wp.rowMaxH) wp.rowMaxH = elemH;
+  return { x: posX, y: posY };
+}
 
 function getAntiOverlapOffset(putUnder) {
   if (!antiOverlapCounters[putUnder]) antiOverlapCounters[putUnder] = 0;
@@ -1143,78 +1244,62 @@ function applyDefaultPreset(layer, putUnder, srcName) {
     if (tagCount < 3) {
       preset = blockDefaults.tags[tagCount];
     } else {
-      // À partir du 4ème tag : Small Tag (82x82)
-      var extraIdx = tagCount - 3;
-      preset = {
-        x: 200 + (extraIdx % 4) * 100,
-        y: 400 + Math.floor(extraIdx / 4) * 100,
-        width: 82, height: 82
-      };
+      // À partir du 4ème tag : Small Tag (82x82) avec wrap
+      var tagPos = getWrapPosition("tags_extra", 82, 82);
+      preset = { x: tagPos.x, y: tagPos.y, width: 82, height: 82 };
     }
     tagCount++;
   } else if (putUnder === "resources") {
-    // Preset automatique selon le type de ressource (Point 6)
+    // Preset automatique selon le type de ressource
     var resPreset = null;
     if (srcName === "card") {
       resPreset = blockDefaults.resources[1]; // Card
     } else if (srcName === "TR") {
       resPreset = blockDefaults.resources[2]; // TR
     } else {
-      // Anti-superposition pour ressources (Point 7)
-      var off = getAntiOverlapOffset("resources");
-      resPreset = {
-        x: 413 + (off % 5) * 100,
-        y: 643 + Math.floor(off / 5) * 110,
-        width: blockDefaults.resources[0].width,
-        height: blockDefaults.resources[0].height
-      };
+      var resW = blockDefaults.resources[0].width, resH = blockDefaults.resources[0].height;
+      var resPos = getWrapPosition("resources", resW, resH);
+      resPreset = { x: resPos.x, y: resPos.y, width: resW, height: resH };
     }
     preset = resPreset;
   } else if (putUnder === "tiles") {
-    // Anti-superposition pour tuiles, preset Standard tile
-    var offT = getAntiOverlapOffset("tiles");
-    var tileW = 142, tileH = 142;
-    if (srcName === "colony" || srcName === "trade") { tileW = 142; tileH = 120; }
-    if (srcName === "off-world_city" || srcName === "greenery_no_O2") { tileW = 171; tileH = 142; }
-    preset = {
-      x: 300 + (offT % 4) * 160,
-      y: 500 + Math.floor(offT / 4) * 160,
-      width: tileW,
-      height: tileH
-    };
+    var tileW = 142, tileH = (srcName === "colony" || srcName === "trade") ? 120 : 142;
+    var tilePos = getWrapPosition("tiles", tileW, tileH);
+    preset = { x: tilePos.x, y: tilePos.y, width: tileW, height: tileH };
   } else if (putUnder === "globalparameters") {
-    // Anti-superposition pour params globaux (Point 7)
-    var offG = getAntiOverlapOffset("globalparameters");
     // Trouver le bon preset "Corps de carte" selon la src
-    var gpPreset = null;
-    if (srcName === "oxygen")      gpPreset = blockDefaults.globalparameters[0];
-    else if (srcName === "temperature") gpPreset = blockDefaults.globalparameters[2];
-    else if (srcName === "venus")   gpPreset = blockDefaults.globalparameters[4];
-    else gpPreset = blockDefaults.globalparameters[0];
-    preset = {
-      x: gpPreset.x + (offG % 4) * 130,
-      y: gpPreset.y + Math.floor(offG / 4) * 130,
-      width: gpPreset.width,
-      height: gpPreset.height
-    };
+    var gpPreset2 = null;
+    if (srcName === "oxygen")           gpPreset2 = blockDefaults.globalparameters[0];
+    else if (srcName === "temperature") gpPreset2 = blockDefaults.globalparameters[2];
+    else if (srcName === "venus")       gpPreset2 = blockDefaults.globalparameters[4];
+    else                                gpPreset2 = blockDefaults.globalparameters[0];
+    var gpPos = getWrapPosition("globalparameters", gpPreset2.width, gpPreset2.height);
+    preset = { x: gpPos.x, y: gpPos.y, width: gpPreset2.width, height: gpPreset2.height };
   } else if (putUnder === "parties") {
-    // Anti-superposition pour partis (Point 7)
-    var offP = getAntiOverlapOffset("parties");
-    preset = {
-      x: 413 + (offP % 4) * 180,
-      y: 643 + Math.floor(offP / 4) * 130,
-      width: blockDefaults.parties[0].width,
-      height: blockDefaults.parties[0].height
-    };
+    var pW = blockDefaults.parties[0].width, pH = blockDefaults.parties[0].height;
+    var pPos = getWrapPosition("parties", pW, pH);
+    preset = { x: pPos.x, y: pPos.y, width: pW, height: pH };
   } else if (putUnder === "misc") {
-    // Anti-superposition pour divers (Point 7)
-    var offM = getAntiOverlapOffset("misc");
-    preset = {
-      x: 413 + (offM % 5) * 110,
-      y: 643 + Math.floor(offM / 5) * 110,
-      width: blockDefaults.misc[0].width,
-      height: blockDefaults.misc[0].height
+    // Trouver le preset misc correspondant à la src
+    var miscPresetW = blockDefaults.misc[0].width, miscPresetH = blockDefaults.misc[0].height;
+    var srcToMiscLabel = {
+      "megacredit":"MC", "arrow":"Arrow", "asterisc":"Asterisk", "bar":"Slash",
+      "chairman":"Chairman", "colon":"Colon", "delegate":"Delegate", "effect":"Effect (bg)",
+      "influence":"Influence", "party_leader":"Party Leader",
+      "corp_tag_holder":"Tag Holder 0"
     };
+    var miscLabel = srcToMiscLabel[srcName];
+    if (miscLabel) {
+      for (var mi = 0; mi < blockDefaults.misc.length; mi++) {
+        if (blockDefaults.misc[mi].label === miscLabel) {
+          miscPresetW = blockDefaults.misc[mi].width;
+          miscPresetH = blockDefaults.misc[mi].height;
+          break;
+        }
+      }
+    }
+    var mPos = getWrapPosition("misc", miscPresetW, miscPresetH);
+    preset = { x: mPos.x, y: mPos.y, width: miscPresetW, height: miscPresetH };
   } else if (putUnder === "VPs" || putUnder === "requisites") {
     preset = blockDefaults[putUnder][0];
   } else {
@@ -1255,7 +1340,10 @@ function startTemplate(name) {
   if (!megaTemplates || !megaTemplates[name]) return;
   document.getElementById("layerlist").innerHTML = "";
   ddcount = 0; aLayers = {}; tagCount = 0; undoHistory = []; undoIndex = -1;
-  antiOverlapCounters = {}; // Reset des compteurs anti-superposition
+  antiOverlapCounters = {}; wrapPositions = {}; // Reset des compteurs
+  // Mettre à jour la largeur de la carte pour le wrap
+  var tplData = megaTemplates[name];
+  if (tplData && tplData.layers && tplData.layers[0]) WRAP_CARD_W = tplData.layers[0].width || 826;
   addLayer("Base", {type:"base", color:"#ffffff", height:1126, width:826, params:"color"});
   loadFrom(megaTemplates[name].layers);
   // Point 11 : verrouiller tous les calques sauf Card description
@@ -1489,6 +1577,25 @@ function selectLayer() {
   }
   clickedNode.appendChild(domParams);
 
+  // Afficher "Figer hauteur" seulement pour min/max requirement
+  var lockedHeightRow = document.getElementById("locked-height-row");
+  var lockedHeightCb  = document.getElementById("inputlockedHeight");
+  var inputHeightEl   = document.getElementById("inputheight");
+  if (lockedHeightRow && thisLayer.type === "block" && blockList[thisLayer.iNum]) {
+    var reqSrc = blockList[thisLayer.iNum].src;
+    if (reqSrc === "max_big" || reqSrc === "min_medium") {
+      lockedHeightRow.style.display = "";
+      if (lockedHeightCb) lockedHeightCb.checked = !!thisLayer.lockedHeight;
+      if (inputHeightEl) inputHeightEl.disabled = !!thisLayer.lockedHeight;
+    } else {
+      lockedHeightRow.style.display = "none";
+      if (inputHeightEl) inputHeightEl.disabled = false;
+    }
+  } else {
+    if (lockedHeightRow) lockedHeightRow.style.display = "none";
+    if (inputHeightEl) inputHeightEl.disabled = false;
+  }
+
   // Point 6/10/14 : masquer le menu preset pour certaines catégories
   var allpresetDiv = document.getElementById("allpreset");
   if (allpresetDiv) {
@@ -1558,7 +1665,10 @@ function drawProject() {
             }
           } else if (bgImg.complete) {
             var brdr = layer.obgSize !== undefined ? Number(layer.obgSize) : 6;
-            ctx.drawImage(bgImg, layer.x-brdr, layer.y-brdr, layer.width+2*brdr, layer.height+2*brdr);
+            // Offset spécifique pour colony/trade (forme triangulaire) : décaler 3px vers le haut
+            var bgOffsetY = 0;
+            if (tileSrc === "colony" || tileSrc === "trade") bgOffsetY = -3;
+            ctx.drawImage(bgImg, layer.x-brdr, layer.y-brdr+bgOffsetY, layer.width+2*brdr, layer.height+2*brdr);
           }
         }
         if (!blockList[layer.iNum].obj) {
@@ -1837,7 +1947,7 @@ function resetProject(loadautosave) {
   document.getElementById("layerlist").innerHTML = "";
   ddcount = 0; aLayers = {}; tagCount = 0;
   undoHistory = []; undoIndex = -1;
-  antiOverlapCounters = {};
+  antiOverlapCounters = {}; wrapPositions = {};
   groupSelection = [];
   document.getElementById("xcanvases").innerHTML = "";
   aCanvases = [];
@@ -2059,9 +2169,15 @@ function updateValue(th) {
         }
       }
     }
+    // Hauteur figée pour min/max requirement
+    if (fieldName === "height" && aLayers[layerName].lockedHeight) {
+      return; // Ignorer toute modification de hauteur
+    }
     // Ratio proportionnel
     if (arAlt[fieldName] && !reloading && aLayers[layerName].type !== "text") {
-      if (document.getElementById(arAlt[fieldName][1]).checked) {
+      var ratioLocked = document.getElementById(arAlt[fieldName][1]).checked;
+      // Si hauteur figée, ne jamais modifier la hauteur même avec ratio
+      if (ratioLocked && !(aLayers[layerName].lockedHeight && arAlt[fieldName][0] === "height")) {
         var otherValue = newValue * aLayers[layerName][arAlt[fieldName][0]] / aLayers[layerName][fieldName];
         otherValue = Math.round(otherValue * 1000) / 1000;
         if (otherValue && Math.abs(otherValue - Math.round(otherValue)) < 0.01) otherValue = Math.round(otherValue);
@@ -2074,6 +2190,12 @@ function updateValue(th) {
     aLayers[layerName][fieldName] = th.checked;
     // Persister l'état du ratio fixe par calque
     if (th.id === "lar") { aLayers[layerName].lockedRatio = th.checked; }
+    // Figer/dégeler la hauteur pour min/max requirement
+    if (th.id === "inputlockedHeight") {
+      aLayers[layerName].lockedHeight = th.checked;
+      var ihEl = document.getElementById("inputheight");
+      if (ihEl) ihEl.disabled = th.checked;
+    }
   } else {
     if (th.id === "inputfont") aLayers[layerName].filename = fontList[th.value];
     aLayers[layerName][fieldName] = th.value;
@@ -2246,20 +2368,25 @@ function addBlock(th) {
     }
   }
 
-  // Point 8 : presets auto pour prérequis
+  // Presets auto pour prérequis
   if (thisBlock.putUnder === "requisites") {
     if (thisBlock.src === "max_big") {
       var mp = blockDefaults.requisites[0];
       layer.x = mp.x; layer.y = mp.y; layer.width = mp.width; layer.height = mp.height;
       layer._appliedPreset = "Max";
+      layer.lockedRatio = false;   // ratio fixe décoché
+      layer.lockedHeight = true;   // hauteur figée
     } else if (thisBlock.src === "min_medium") {
       var mnp = blockDefaults.requisites[1];
       layer.x = mnp.x; layer.y = mnp.y; layer.width = mnp.width; layer.height = mnp.height;
       layer._appliedPreset = "Min";
+      layer.lockedRatio = false;   // ratio fixe décoché
+      layer.lockedHeight = true;   // hauteur figée
     } else if (thisBlock.src === "normal") {
       var nrp = blockDefaults.requisites[2];
       layer.x = nrp.x; layer.y = nrp.y; layer.width = nrp.width; layer.height = nrp.height;
       layer._appliedPreset = "No Req";
+      layer.locked = true;         // no req : entièrement verrouillé
     }
   }
 
@@ -2275,13 +2402,33 @@ function addBlock(th) {
     layer._gpSrc = thisBlock.src;
   }
 
+  // Preset auto pour misc selon la src
+  if (thisBlock.putUnder === "misc") {
+    var srcToLabel = {
+      "megacredit":"MC", "arrow":"Arrow", "asterisc":"Asterisk", "bar":"Slash",
+      "chairman":"Chairman", "colon":"Colon", "delegate":"Delegate", "effect":"Effect (bg)",
+      "influence":"Influence", "party_leader":"Party Leader",
+      "corp_tag_holder":"Tag Holder 0"
+    };
+    var mLabel = srcToLabel[thisBlock.src];
+    if (mLabel) {
+      for (var mdi = 0; mdi < blockDefaults.misc.length; mdi++) {
+        if (blockDefaults.misc[mdi].label === mLabel) {
+          var md = blockDefaults.misc[mdi];
+          layer.x = md.x; layer.y = md.y; layer.width = md.width; layer.height = md.height;
+          layer._appliedPreset = mLabel;
+          break;
+        }
+      }
+    }
+  }
+
   // Preset auto pour tuiles avec dimensions correctes selon le type
   if (thisBlock.putUnder === "tiles") {
     if (thisBlock.src === "colony" || thisBlock.src === "trade") {
       layer.width = 142; layer.height = 120;
-    } else if (thisBlock.src === "off-world_city" || thisBlock.src === "greenery_no_O2") {
-      layer.width = 171; layer.height = 142;
     } else {
+      // greenery, greenery_no_O2, off-world_city, city, ocean, etc. : 142x142
       if (!layer.width)  layer.width  = 142;
       if (!layer.height) layer.height = 142;
     }
@@ -2377,16 +2524,15 @@ function addEffectBox() {
 
 type2FuncList.line = addLine;
 function addLine() {
-  // Une seule ligne autorisée par carte
+  // Une seule ligne autorisée par carte — si elle existe déjà, on ne fait rien
   var layerDivs = document.getElementsByClassName("divRec");
   for (var i = 0; i < layerDivs.length; i++) {
     if (aLayers[layerDivs[i].id] && aLayers[layerDivs[i].id].type === "line") {
-      alert("Une seule ligne est autorisée par carte.");
       return aLayers[layerDivs[i].id];
     }
   }
   // Point 12 : valeurs par défaut corrigées + preset allpreset pour ligne
-  var layer = {type:"line", x:240, y:1012, width:2, angle:0, len:350, color:"#000000", opacity:1, locked:true, params:"allangle alllen allpreset color"};
+  var layer = {type:"line", x:60,  y:1012, width:2, angle:0, len:706, color:"#000000", opacity:1, locked:true, params:"allangle alllen allpreset color"};
   layer._appliedPreset = "Flavor 1 ligne";
   var newLayer = addLayer("Ligne", layer);
   drawProject();
@@ -2722,20 +2868,22 @@ function drag(event) {
     var newX = resizeStartLayerX, newY = resizeStartLayerY;
     var ratio = resizeStartH / resizeStartW;
 
+    // Redimensionnement libre pour production et effect, sinon ratio fixe
+    var freeResize = (layerToDrag.type === "production" || layerToDrag.type === "effect");
     if (resizeHandle === "se") {
       newW = Math.max(10, resizeStartW + dx);
-      newH = Math.round(newW * ratio);
+      newH = freeResize ? Math.max(10, resizeStartH + dy) : Math.round(newW * ratio);
     } else if (resizeHandle === "sw") {
       newW = Math.max(10, resizeStartW - dx);
-      newH = Math.round(newW * ratio);
+      newH = freeResize ? Math.max(10, resizeStartH + dy) : Math.round(newW * ratio);
       newX = resizeStartLayerX + resizeStartW - newW;
     } else if (resizeHandle === "ne") {
       newW = Math.max(10, resizeStartW + dx);
-      newH = Math.round(newW * ratio);
-      newY = resizeStartLayerY + resizeStartH - newH;
+      newH = freeResize ? Math.max(10, resizeStartH - dy) : Math.round(newW * ratio);
+      newY = freeResize ? resizeStartLayerY + resizeStartH - newH : resizeStartLayerY + resizeStartH - newH;
     } else if (resizeHandle === "nw") {
       newW = Math.max(10, resizeStartW - dx);
-      newH = Math.round(newW * ratio);
+      newH = freeResize ? Math.max(10, resizeStartH - dy) : Math.round(newW * ratio);
       newX = resizeStartLayerX + resizeStartW - newW;
       newY = resizeStartLayerY + resizeStartH - newH;
     }
