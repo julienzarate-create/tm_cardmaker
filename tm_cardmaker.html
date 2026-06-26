@@ -65,7 +65,7 @@ textarea { overflow: auto; }
   --border: rgba(232,101,26,0.22);
   --text: #F0E6D3;
   --muted: #8A7E6E;
-  --sidebar: 260px;
+  --sidebar: 480px;
 }
 
 body {
@@ -182,15 +182,15 @@ body {
 .sb-sec-btn.open .arr { transform: rotate(180deg); }
 .sb-content { display: none; background: rgba(0,0,0,0.15); }
 .sb-content.open { display: block; }
-.sb-icon-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 5px; padding: 8px; }
+.sb-icon-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 4px; padding: 6px; }
 .sb-icon {
-  display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 3px;
+  display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 5px 3px;
   border-radius: 5px; background: var(--panel); border: 1px solid var(--border);
   cursor: pointer; transition: all 0.15s; text-decoration: none;
 }
 .sb-icon:hover { background: var(--mars); border-color: var(--rust); }
-.sb-icon img { width: 34px; height: 34px; object-fit: contain; border-radius: 3px; }
-.sb-icon span { font-size: 8px; color: var(--muted); text-align: center; line-height: 1.2; }
+.sb-icon img { width: 38px; height: 38px; object-fit: contain; border-radius: 3px; }
+.sb-icon span { font-size: 8px; color: var(--muted); text-align: center; line-height: 1.2; max-width: 56px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sb-icon:hover span { color: #fff; }
 .sb-item {
   display: block; padding: 7px 18px; color: var(--text); font-size: 12px;
@@ -220,6 +220,11 @@ body {
   border: 2px solid var(--border); border-radius: 4px; flex-shrink: 0;
   box-shadow: 0 0 36px rgba(193,68,14,0.1), 0 4px 20px rgba(0,0,0,0.6);
   background: #111; cursor: default;
+  max-height: calc(100vh - 40px);
+  max-width: calc(100vw - var(--sidebar) - 310px);
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain;
 }
 /* Curseur pendant le drag sur le canvas */
 #cmcanvas.dragging { cursor: grabbing; }
@@ -377,11 +382,11 @@ input[type=number] { width: auto; }
       <div class="tpl-name">Carte Rouge</div><div class="tpl-sub">Petit bas</div>
     </div>
     <div class="tpl-card" onclick="startTemplate('prelude')">
-      <div class="tpl-thumb tc-purple"><img src="templates/prelude.png" alt="" onerror="this.parentNode.innerHTML='💜'"></div>
+      <div class="tpl-thumb tc-purple" style="width:92px;height:66px;"><img src="templates/prelude.png" alt="" onerror="this.parentNode.innerHTML='💜'"></div>
       <div class="tpl-name">Prélude</div><div class="tpl-sub">Horizontale</div>
     </div>
     <div class="tpl-card" onclick="startTemplate('corporation')">
-      <div class="tpl-thumb tc-dark"><img src="templates/corporation.png" alt="" onerror="this.parentNode.innerHTML='🏢'"></div>
+      <div class="tpl-thumb tc-dark" style="width:92px;height:66px;"><img src="templates/corporation.png" alt="" onerror="this.parentNode.innerHTML='🏢'"></div>
       <div class="tpl-name">Corporation</div><div class="tpl-sub">Horizontale</div>
     </div>
   </div>
@@ -446,49 +451,63 @@ input[type=number] { width: auto; }
       <a onclick="clickSaveProject()" href="#" class="sb-item">📦 Exporter projet</a>
     </div>
   </div>
-  <div class="sb-sec">
-    <button class="sb-sec-btn open" onclick="toggleSec(this,'st')">Tags <span class="arr">▼</span></button>
-    <div class="sb-content open" id="st"><div class="sb-icon-grid" id="tags"></div></div>
-  </div>
-  <div class="sb-sec">
-    <button class="sb-sec-btn open" onclick="toggleSec(this,'sr')">Ressources <span class="arr">▼</span></button>
-    <div class="sb-content open" id="sr"><div class="sb-icon-grid" id="resources"></div></div>
-  </div>
-  <div class="sb-sec">
-    <button class="sb-sec-btn" onclick="toggleSec(this,'sti')">Tuiles <span class="arr">▼</span></button>
-    <div class="sb-content" id="sti"><div class="sb-icon-grid" id="tiles"></div></div>
-  </div>
-  <div class="sb-sec">
-    <button class="sb-sec-btn" onclick="toggleSec(this,'sv')">Points de victoire <span class="arr">▼</span></button>
-    <div class="sb-content" id="sv"><div class="sb-icon-grid" id="VPs"></div></div>
-  </div>
-  <div class="sb-sec">
-    <button class="sb-sec-btn" onclick="toggleSec(this,'sq')">Prérequis <span class="arr">▼</span></button>
-    <div class="sb-content" id="sq"><div class="sb-icon-grid" id="requisites"></div></div>
-  </div>
-  <div class="sb-sec">
-    <button class="sb-sec-btn" onclick="toggleSec(this,'sg')">Params globaux <span class="arr">▼</span></button>
-    <div class="sb-content" id="sg"><div class="sb-icon-grid" id="globalparameters"></div></div>
-  </div>
-  <div class="sb-sec">
-    <button class="sb-sec-btn" onclick="toggleSec(this,'sp')">Partis <span class="arr">▼</span></button>
-    <div class="sb-content" id="sp"><div class="sb-icon-grid" id="parties"></div></div>
-  </div>
-  <div class="sb-sec">
-    <button class="sb-sec-btn" onclick="toggleSec(this,'sm')">Divers <span class="arr">▼</span></button>
-    <div class="sb-content" id="sm"><div class="sb-icon-grid" id="misc"></div></div>
-  </div>
-  <div class="sb-sec">
-    <button class="sb-sec-btn" onclick="toggleSec(this,'so')">Texte &amp; outils <span class="arr">▼</span></button>
-    <div class="sb-content" id="so">
-      <a onclick="addTextBox()" href="#" class="sb-item">🔤 Zone de texte</a>
-      <a onclick="addProduction()" href="#" class="sb-item">⬛ Boîte production</a>
-      <a onclick="addEffectBox()" href="#" class="sb-item">✦ Boîte effet</a>
-      <a onclick="addLine()" href="#" class="sb-item">— Ligne</a>
-      <a onclick="openOverlay('overlay')" href="#" class="sb-item">🌐 Image web</a>
-      <a onclick="document.getElementById('fileselection').click()" href="#" class="sb-item">📁 Image locale</a>
-      <a onclick="openOverlay('fontoverlay')" href="#" class="sb-item">🔡 Police web</a>
-      <input type="file" id="fileselection" class="hidden" onchange="addUserFile(this)">
+  <!-- Layout 2 colonnes pour les blocs -->
+  <style>
+  .sb-two-cols { display: flex; gap: 0; }
+  .sb-col { flex: 1; min-width: 0; border-right: 1px solid var(--border); }
+  .sb-col:last-child { border-right: none; }
+  .sb-col .sb-sec { border-bottom: 1px solid var(--border); }
+  .sb-col .sb-sec-btn { font-size: 9px; padding: 7px 8px; }
+  </style>
+  <div class="sb-two-cols">
+    <div class="sb-col">
+      <div class="sb-sec">
+        <button class="sb-sec-btn open" onclick="toggleSec(this,'st')">Tags <span class="arr">▼</span></button>
+        <div class="sb-content open" id="st"><div class="sb-icon-grid" id="tags"></div></div>
+      </div>
+      <div class="sb-sec">
+        <button class="sb-sec-btn open" onclick="toggleSec(this,'sr')">Ressources <span class="arr">▼</span></button>
+        <div class="sb-content open" id="sr"><div class="sb-icon-grid" id="resources"></div></div>
+      </div>
+      <div class="sb-sec">
+        <button class="sb-sec-btn" onclick="toggleSec(this,'sti')">Tuiles <span class="arr">▼</span></button>
+        <div class="sb-content" id="sti"><div class="sb-icon-grid" id="tiles"></div></div>
+      </div>
+      <div class="sb-sec">
+        <button class="sb-sec-btn" onclick="toggleSec(this,'sv')">Points de victoire <span class="arr">▼</span></button>
+        <div class="sb-content" id="sv"><div class="sb-icon-grid" id="VPs"></div></div>
+      </div>
+    </div>
+    <div class="sb-col">
+      <div class="sb-sec">
+        <button class="sb-sec-btn" onclick="toggleSec(this,'sq')">Prérequis <span class="arr">▼</span></button>
+        <div class="sb-content" id="sq"><div class="sb-icon-grid" id="requisites"></div></div>
+      </div>
+      <div class="sb-sec">
+        <button class="sb-sec-btn" onclick="toggleSec(this,'sg')">Params globaux <span class="arr">▼</span></button>
+        <div class="sb-content" id="sg"><div class="sb-icon-grid" id="globalparameters"></div></div>
+      </div>
+      <div class="sb-sec">
+        <button class="sb-sec-btn" onclick="toggleSec(this,'sp')">Partis <span class="arr">▼</span></button>
+        <div class="sb-content" id="sp"><div class="sb-icon-grid" id="parties"></div></div>
+      </div>
+      <div class="sb-sec">
+        <button class="sb-sec-btn" onclick="toggleSec(this,'sm')">Divers <span class="arr">▼</span></button>
+        <div class="sb-content" id="sm"><div class="sb-icon-grid" id="misc"></div></div>
+      </div>
+      <div class="sb-sec">
+        <button class="sb-sec-btn" onclick="toggleSec(this,'so')">Texte &amp; outils <span class="arr">▼</span></button>
+        <div class="sb-content" id="so">
+          <a onclick="addTextBox()" href="#" class="sb-item">🔤 Zone de texte</a>
+          <a onclick="addProduction()" href="#" class="sb-item">⬛ Boîte production</a>
+          <a onclick="addEffectBox()" href="#" class="sb-item">✦ Boîte effet</a>
+          <a onclick="addLine()" href="#" class="sb-item">— Ligne</a>
+          <a onclick="openOverlay('overlay')" href="#" class="sb-item">🌐 Image web</a>
+          <a onclick="document.getElementById('fileselection').click()" href="#" class="sb-item">📁 Image locale</a>
+          <a onclick="openOverlay('fontoverlay')" href="#" class="sb-item">🔡 Police web</a>
+          <input type="file" id="fileselection" class="hidden" onchange="addUserFile(this)">
+        </div>
+      </div>
     </div>
   </div>
   <!-- Conteneurs cachés pour la compatibilité JS -->
@@ -755,6 +774,12 @@ function updateUndoButtons() {
   if (rt) rt.disabled = !canRedo;
 }
 
+var _historySaveTimer = null;
+function debounceSaveHistory() {
+  if (_historySaveTimer) clearTimeout(_historySaveTimer);
+  _historySaveTimer = setTimeout(function() { saveToHistory(); }, 800);
+}
+
 document.addEventListener("keydown", function(e) {
   if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
   if (e.ctrlKey && e.key === "z") { e.preventDefault(); undo(); }
@@ -856,14 +881,14 @@ var blockList = [
   {putUnder:"tags",             text:"",                      src:"venus",     otherbg:"tag_otherbg"},
   {putUnder:"tags",             text:"",                      src:"wild",      otherbg:"tag_otherbg"},
   {putUnder:"tiles",            text:"",                      src:"city",      otherbg:"tiles_otherbg"},
-  {putUnder:"tiles",            text:"",                      src:"colony"},
+  {putUnder:"tiles",            text:"",                      src:"colony",   otherbg:"tiles_colony_otherbg"},
   {putUnder:"tiles",            text:"",                      src:"empty",     otherbg:"tiles_otherbg"},
   {putUnder:"tiles",            text:"",                      src:"greenery_no_O2", otherbg:"tiles_otherbg"},
   {putUnder:"tiles",            text:"",                      src:"greenery",  otherbg:"tiles_otherbg"},
   {putUnder:"tiles",            text:"",                      src:"ocean",     otherbg:"tiles_otherbg"},
   {putUnder:"tiles",            text:"",                      src:"off-world_city", otherbg:"tiles_otherbg"},
   {putUnder:"tiles",            text:"",                      src:"special",   otherbg:"tiles_otherbg"},
-  {putUnder:"tiles",            text:"",                      src:"trade"},
+  {putUnder:"tiles",            text:"",                      src:"trade",    otherbg:"tiles_colony_otherbg"},
   {putUnder:"VPs",              text:"VP 1/",                 src:"1_for"},
   {putUnder:"VPs",              text:"1 VP",                  src:"1"},
   {putUnder:"VPs",              text:"VP 2/",                 src:"2_for"},
@@ -871,9 +896,10 @@ var blockList = [
   {putUnder:"VPs",              text:"3 VP",                  src:"3"},
   {putUnder:"VPs",              text:"4 VP",                  src:"4"},
   {putUnder:"VPs",              text:"5 VP",                  src:"5"},
-  {putUnder:"VPs",              text:"VP background",         src:"blank"},
+  {putUnder:"VPs",              text:"VP background",         src:"blank",  otherbg:"vp_otherbg"},
   {putUnder:"VPs",              text:"-VP",                   src:"VPnegative"},
   {putUnder:"VPs",              text:"/ VP",                  src:"n_for"},
+  {putUnder:"VPs",              text:"vp_otherbg",             src:"vp_bg", hidden:true},
   {putUnder:"misc",             text:"",                      src:"party_leader"},
   {putUnder:"templates",        text:"",                      src:"prelude"},
   {putUnder:"templates",        text:"",                      src:"corporation"},
@@ -881,7 +907,7 @@ var blockList = [
   {putUnder:"misc",             text:"Effect (bg)",           src:"effect"},
   {putUnder:"tags",             text:"",                      src:"multitag",  otherbg:"tag_otherbg"},
   {putUnder:"tiles",            text:"tiles_otherbg",         src:"other_player_background", hidden:true},
-  {putUnder:"tags",             text:"",                      src:"tourism",   otherbg:"tag_otherbg"},
+  {putUnder:"tiles",            text:"tiles_colony_otherbg",  src:"colony_trade_bg", hidden:true},
   {putUnder:"tags",             text:"",                      src:"mercury",   otherbg:"tag_otherbg"},
   {putUnder:"resources",        text:"",                      src:"asteroid",  otherbg:"res_otherbg"},
   {putUnder:"resources",        text:"",                      src:"ore",       otherbg:"res_otherbg"},
@@ -981,7 +1007,7 @@ var megaTemplates = {
     {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
     {type:"block", iNum:0,  x:0,   y:0,   width:826, height:1126, params:"allimages"},
     {type:"text",  data:"Cost",        x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
-    {type:"block", iNum:37, x:179, y:97,  width:22,  height:59,  params:"allimages allpreset"},
+    {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
     {type:"text",  data:"CARD NAME",   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",    x:413, y:612,  width:826, height:24, color:"#24770d", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:110, y:770, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
@@ -992,7 +1018,7 @@ var megaTemplates = {
     {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
     {type:"block", iNum:2,  x:0,   y:0,   width:826, height:1126, params:"allimages"},
     {type:"text",  data:"Cost",        x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
-    {type:"block", iNum:37, x:179, y:97,  width:22,  height:59,  params:"allimages allpreset"},
+    {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
     {type:"text",  data:"CARD NAME",   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",    x:413, y:562,  width:826, height:24, color:"#24770d", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:110, y:770, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
@@ -1003,7 +1029,7 @@ var megaTemplates = {
     {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
     {type:"block", iNum:1,  x:0,   y:0,   width:826, height:1126, params:"allimages"},
     {type:"text",  data:"Cost",        x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
-    {type:"block", iNum:37, x:179, y:97,  width:22,  height:59,  params:"allimages allpreset"},
+    {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
     {type:"text",  data:"CARD NAME",   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",    x:413, y:664,  width:826, height:24, color:"#24770d", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:110, y:770, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
@@ -1014,7 +1040,7 @@ var megaTemplates = {
     {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
     {type:"block", iNum:3,  x:0,   y:0,   width:826, height:1126, params:"allimages"},
     {type:"text",  data:"Cost",              x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
-    {type:"block", iNum:37, x:179, y:97,  width:22,  height:59,  params:"allimages allpreset"},
+    {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
     {type:"text",  data:"CARD NAME",         x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",          x:413, y:798,  width:826, height:24, color:"#0c5e84", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:100, y:860, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
@@ -1027,7 +1053,7 @@ var megaTemplates = {
     {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
     {type:"block", iNum:4,  x:0,   y:0,   width:826, height:1126, params:"allimages"},
     {type:"text",  data:"Cost",              x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
-    {type:"block", iNum:37, x:179, y:97,  width:22,  height:59,  params:"allimages allpreset"},
+    {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
     {type:"text",  data:"CARD NAME",         x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",          x:413, y:753,  width:702, height:24, color:"#0c5e84", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:100, y:860, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
@@ -1040,7 +1066,7 @@ var megaTemplates = {
     {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
     {type:"block", iNum:5,  x:0,   y:0,   width:826, height:1126, params:"allimages"},
     {type:"text",  data:"Cost",              x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
-    {type:"block", iNum:37, x:179, y:97,  width:22,  height:59,  params:"allimages allpreset"},
+    {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
     {type:"text",  data:"CARD NAME",         x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",          x:413, y:849,  width:702, height:24, color:"#0c5e84", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:100, y:891, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
@@ -1053,7 +1079,7 @@ var megaTemplates = {
     {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
     {type:"block", iNum:6,  x:0,   y:0,   width:826, height:1126, params:"allimages"},
     {type:"text",  data:"Cost",        x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
-    {type:"block", iNum:37, x:179, y:97,  width:22,  height:59,  params:"allimages allpreset"},
+    {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
     {type:"text",  data:"CARD NAME",   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",    x:413, y:685,  width:826, height:24, color:"#c36a17", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:100, y:810, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
@@ -1064,7 +1090,7 @@ var megaTemplates = {
     {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
     {type:"block", iNum:7,  x:0,   y:0,   width:826, height:1126, params:"allimages"},
     {type:"text",  data:"Cost",        x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
-    {type:"block", iNum:37, x:179, y:97,  width:22,  height:59,  params:"allimages allpreset"},
+    {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
     {type:"text",  data:"CARD NAME",   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",    x:413, y:718,  width:826, height:24, color:"#c36a17", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:100, y:810, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
@@ -1073,7 +1099,8 @@ var megaTemplates = {
   ]},
   prelude: { layers: [
     {type:"base",  color:"#ffffff", height:826, width:1126, params:"color"},
-    {type:"block", iNum:94, x:0,   y:0,   width:1126, height:826, params:"allimages"},
+    {type:"block", iNum:92, x:0,   y:0,   width:1126, height:826, params:"allimages"},
+    {type:"block", iNum:94, x:937, y:67,  width:257,  height:89,  params:"allimages allpreset", locked:true, _appliedPreset:"Tag Holder 0"},
     {type:"text",  data:"CARD NAME",   x:563, y:218, width:826, height:48, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"text",  data:"FAN MADE",    x:563, y:500, width:826, height:24, color:"#ce809f", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"text",  data:"P R E L U D E", x:563, y:99, width:826, height:24, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
@@ -1082,10 +1109,10 @@ var megaTemplates = {
   ]},
   corporation: { layers: [
     {type:"base",   color:"#ffffff", height:826, width:1126, params:"color"},
-    {type:"block",  iNum:96, x:969, y:103, width:257,    height:89,  params:"allimages"},
-    {type:"block",  iNum:95, x:0,   y:0,   width:1126,   height:826, params:"allimages"},
+    {type:"block",  iNum:93, x:0,   y:0,   width:1126,   height:826, params:"allimages"},
+    {type:"block",  iNum:94, x:937, y:90,  width:257,    height:89,  params:"allimages allpreset", locked:true, _appliedPreset:"Tag Holder 0"},
     {type:"effect", x:600, y:300, width:400, height:300, params:"allimages allpreset"},
-    {type:"block",  iNum:97, x:631, y:307, width:345.79, height:36,  params:"allimages"},
+    {type:"block",  iNum:95, x:631, y:307, width:346,    height:36,  params:"allimages allpreset", locked:true, _appliedPreset:"Effect (bg)"},
     {type:"text",   data:"E F F E C T",             x:800, y:333, width:1126, height:22, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
     {type:"text",   data:"FAN MADE",                x:198, y:736, width:826,  height:24, color:"#c3c3c3", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
     {type:"text",   data:"C O R P O R A T I O N",  x:563, y:109, width:826,  height:24, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
@@ -1144,13 +1171,16 @@ function applyDefaultPreset(layer, putUnder, srcName) {
     }
     preset = resPreset;
   } else if (putUnder === "tiles") {
-    // Anti-superposition pour tuiles (Point 7), preset Standard tile
+    // Anti-superposition pour tuiles, preset Standard tile
     var offT = getAntiOverlapOffset("tiles");
+    var tileW = 142, tileH = 142;
+    if (srcName === "colony" || srcName === "trade") { tileW = 142; tileH = 120; }
+    if (srcName === "off-world_city" || srcName === "greenery_no_O2") { tileW = 171; tileH = 142; }
     preset = {
       x: 300 + (offT % 4) * 160,
       y: 500 + Math.floor(offT / 4) * 160,
-      width: 142,
-      height: 142
+      width: tileW,
+      height: tileH
     };
   } else if (putUnder === "globalparameters") {
     // Anti-superposition pour params globaux (Point 7)
@@ -1415,7 +1445,9 @@ function selectLayer() {
             } else {
               sub.value = thisLayer[fieldName] !== undefined ? thisLayer[fieldName] : sub.value;
             }
-          } else if (sub.id === "lar" || sub.id === "slar") {
+          } else if (sub.id === "lar") {
+            sub.checked = (thisLayer.lockedRatio !== false); // persiste par calque
+          } else if (sub.id === "slar") {
             sub.checked = true;
           } else if (sub.id === "presets") {
             var opts   = sub.getElementsByTagName("option");
@@ -1516,10 +1548,9 @@ function drawProject() {
         if (i === 0) { c.height = layer.height; c.width = layer.width; }
         if (layer.obg) {
           var bgKey = blockList[layer.iNum].otherbg;
-          // Point 18 : Greenery et Off-World City utilisent le fond de leur tuile de base
           var tileSrc = blockList[layer.iNum].src;
-          if (tileSrc === "greenery") bgKey = "tiles_otherbg";       // Greenery → fond greenery_no_O2 (même fond)
-          if (tileSrc === "off-world_city") bgKey = "tiles_otherbg"; // Off-world city → fond city
+          if (tileSrc === "greenery") bgKey = "tiles_otherbg";
+          if (tileSrc === "off-world_city") bgKey = "tiles_otherbg";
           var bgImg = otherBgList[bgKey];
           if (!bgImg) {
             for (var j = 0; j < blockList.length; j++) {
@@ -1578,6 +1609,8 @@ function drawProject() {
         break;
 
       case "line":
+        ctx.save();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.lineWidth   = layer.width;
         ctx.strokeStyle = layer.color;
         ctx.translate(layer.x, layer.y);
@@ -1586,8 +1619,7 @@ function drawProject() {
         ctx.moveTo(0, 0);
         ctx.lineTo(layer.len, 0);
         ctx.stroke();
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-        ctx.lineWidth = 1;
+        ctx.restore();
         break;
 
       default:
@@ -1621,6 +1653,23 @@ function drawProject() {
       ctx.strokeRect(sx - 4, sy - 4, sw + 8, sh + 8);
       ctx.setLineDash([]);
       ctx.restore();
+
+      // Dessiner les poignées de redimensionnement aux 4 coins (blocs non-texte)
+      if (selLayer.type !== "text" && selLayer.type !== "line") {
+        var hx = [sx - 4, sx + sw + 4 - HANDLE_SIZE];
+        var hy = [sy - 4, sy + sh + 4 - HANDLE_SIZE];
+        ctx.save();
+        ctx.fillStyle = "#E8651A";
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = 1.5;
+        for (var hxi = 0; hxi < 2; hxi++) {
+          for (var hyi = 0; hyi < 2; hyi++) {
+            ctx.fillRect(hx[hxi], hy[hyi], HANDLE_SIZE, HANDLE_SIZE);
+            ctx.strokeRect(hx[hxi], hy[hyi], HANDLE_SIZE, HANDLE_SIZE);
+          }
+        }
+        ctx.restore();
+      }
     }
   }
 }
@@ -2023,12 +2072,15 @@ function updateValue(th) {
     aLayers[layerName][fieldName] = newValue;
   } else if (th.type === "checkbox") {
     aLayers[layerName][fieldName] = th.checked;
+    // Persister l'état du ratio fixe par calque
+    if (th.id === "lar") { aLayers[layerName].lockedRatio = th.checked; }
   } else {
     if (th.id === "inputfont") aLayers[layerName].filename = fontList[th.value];
     aLayers[layerName][fieldName] = th.value;
   }
   drawProject();
-  saveToHistory();
+  // saveToHistory est appelé uniquement sur les actions structurelles, pas à chaque valeur
+  debounceSaveHistory();
 }
 
 function setPresets(th) {
@@ -2223,11 +2275,16 @@ function addBlock(th) {
     layer._gpSrc = thisBlock.src;
   }
 
-  // Point 14 : preset auto pour tuiles
+  // Preset auto pour tuiles avec dimensions correctes selon le type
   if (thisBlock.putUnder === "tiles") {
-    // Dimensions depuis l'image ou preset (height fixe = 142)
-    if (!layer.width)  layer.width  = 142;
-    if (!layer.height) layer.height = 142;
+    if (thisBlock.src === "colony" || thisBlock.src === "trade") {
+      layer.width = 142; layer.height = 120;
+    } else if (thisBlock.src === "off-world_city" || thisBlock.src === "greenery_no_O2") {
+      layer.width = 171; layer.height = 142;
+    } else {
+      if (!layer.width)  layer.width  = 142;
+      if (!layer.height) layer.height = 142;
+    }
     layer._appliedPreset = "Standard tile";
     layer._tileSrc = thisBlock.src;
   }
@@ -2550,6 +2607,14 @@ var dragOffsetX  = 0;
 var dragOffsetY  = 0;
 var keyFocusLayer = null;
 var groupSelection = []; // liste des layerId dans le groupe courant (Point 16)
+var resizeHandle = null; // coin de redimensionnement actif: 'nw','ne','sw','se'
+var resizeStartX = 0;
+var resizeStartY = 0;
+var resizeStartW = 0;
+var resizeStartH = 0;
+var resizeStartLayerX = 0;
+var resizeStartLayerY = 0;
+var HANDLE_SIZE = 10; // taille des poignées en pixels canvas
 
 function getMousePos(event) {
   var c    = document.getElementById("cmcanvas");
@@ -2563,9 +2628,60 @@ function getMousePos(event) {
   };
 }
 
+function getLayerDisplayRect(layer) {
+  // Retourne {sx, sy, sw, sh} comme dans drawProject pour le contour de sélection
+  var sx = Number(layer.x) || 0;
+  var sy = Number(layer.y) || 0;
+  var sw = Number(layer.width) || 0;
+  var sh = Number(layer.height) || 0;
+  if (layer.type === "text") {
+    if (layer.justify === "center") sx = sx - sw / 2;
+    else if (layer.justify === "right") sx = sx - sw;
+    sy = sy - sh;
+  }
+  return {sx:sx-4, sy:sy-4, sw:sw+8, sh:sh+8};
+}
+
+function getResizeHandle(layer, mx, my) {
+  if (layer.type === "text" || layer.type === "line" || layer.type === "base") return null;
+  var r = getLayerDisplayRect(layer);
+  var hs = HANDLE_SIZE;
+  var corners = {
+    nw: {x:r.sx,           y:r.sy},
+    ne: {x:r.sx+r.sw-hs,   y:r.sy},
+    sw: {x:r.sx,           y:r.sy+r.sh-hs},
+    se: {x:r.sx+r.sw-hs,   y:r.sy+r.sh-hs}
+  };
+  for (var h in corners) {
+    var c = corners[h];
+    if (mx >= c.x && mx <= c.x+hs && my >= c.y && my <= c.y+hs) return h;
+  }
+  return null;
+}
+
 function dragStart(event) {
-  if (event.ctrlKey) return; // Ctrl+clic géré séparément
+  if (event.ctrlKey) return;
   var mouse = getMousePos(event);
+
+  // Vérifier d'abord si on clique sur une poignée du calque sélectionné
+  if (selectedLayerId && aLayers[selectedLayerId]) {
+    var selLayer = aLayers[selectedLayerId];
+    var handle = getResizeHandle(selLayer, mouse.x, mouse.y);
+    if (handle) {
+      resizeHandle = handle;
+      resizeStartX = mouse.x;
+      resizeStartY = mouse.y;
+      resizeStartW = Number(selLayer.width);
+      resizeStartH = Number(selLayer.height);
+      resizeStartLayerX = Number(selLayer.x);
+      resizeStartLayerY = Number(selLayer.y);
+      layerToDrag = selLayer;
+      layerToDragId = selectedLayerId;
+      document.getElementById("cmcanvas").classList.add("dragging");
+      return;
+    }
+  }
+
   var layerDivs = document.getElementsByClassName("divRec");
   for (var i = layerDivs.length - 1; i >= 0; i--) {
     var layer = aLayers[layerDivs[i].id];
@@ -2590,12 +2706,52 @@ function dragEnd(event) {
   }
   layerToDrag = null;
   layerToDragId = null;
+  resizeHandle = null;
   document.getElementById("cmcanvas").classList.remove("dragging");
 }
 
 function drag(event) {
   if (layerToDrag === null) return;
   var mouse = getMousePos(event);
+
+  // Mode redimensionnement par poignée
+  if (resizeHandle) {
+    var dx = mouse.x - resizeStartX;
+    var dy = mouse.y - resizeStartY;
+    var newW = resizeStartW, newH = resizeStartH;
+    var newX = resizeStartLayerX, newY = resizeStartLayerY;
+    var ratio = resizeStartH / resizeStartW;
+
+    if (resizeHandle === "se") {
+      newW = Math.max(10, resizeStartW + dx);
+      newH = Math.round(newW * ratio);
+    } else if (resizeHandle === "sw") {
+      newW = Math.max(10, resizeStartW - dx);
+      newH = Math.round(newW * ratio);
+      newX = resizeStartLayerX + resizeStartW - newW;
+    } else if (resizeHandle === "ne") {
+      newW = Math.max(10, resizeStartW + dx);
+      newH = Math.round(newW * ratio);
+      newY = resizeStartLayerY + resizeStartH - newH;
+    } else if (resizeHandle === "nw") {
+      newW = Math.max(10, resizeStartW - dx);
+      newH = Math.round(newW * ratio);
+      newX = resizeStartLayerX + resizeStartW - newW;
+      newY = resizeStartLayerY + resizeStartH - newH;
+    }
+    layerToDrag.width  = Math.round(newW);
+    layerToDrag.height = Math.round(newH);
+    layerToDrag.x = Math.round(newX);
+    layerToDrag.y = Math.round(newY);
+    // Mettre à jour les champs
+    var iw = document.getElementById("inputwidth");  if (iw) iw.value = layerToDrag.width;
+    var ih = document.getElementById("inputheight"); if (ih) ih.value = layerToDrag.height;
+    var ix2 = document.getElementById("inputx");    if (ix2) ix2.value = layerToDrag.x;
+    var iy2 = document.getElementById("inputy");    if (iy2) iy2.value = layerToDrag.y;
+    drawProject();
+    return;
+  }
+
   var newX = Math.round(mouse.x + dragOffsetX);
   var newY = Math.round(mouse.y + dragOffsetY);
   var dx = newX - layerToDrag.x;
