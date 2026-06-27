@@ -911,6 +911,10 @@ input[type=number] { width: auto; }
         <div class="sb-content open" id="sm"><div class="sb-icon-grid" id="misc"></div></div>
       </div>
       <div class="sb-sec">
+        <button class="sb-sec-btn open" onclick="toggleSec(this,'sext')">Icônes Extensions <span class="arr">▼</span></button>
+        <div class="sb-content open" id="sext"><div class="sb-icon-grid" id="icons_extensions"></div></div>
+      </div>
+      <div class="sb-sec">
         <button class="sb-sec-btn open" onclick="toggleSec(this,'stpl')">Templates <span class="arr">▼</span></button>
         <div class="sb-content open" id="stpl">
           <!-- Rempli dynamiquement par updateTemplateList() -->
@@ -1248,7 +1252,7 @@ var I18N = {
     },
     // Textes par défaut des calques (dans les templates)
     default_card_name: "NOM DE LA CARTE",
-    default_description: "Description de carte\nPlusieurs lignes\net elles peuvent être beaucoup, beaucoup plus longues\n'Interligne' contrôle l'espacement entre les lignes",
+    default_description: "Description de carte. Plusieurs lignes et elles peuvent être beaucoup, beaucoup plus longues 'Interligne' contrôle l'espacement entre les lignes",
     default_flavor: "Texte d'ambiance !",
     default_effect_action: "Texte d'effet ou d'action !",
     default_replace: "Remplacez ce texte !",
@@ -1422,7 +1426,7 @@ var I18N = {
     },
     // Default layer texts
     default_card_name: "CARD NAME",
-    default_description: "Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines",
+    default_description: "Card description. Multiple lines and they can be much, much, much longer 'V space' controls the spacing between lines",
     default_flavor: "Flavor text!",
     default_effect_action: "Effect or Action text!",
     default_replace: "Replace this text!",
@@ -1802,6 +1806,28 @@ var blockList = [
   {putUnder:"tags",             text:"",                      src:"mercury",   otherbg:"tag_otherbg"},
   {putUnder:"resources",        text:"",                      src:"asteroid",  otherbg:"res_otherbg"},
   {putUnder:"resources",        text:"",                      src:"ore",       otherbg:"res_otherbg"},
+  {putUnder:"icons_extensions", text:"Base",                  src:"1A"},
+  {putUnder:"icons_extensions", text:"Prélude",               src:"2prelude"},
+  {putUnder:"icons_extensions", text:"Turmoil",               src:"3T"},
+  {putUnder:"icons_extensions", text:"Némésis",               src:"4N"},
+  {putUnder:"icons_extensions", text:"Vénus",                 src:"5_Venus"},
+  {putUnder:"icons_extensions", text:"Violette",              src:"6_violette"},
+  {putUnder:"icons_extensions", text:"Vénus 2",               src:"7_venus_2"},
+  {putUnder:"icons_extensions", text:"Corp Era",              src:"8_corp_era"},
+  {putUnder:"icons_extensions", text:"Moon",                  src:"9_moon"},
+  {putUnder:"icons_extensions", text:"Hydrogène",             src:"10_H"},
+  {putUnder:"icons_extensions", text:"Silésia",               src:"11_silesia"},
+  {putUnder:"icons_extensions", text:"Oxygène",               src:"12_O"},
+  {putUnder:"icons_extensions", text:"Nucléaire",             src:"13_nuclear"},
+  {putUnder:"icons_extensions", text:"Vénus 3",               src:"14_venus_3"},
+  {putUnder:"icons_extensions", text:"Violet 2",              src:"15_violet_2"},
+  {putUnder:"icons_extensions", text:"Colonie",               src:"16_colony"},
+  {putUnder:"icons_extensions", text:"Arès",                  src:"17_ares_"},
+  {putUnder:"icons_extensions", text:"Violet Vénus",          src:"18_violet_venus"},
+  {putUnder:"icons_extensions", text:"Colonie 2",             src:"19_colony_2"},
+  {putUnder:"icons_extensions", text:"Turmoil 2",             src:"20_turmoil"},
+  {putUnder:"icons_extensions", text:"Épique",                src:"21_epic"},
+  {putUnder:"icons_extensions", text:"Fighter",               src:"22_fighter"},
 
 ];
 
@@ -1813,7 +1839,7 @@ var blockDefaults = {
     {label:"Second Tag",   x:531, y:67, width:110, height:110},
     {label:"Third Tag",    x:420, y:67, width:110, height:110},
     {label:"Small Tag",    x:413, y:400, width:82, height:82},
-    {label:"Prérequis",    x:276, y:82,  width:82, height:82},
+    {label:"Prérequis",    x:284, y:97,  width:82, height:82},
     {label:"First (Prel)", x:937, y:67, width:110, height:110},
     {label:"Second (Prel)",x:822, y:67, width:110, height:110},
     {label:"Third (Prel)", x:708, y:67, width:110, height:110},
@@ -1838,7 +1864,7 @@ var blockDefaults = {
     {label:"Standard", x:413, y:643, width:92,  height:92},
     {label:"Card",     x:413, y:643, width:88,  height:122},
     {label:"TR",       x:413, y:643, width:151, height:112},
-    {label:"Prérequis",x:284, y:92,  width:66,  height:66,  obg:true, obgSize:5}
+    {label:"Prérequis",x:276, y:87,  width:67,  height:67,  lockedRatio:true, obg:true, obgSize:5}
   ],
   VPs: [
     {label:"Standard", x:542, y:836, width:223, height:223},
@@ -1846,7 +1872,7 @@ var blockDefaults = {
   ],
   tiles: [
     {label:"Standard tile", height:142},
-    {label:"Prérequis",     x:284, y:92,  width:66, height:66, obg:true, obgSize:6}
+    {label:"Prérequis",     x:284, y:97,  width:80, height:80, obg:true, obgSize:6}
   ],
   requisites: [
     {label:"Max",    x:180, y:92, width:200, height:60},
@@ -1901,7 +1927,7 @@ var megaTemplates = {
     {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
     {type:"text",  data:t("default_card_name"),   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",    x:413, y:612,  width:150, height:24, color:"#24770d", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
-    {type:"text",  data:t("default_description"), x:110, y:770, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",  data:t("default_description"), x:110, y:770, width:550, height:28, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
     {type:"line",  x:254, y:1012, width:2, angle:0, len:333, color:"#000000", params:"allangle alllen allpreset color", locked:true},
     {type:"text",  data:t("default_flavor"), x:413, y:1037, width:600, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
   ]},
@@ -1912,7 +1938,7 @@ var megaTemplates = {
     {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
     {type:"text",  data:t("default_card_name"),   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",    x:413, y:562,  width:150, height:24, color:"#24770d", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
-    {type:"text",  data:t("default_description"), x:110, y:770, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",  data:t("default_description"), x:110, y:770, width:550, height:28, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
     {type:"line",  x:254, y:1012, width:2, angle:0, len:333, color:"#000000", params:"allangle alllen allpreset color", locked:true},
     {type:"text",  data:t("default_flavor"), x:413, y:1037, width:600, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
   ]},
@@ -1923,7 +1949,7 @@ var megaTemplates = {
     {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
     {type:"text",  data:t("default_card_name"),   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",    x:413, y:664,  width:150, height:24, color:"#24770d", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
-    {type:"text",  data:t("default_description"), x:110, y:770, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",  data:t("default_description"), x:110, y:770, width:550, height:28, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
     {type:"line",  x:254, y:1012, width:2, angle:0, len:333, color:"#000000", params:"allangle alllen allpreset color", locked:true},
     {type:"text",  data:t("default_flavor"), x:413, y:1037, width:600, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
   ]},
@@ -1934,7 +1960,7 @@ var megaTemplates = {
     {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
     {type:"text",  data:t("default_card_name"),         x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",          x:413, y:798,  width:150, height:24, color:"#0c5e84", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
-    {type:"text",  data:t("default_description"), x:100, y:860, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",  data:t("default_description"), x:100, y:860, width:550, height:28, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
     {type:"block", iNum:13, x:355, y:265, width:116, height:55, params:"allimages allpreset"},
     {type:"text",  data:t("default_effect_action"), x:413, y:360, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
     {type:"line",  x:254, y:1012, width:2, angle:0, len:333, color:"#000000", params:"allangle alllen allpreset color", locked:true},
@@ -1947,7 +1973,7 @@ var megaTemplates = {
     {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
     {type:"text",  data:t("default_card_name"),         x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",          x:413, y:753,  width:150, height:24, color:"#0c5e84", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
-    {type:"text",  data:t("default_description"), x:100, y:860, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",  data:t("default_description"), x:100, y:860, width:550, height:28, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
     {type:"block", iNum:13, x:355, y:265, width:116, height:55, params:"allimages allpreset"},
     {type:"text",  data:t("default_effect_action"), x:413, y:360, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
     {type:"line",  x:254, y:1012, width:2, angle:0, len:333, color:"#000000", params:"allangle alllen allpreset color", locked:true},
@@ -1960,7 +1986,7 @@ var megaTemplates = {
     {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
     {type:"text",  data:t("default_card_name"),         x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",          x:413, y:849,  width:150, height:24, color:"#0c5e84", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
-    {type:"text",  data:t("default_description"), x:100, y:891, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",  data:t("default_description"), x:100, y:891, width:550, height:28, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
     {type:"block", iNum:13, x:355, y:265, width:116, height:55, params:"allimages allpreset"},
     {type:"text",  data:t("default_effect_action"), x:413, y:360, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
     {type:"line",  x:254, y:1012, width:2, angle:0, len:333, color:"#000000", params:"allangle alllen allpreset color", locked:true},
@@ -1973,7 +1999,7 @@ var megaTemplates = {
     {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
     {type:"text",  data:t("default_card_name"),   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",    x:413, y:685,  width:150, height:24, color:"#c36a17", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
-    {type:"text",  data:t("default_description"), x:100, y:810, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",  data:t("default_description"), x:100, y:810, width:550, height:28, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
     {type:"line",  x:254, y:1012, width:2, angle:0, len:333, color:"#000000", params:"allangle alllen allpreset color", locked:true},
     {type:"text",  data:t("default_flavor"), x:413, y:1037, width:600, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
   ]},
@@ -1984,7 +2010,7 @@ var megaTemplates = {
     {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
     {type:"text",  data:t("default_card_name"),   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",    x:413, y:718,  width:150, height:24, color:"#c36a17", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
-    {type:"text",  data:t("default_description"), x:100, y:810, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",  data:t("default_description"), x:100, y:810, width:550, height:28, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
     {type:"line",  x:254, y:1012, width:2, angle:0, len:333, color:"#000000", params:"allangle alllen allpreset color", locked:true},
     {type:"text",  data:t("default_flavor"), x:413, y:1037, width:600, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
   ]},
@@ -1994,7 +2020,7 @@ var megaTemplates = {
     {type:"text",  data:t("default_card_name"),   x:563, y:218, width:826, height:48, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"text",  data:"FAN MADE",    x:563, y:500, width:150, height:24, color:"#ce809f", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"text",  data:"P R E L U D E", x:563, y:99, width:826, height:24, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
-    {type:"text",  data:t("default_description"), x:110, y:560, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",  data:t("default_description"), x:110, y:560, width:550, height:28, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
     {type:"text",  data:t("default_flavor"), x:563, y:723, width:600, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"}
   ]},
   corporation: { layers: [
@@ -2006,7 +2032,7 @@ var megaTemplates = {
     {type:"text",   data:"E F F E C T",             x:800, y:333, width:1126, height:22, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset", locked:false},
     {type:"text",   data:"FAN MADE",                x:198, y:736, width:150,  height:24, color:"#c3c3c3", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
     {type:"text",   data:"C O R P O R A T I O N",  x:563, y:109, width:826,  height:24, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
-    {type:"text",   data:t("default_description"), x:110, y:560, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",   data:t("default_description"), x:110, y:560, width:550, height:28, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
     {type:"text",   data:t("default_flavor"), x:563, y:723, width:600, height:22, color:"#000000", font:"Pagella", style:"italic", weight:"bold", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"}
   ]}
 };
@@ -2119,6 +2145,9 @@ function applyDefaultPreset(layer, putUnder, srcName) {
     preset = { x: mPos.x, y: mPos.y, width: miscPresetW, height: miscPresetH };
   } else if (putUnder === "VPs" || putUnder === "requisites") {
     preset = blockDefaults[putUnder][0];
+  } else if (putUnder === "icons_extensions") {
+    // Icônes extensions : position fixe par défaut
+    preset = { x: 55, y: 898, width: 38, height: 38, lockedRatio: true };
   } else {
     preset = blockDefaults[putUnder][0];
   }
@@ -2128,7 +2157,8 @@ function applyDefaultPreset(layer, putUnder, srcName) {
     if (preset.y      !== undefined) layer.y      = Math.round(preset.y);
     if (preset.width  !== undefined) layer.width  = Math.round(preset.width);
     if (preset.height !== undefined) layer.height = Math.round(preset.height);
-    if (preset.obg    !== undefined) { layer.obg = preset.obg; layer.obgSize = preset.obgSize || 6; }
+    if (preset.obg         !== undefined) { layer.obg = preset.obg; layer.obgSize = preset.obgSize || 6; }
+    if (preset.lockedRatio !== undefined) layer.lockedRatio = preset.lockedRatio;
     // Mémoriser le preset appliqué (Point 5)
     layer._appliedPreset = preset.label || null;
   }
@@ -3186,10 +3216,11 @@ function applyGPMode(layerId, isRequisite) {
       }
       var bw = layer._bodyWidth;
       var bh = layer._bodyHeight;
-      layer.x      = REQ_POS.x;
-      layer.y      = REQ_POS.y;
-      layer.width  = Math.round(bw * REQ_RATIO);
-      layer.height = Math.round(bh * REQ_RATIO);
+      layer.x      = 284;
+      layer.y      = 97;
+      // Largeur fixée à 80, hauteur proportionnelle (ratio non forcé)
+      layer.width  = 80;
+      layer.height = (bw > 0) ? Math.round(bh * (80 / bw)) : 80;
       layer.obg    = false; // jamais activé en prérequis
       layer._appliedPreset = "Prérequis";
       var ixEl = document.getElementById("inputx");      if (ixEl) ixEl.value = layer.x;
@@ -3236,7 +3267,25 @@ function applyGPMode(layerId, isRequisite) {
 // ============================================================
 var REQ_RATIO = 66 / 142; // ratio de réduction tuile standard → prérequis
 
-var REQ_POS = { x: 284, y: 92 };
+// Positions prérequis différenciées par type d'élément
+var REQ_POS_RESOURCES  = { x: 289, y: 100 };
+var REQ_POS_BADGES     = { x: 284, y: 97  };
+var REQ_POS_MEGACREDIT = { x: 276, y: 87, width: 67, height: 67 };
+var REQ_POS_CHAIRMAN   = { x: 279, y: 86, width: 55, height: 70 };
+var REQ_POS_TR         = { x: 273, y: 86, width: 89, height: 66 };
+
+function getReqPosForLayer(layer) {
+  // Megacredit
+  if (layer._miscReqSrc === "megacredit") return REQ_POS_MEGACREDIT;
+  // Chairman et party_leader
+  if (layer._miscReqSrc === "delegate" || layer._miscReqSrc === "chairman" || layer._miscReqSrc === "party_leader") return REQ_POS_CHAIRMAN;
+  // TR (ressource)
+  if (layer._resSrc === "TR") return REQ_POS_TR;
+  // Badges (tags)
+  if (layer._tagSrc) return REQ_POS_BADGES;
+  // Ressources et reste (delegate, influence, parties)
+  return REQ_POS_RESOURCES;
+}
 
 function applyBodyReqMode(layerId, isRequisite) {
   var layer = aLayers[layerId];
@@ -3248,14 +3297,19 @@ function applyBodyReqMode(layerId, isRequisite) {
       layer._bodyWidth  = layer.width;
       layer._bodyHeight = layer.height;
     }
-    var bw = layer._bodyWidth;
-    var bh = layer._bodyHeight;
-    var newW = Math.round(bw * REQ_RATIO);
-    var newH = Math.round(bh * REQ_RATIO);
-    layer.x      = REQ_POS.x;
-    layer.y      = REQ_POS.y;
-    layer.width  = newW;
-    layer.height = newH;
+    var reqPos = getReqPosForLayer(layer);
+    layer.x   = reqPos.x;
+    layer.y   = reqPos.y;
+    // Si la position définit une taille fixe, l'appliquer directement
+    if (reqPos.width !== undefined) {
+      layer.width  = reqPos.width;
+      layer.height = reqPos.height;
+    } else {
+      var bw = layer._bodyWidth;
+      var bh = layer._bodyHeight;
+      layer.width  = Math.round(bw * REQ_RATIO);
+      layer.height = Math.round(bh * REQ_RATIO);
+    }
     layer.obg    = false;
     layer._appliedPreset = "Prérequis";
   } else {
