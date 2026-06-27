@@ -245,6 +245,10 @@ body {
   background: var(--rust); opacity: 0;
 }
 .resize-handle:hover::after, .resize-handle.dragging::after { opacity: 0.5; }
+/* Le handle entre canvas et panneau calques s'étire sur toute la hauteur du panneau */
+#resize-right {
+  align-self: stretch;
+}
 
 /* Poignée sur toute la hauteur du bord droit de la sidebar */
 #sidebar-resize-handle {
@@ -376,7 +380,7 @@ input[type=number] { width: auto; }
    MODALE SETTINGS
    ============================================================ */
 #settings-overlay {
-  position: fixed; inset: 0; background: rgba(5,8,15,0.88); z-index: 600;
+  position: fixed; inset: 0; background: rgba(5,8,15,0.88); z-index: 1200;
   display: flex; align-items: center; justify-content: center;
 }
 #settings-overlay.hidden { display: none; }
@@ -466,6 +470,16 @@ input[type=number] { width: auto; }
 }
 .guide-step-text { color: var(--muted); font-size: 11px; line-height: 1.5; }
 .guide-step-text strong { color: var(--text); }
+
+/* Conditions d'utilisation */
+.tos-section { margin-bottom: 18px; }
+.tos-section-title {
+  font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--rust); margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid var(--border);
+}
+.tos-text { color: var(--muted); font-size: 11px; line-height: 1.6; }
+.tos-text a { color: var(--gold); text-decoration: underline; }
+.tos-text strong { color: var(--text); }
 
 /* ============================================================
    TUTORIEL INTERACTIF (coach marks)
@@ -585,6 +599,7 @@ input[type=number] { width: auto; }
     <div class="smod-tabs">
       <button class="smod-tab active" onclick="switchSettingsTab('params')" id="tab-params" data-i18n="tab_params">Paramètres</button>
       <button class="smod-tab" onclick="switchSettingsTab('help')" id="tab-help" data-i18n="tab_help">Aide</button>
+      <button class="smod-tab" onclick="switchSettingsTab('tos')" id="tab-tos" data-i18n="tab_tos">Conditions</button>
     </div>
     <div class="smod-body">
       <!-- ONGLET PARAMÈTRES -->
@@ -643,6 +658,41 @@ input[type=number] { width: auto; }
             <li class="guide-step"><div class="guide-step-num">5</div><div class="guide-step-text" data-i18n="guide_5"><strong>Ordonner les calques</strong> par glisser-déposer dans le panneau de droite.</div></li>
             <li class="guide-step"><div class="guide-step-num">6</div><div class="guide-step-text" data-i18n="guide_6"><strong>Exporter</strong> via Fichier → Sauvegarder (PNG) ou Exporter projet.</div></li>
           </ol>
+        </div>
+      </div>
+      <!-- ONGLET CONDITIONS D'UTILISATION -->
+      <div id="stab-tos" style="display:none;">
+        <div class="tos-section">
+          <div class="tos-section-title" data-i18n="tos_fryx_title">Règles FryxGames</div>
+          <div class="tos-text" data-i18n="tos_fryx_text">Les cartes créées avec cet outil sont du <strong>contenu fan-made non officiel</strong>. Selon Jacob Fryxelius (FryxGames) : marquez toutes vos cartes "Fan Made", n'utilisez pas d'illustrations sous droits d'auteur sans permission, et ne commercialisez pas le contenu fan-made sous quelque forme que ce soit.</div>
+        </div>
+        <div class="tos-section">
+          <div class="tos-section-title" data-i18n="tos_gpl_title">Licence de l'outil (GPL v3)</div>
+          <div class="tos-text" data-i18n="tos_gpl_text">Cet outil est un logiciel libre sous licence <strong>GNU GPL v3</strong>. Vous êtes libre de l'utiliser, le modifier et le redistribuer, à condition que toute version modifiée reste sous GPL v3. <strong>Aucun usage commercial</strong> de l'outil lui-même n'est autorisé. Code source : <a href="https://github.com/julienzarate-create/tm_cardmaker" target="_blank">github.com/julienzarate-create/tm_cardmaker</a></div>
+        </div>
+        <div class="tos-section">
+          <div class="tos-section-title" data-i18n="tos_assets_title">Assets FryxGames</div>
+          <div class="tos-text" data-i18n="tos_assets_text">Les noms, mécaniques, visuels et éléments graphiques du jeu Terraforming Mars sont la propriété de <strong>FryxGames / Asmodee</strong>. Cet outil n'est ni affilié ni endorsé par FryxGames.</div>
+        </div>
+        <div class="tos-section">
+          <div class="tos-section-title" data-i18n="tos_images_title">Images tierces</div>
+          <div class="tos-text" data-i18n="tos_images_text">Si vous importez des images depuis le web ou votre ordinateur, vous êtes <strong>seul responsable</strong> de vérifier que vous disposez des droits nécessaires pour les utiliser et les diffuser.</div>
+        </div>
+        <div class="tos-section">
+          <div class="tos-section-title" data-i18n="tos_share_title">Partage des cartes</div>
+          <div class="tos-text" data-i18n="tos_share_text">Lors du partage de vos créations, mentionnez toujours leur caractère <strong>fan-made et non officiel</strong> afin d'éviter toute confusion avec du contenu officiel FryxGames.</div>
+        </div>
+        <div class="tos-section">
+          <div class="tos-section-title" data-i18n="tos_warranty_title">Aucune garantie</div>
+          <div class="tos-text" data-i18n="tos_warranty_text">Cet outil est fourni <strong>"tel quel"</strong>, sans garantie de fonctionnement, conformément à la licence GPL v3. Les données non sauvegardées peuvent être perdues en cas de fermeture du navigateur.</div>
+        </div>
+        <div class="tos-section">
+          <div class="tos-section-title" data-i18n="tos_privacy_title">Données personnelles</div>
+          <div class="tos-text" data-i18n="tos_privacy_text">Cet outil fonctionne <strong>entièrement dans votre navigateur</strong> (100% client-side). Aucune donnée n'est envoyée à un serveur. Vos créations restent sur votre machine.</div>
+        </div>
+        <div class="tos-section">
+          <div class="tos-section-title" data-i18n="tos_attribution_title">Attribution</div>
+          <div class="tos-text" data-i18n="tos_attribution_text">Cet outil est basé sur le travail original de <strong>SliceOfBread</strong>. En cas de redistribution ou de fork, merci de mentionner cette attribution.</div>
         </div>
       </div>
     </div>
@@ -1065,7 +1115,7 @@ var I18N = {
     modal_font_ph: "https://fonts.googleapis.com/css2?family=...",
     // Settings
     settings_title: "Paramètres",
-    tab_params: "Paramètres", tab_help: "Aide",
+    tab_params: "Paramètres", tab_help: "Aide", tab_tos: "Conditions",
     lang_section: "Langue / Language",
     lang_label: "Langue de l'interface",
     display_section: "Affichage",
@@ -1091,6 +1141,23 @@ var I18N = {
     guide_4: "<strong>Redimensionner</strong> avec les carrés oranges aux coins de l'élément sélectionné.",
     guide_5: "<strong>Ordonner les calques</strong> par glisser-déposer dans le panneau de droite.",
     guide_6: "<strong>Exporter</strong> via Fichier → Sauvegarder (PNG) ou Exporter projet.",
+    // Conditions d'utilisation
+    tos_fryx_title: "Règles FryxGames",
+    tos_fryx_text: "Les cartes créées avec cet outil sont du <strong>contenu fan-made non officiel</strong>. Selon Jacob Fryxelius (FryxGames) : marquez toutes vos cartes \"Fan Made\", n'utilisez pas d'illustrations sous droits d'auteur sans permission, et ne commercialisez pas le contenu fan-made sous quelque forme que ce soit.",
+    tos_gpl_title: "Licence de l'outil (GPL v3)",
+    tos_gpl_text: "Cet outil est un logiciel libre sous licence <strong>GNU GPL v3</strong>. Vous êtes libre de l'utiliser, le modifier et le redistribuer, à condition que toute version modifiée reste sous GPL v3. <strong>Aucun usage commercial</strong> de l'outil lui-même n'est autorisé. Code source : <a href=\"https://github.com/julienzarate-create/tm_cardmaker\" target=\"_blank\">github.com/julienzarate-create/tm_cardmaker</a>",
+    tos_assets_title: "Assets FryxGames",
+    tos_assets_text: "Les noms, mécaniques, visuels et éléments graphiques du jeu Terraforming Mars sont la propriété de <strong>FryxGames / Asmodee</strong>. Cet outil n'est ni affilié ni endorsé par FryxGames.",
+    tos_images_title: "Images tierces",
+    tos_images_text: "Si vous importez des images depuis le web ou votre ordinateur, vous êtes <strong>seul responsable</strong> de vérifier que vous disposez des droits nécessaires pour les utiliser et les diffuser.",
+    tos_share_title: "Partage des cartes",
+    tos_share_text: "Lors du partage de vos créations, mentionnez toujours leur caractère <strong>fan-made et non officiel</strong> afin d'éviter toute confusion avec du contenu officiel FryxGames.",
+    tos_warranty_title: "Aucune garantie",
+    tos_warranty_text: "Cet outil est fourni <strong>\"tel quel\"</strong>, sans garantie de fonctionnement, conformément à la licence GPL v3. Les données non sauvegardées peuvent être perdues en cas de fermeture du navigateur.",
+    tos_privacy_title: "Données personnelles",
+    tos_privacy_text: "Cet outil fonctionne <strong>entièrement dans votre navigateur</strong> (100% client-side). Aucune donnée n'est envoyée à un serveur. Vos créations restent sur votre machine.",
+    tos_attribution_title: "Attribution",
+    tos_attribution_text: "Cet outil est basé sur le travail original de <strong>SliceOfBread</strong>. En cas de redistribution ou de fork, merci de mentionner cette attribution.",
     // Tutoriel
     tut_skip: "Passer", tut_next: "Suivant →", tut_finish: "Terminer",
     tut_of: "/",
@@ -1218,7 +1285,7 @@ var I18N = {
     modal_font_ph: "https://fonts.googleapis.com/css2?family=...",
     // Settings
     settings_title: "Settings",
-    tab_params: "Settings", tab_help: "Help",
+    tab_params: "Settings", tab_help: "Help", tab_tos: "Terms",
     lang_section: "Langue / Language",
     lang_label: "Interface language",
     display_section: "Display",
@@ -1244,6 +1311,23 @@ var I18N = {
     guide_4: "<strong>Resize</strong> using the orange squares at the corners of the selected element.",
     guide_5: "<strong>Reorder layers</strong> by drag and drop in the right panel.",
     guide_6: "<strong>Export</strong> via File → Save (PNG) or Export project.",
+    // Terms of use
+    tos_fryx_title: "FryxGames Rules",
+    tos_fryx_text: "Cards created with this tool are <strong>unofficial fan-made content</strong>. According to Jacob Fryxelius (FryxGames): mark all your cards \"Fan Made\", do not use copyrighted artwork without permission, and do not commercialize fan-made content in any form.",
+    tos_gpl_title: "Tool License (GPL v3)",
+    tos_gpl_text: "This tool is free software under the <strong>GNU GPL v3</strong> license. You are free to use, modify and redistribute it, provided any modified version remains under GPL v3. <strong>No commercial use</strong> of the tool itself is permitted. Source code: <a href=\"https://github.com/julienzarate-create/tm_cardmaker\" target=\"_blank\">github.com/julienzarate-create/tm_cardmaker</a>",
+    tos_assets_title: "FryxGames Assets",
+    tos_assets_text: "The names, mechanics, visuals and graphic elements of the Terraforming Mars game are the property of <strong>FryxGames / Asmodee</strong>. This tool is neither affiliated with nor endorsed by FryxGames.",
+    tos_images_title: "Third-party Images",
+    tos_images_text: "If you import images from the web or your computer, you are <strong>solely responsible</strong> for verifying that you have the necessary rights to use and distribute them.",
+    tos_share_title: "Sharing Cards",
+    tos_share_text: "When sharing your creations, always mention their <strong>fan-made and unofficial</strong> nature to avoid any confusion with official FryxGames content.",
+    tos_warranty_title: "No Warranty",
+    tos_warranty_text: "This tool is provided <strong>\"as is\"</strong>, without any warranty of fitness or function, in accordance with the GPL v3 license. Unsaved data may be lost if the browser is closed.",
+    tos_privacy_title: "Personal Data",
+    tos_privacy_text: "This tool runs <strong>entirely in your browser</strong> (100% client-side). No data is sent to any server. Your creations remain on your machine.",
+    tos_attribution_title: "Attribution",
+    tos_attribution_text: "This tool is based on the original work of <strong>SliceOfBread</strong>. If you redistribute or fork it, please include this attribution.",
     // Tutorial
     tut_skip: "Skip", tut_next: "Next →", tut_finish: "Finish",
     tut_of: "/",
@@ -2035,29 +2119,10 @@ function startTemplate(name) {
   addLayer(t("layer_base"), {type:"base", color:"#ffffff", height:baseH, width:baseW, params:"color"});
   loadFrom(megaTemplates[name].layers);
   applyCanvasZoom();
+  if (window._restoreLayout) window._restoreLayout();
   updateTemplateList();
-  // Point 11 : verrouiller tous les calques sauf Card description
-  var layerDivs = document.getElementsByClassName("divRec");
-  for (var i = 0; i < layerDivs.length; i++) {
-    var lid = layerDivs[i].id;
-    var lyr = aLayers[lid];
-    if (!lyr) continue;
-    if (lid === "dragdropdiv0") continue; // Base toujours non-verrouillée (gérée séparément)
-    // Chercher si c'est le calque de description
-    var nameEl = layerDivs[i].querySelector("input[type=text]");
-    var layerName = nameEl ? nameEl.value : "";
-    if (lyr.type === "text" && (layerName.indexOf("descr") !== -1 || (lyr.data && lyr.data.indexOf("Card description") === 0))) {
-      lyr.locked = false;
-    } else {
-      lyr.locked = true;
-    }
-    // Mettre à jour l'icône de verrou
-    var lockIcon = layerDivs[i].querySelector(".layer-lock");
-    if (lockIcon) {
-      lockIcon.innerText = lyr.locked ? "🔒" : "🔓";
-      lockIcon.title = lyr.locked ? "Déverrouiller" : "Verrouiller";
-    }
-  }
+  // Appliquer les verrous selon les règles par template
+  applyTemplateLocks(name);
   saveToHistory();
 }
 
@@ -4407,11 +4472,71 @@ function swapTemplate(name) {
   }
 
   applyCanvasZoom();
+  if (window._restoreLayout) window._restoreLayout();
   updateTemplateList();
+  applyTemplateLocks(name);
   sortable(layerlist, function() {});
   if (blockList[layer.iNum].obj) drawProject();
   else fetchBlock(layer.iNum);
   saveToHistory();
+}
+
+// ============================================================
+// VERROUS PAR TEMPLATE
+// ============================================================
+// Détermine si un calque doit être déverrouillé selon le template actif
+function applyTemplateLocks(templateName) {
+  // Exceptions par template : calques NON verrouillés (en plus de la Base)
+  // Identification par : lyr.type, lyr.iNum, lyr.data (partiel)
+  var unlockRules = {
+    // Vertes : seul Card description déverrouillé
+    green_normal:      function(lyr) { return _isCardDescription(lyr); },
+    green_big_bottom:  function(lyr) { return _isCardDescription(lyr); },
+    green_small_bottom:function(lyr) { return _isCardDescription(lyr); },
+    // Rouges : idem
+    red_normal:        function(lyr) { return _isCardDescription(lyr); },
+    red_small_bottom:  function(lyr) { return _isCardDescription(lyr); },
+    // Prélude : seul Card description déverrouillé
+    prelude:           function(lyr) { return _isCardDescription(lyr); },
+    // Bleues : Card description + flèche Action (iNum:13) + texte effet/action
+    blue_normal:       function(lyr) { return _isCardDescription(lyr) || _isActionArrow(lyr) || _isEffectActionText(lyr); },
+    blue_big_bottom:   function(lyr) { return _isCardDescription(lyr) || _isActionArrow(lyr) || _isEffectActionText(lyr); },
+    blue_big_top:      function(lyr) { return _isCardDescription(lyr) || _isActionArrow(lyr) || _isEffectActionText(lyr); },
+    // Corporation : Card description + Support badge (iNum:95) + Boîte d'effets + Effet fond (iNum:96) + E F F E C T
+    corporation:       function(lyr) { return _isCardDescription(lyr) || lyr.iNum === 95 || lyr.type === "effect" || lyr.iNum === 96 || _isEffectText(lyr); },
+  };
+  var rule = unlockRules[templateName] || function() { return false; };
+  var layerDivs = document.getElementsByClassName("divRec");
+  for (var i = 0; i < layerDivs.length; i++) {
+    var lid = layerDivs[i].id;
+    var lyr = aLayers[lid];
+    if (!lyr) continue;
+    if (lid === "dragdropdiv0") continue; // Base toujours libre
+    lyr.locked = !rule(lyr);
+    var lockIcon = layerDivs[i].querySelector(".layer-lock");
+    if (lockIcon) {
+      lockIcon.innerText = lyr.locked ? "🔒" : "🔓";
+      lockIcon.title = lyr.locked ? t('lock_lock') : t('lock_unlock');
+    }
+  }
+}
+function _isCardDescription(lyr) {
+  return lyr.type === "text" && lyr.data && (
+    lyr.data.indexOf("Card description") === 0 ||
+    lyr.data.indexOf("Description de carte") === 0
+  );
+}
+function _isActionArrow(lyr) {
+  return lyr.type === "block" && lyr.iNum === 13;
+}
+function _isEffectActionText(lyr) {
+  return lyr.type === "text" && lyr.data && (
+    lyr.data.indexOf("Effect or Action") === 0 ||
+    lyr.data.indexOf("Texte d'effet ou d'action") === 0
+  );
+}
+function _isEffectText(lyr) {
+  return lyr.type === "text" && lyr.data && lyr.data.indexOf("E F F E C T") === 0;
 }
 
 
@@ -4651,35 +4776,75 @@ function initResizeHandles() {
   }
   updateSidebarHandle();
 
+  // Clé localStorage selon l'orientation courante
+  function _layoutKey() {
+    var base = aLayers && aLayers["dragdropdiv0"];
+    return (base && base.width > base.height) ? "tm_layout_horiz" : "tm_layout_vert";
+  }
+  // Sauvegarder les 3 valeurs de layout
+  function _saveLayout() {
+    var canvasWrap = document.querySelector('#canvas-area > div:nth-child(2)');
+    var layerPanel = document.getElementById('layer-panel');
+    var sidebarW = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--sidebar')) || 500;
+    var canvasZoom = canvasWrap ? (parseFloat(canvasWrap.style.zoom) || 1) : 1;
+    var layerW = layerPanel ? (parseFloat(layerPanel.style.width) || 0) : 0;
+    localStorage.setItem(_layoutKey(), JSON.stringify({sidebarW: sidebarW, canvasZoom: canvasZoom, layerW: layerW}));
+  }
+  // Restaurer le layout selon l'orientation
+  function restoreLayout() {
+    var key = _layoutKey();
+    var saved = localStorage.getItem(key);
+    if (!saved) return;
+    try {
+      var d = JSON.parse(saved);
+      if (d.sidebarW) {
+        document.documentElement.style.setProperty("--sidebar", d.sidebarW + "px");
+        var h = document.getElementById("sidebar-resize-handle");
+        if (h) h.style.left = (d.sidebarW - 3) + "px";
+      }
+      if (d.canvasZoom) {
+        var canvasWrap = document.querySelector('#canvas-area > div:nth-child(2)');
+        if (canvasWrap) canvasWrap.style.zoom = d.canvasZoom;
+      }
+      if (d.layerW && d.layerW > 0) {
+        var lp = document.getElementById('layer-panel');
+        if (lp) { lp.style.minWidth = d.layerW + "px"; lp.style.maxWidth = d.layerW + "px"; lp.style.width = d.layerW + "px"; }
+      }
+    } catch(e) {}
+  }
+  // Exposer restoreLayout globalement pour l'appeler après startTemplate
+  window._restoreLayout = restoreLayout;
+
   var sidebarHandle = document.getElementById("sidebar-resize-handle");
   makeDragger(sidebarHandle, function(x) {
     var newW = Math.max(200, Math.min(700, x));
     document.documentElement.style.setProperty("--sidebar", newW + "px");
-    // Repositionner la poignée
     var h = document.getElementById("sidebar-resize-handle");
     if (h) h.style.left = (newW - 3) + "px";
+    _saveLayout();
   });
 
   // Dragger gauche (entre bord gauche de main-content et canvas) : redimensionne le canvas en modifiant la marge
   makeDragger(document.getElementById("resize-left"), function(x) {
-    // x = position souris depuis bord gauche fenêtre
-    // on ajuste le padding-left de main-content pour simuler agrandissement canvas
     var sidebarW = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--sidebar')) || 500;
     var newPad = Math.max(0, Math.min(200, x - sidebarW));
     var mainContent = document.getElementById("main-content");
     if (mainContent) mainContent.style.paddingLeft = newPad + "px";
   });
 
-  // Dragger droit (entre canvas et panneau calques) : agrandit le panneau calques par la gauche
+  // Dragger droit (entre canvas et panneau calques) : modifie le zoom du canvas
   makeDragger(document.getElementById("resize-right"), function(x) {
-    var layerPanel = document.getElementById("layer-panel");
-    if (!layerPanel) return;
-    var lpRect = layerPanel.getBoundingClientRect();
-    var newW = Math.max(180, Math.min(500, lpRect.right - x));
-    layerPanel.style.minWidth = newW + "px";
-    layerPanel.style.maxWidth = newW + "px";
-    layerPanel.style.width    = newW + "px";
+    var canvasWrap = document.querySelector('#canvas-area > div:nth-child(2)');
+    if (!canvasWrap) return;
+    var wrapRect = canvasWrap.getBoundingClientRect();
+    // La largeur naturelle du canvas wrap (avant zoom) sert de référence
+    var naturalW = canvasWrap.offsetWidth / (parseFloat(canvasWrap.style.zoom) || 1);
+    // On calcule le zoom voulu pour que le bord droit du canvas atteigne x
+    var newZoom = Math.max(0.3, Math.min(2.0, (x - wrapRect.left) / naturalW));
+    canvasWrap.style.zoom = newZoom;
+    _saveLayout();
   });
+
   // Dragger far-right (à droite du panneau calques) : réduit le panneau calques par la droite
   makeDragger(document.getElementById("resize-far-right"), function(x) {
     var layerPanel = document.getElementById("layer-panel");
@@ -4689,8 +4854,8 @@ function initResizeHandles() {
     layerPanel.style.minWidth = newW + "px";
     layerPanel.style.maxWidth = newW + "px";
     layerPanel.style.width    = newW + "px";
-    // Point 17 : repositionner le filigrane raccourcis si plus de place à droite
     _adjustShortcutsWatermark();
+    _saveLayout();
   });
 }
 
@@ -5215,8 +5380,10 @@ document.getElementById('settings-overlay').addEventListener('click', function(e
 function switchSettingsTab(tab) {
   document.getElementById('stab-params').style.display = tab === 'params' ? '' : 'none';
   document.getElementById('stab-help').style.display = tab === 'help' ? '' : 'none';
+  document.getElementById('stab-tos').style.display = tab === 'tos' ? '' : 'none';
   document.getElementById('tab-params').classList.toggle('active', tab === 'params');
   document.getElementById('tab-help').classList.toggle('active', tab === 'help');
+  document.getElementById('tab-tos').classList.toggle('active', tab === 'tos');
 }
 
 function setLang(lang) {
