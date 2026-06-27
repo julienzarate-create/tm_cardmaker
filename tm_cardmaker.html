@@ -4752,12 +4752,13 @@ function _adjustShortcutsWatermark() {
 // RESIZE SIDEBARS (séparateurs glissables)
 // ============================================================
 function initResizeHandles() {
-  function makeDragger(el, onDrag) {
+  function makeDragger(el, onDrag, onStart) {
     if (!el) return;
     var dragging = false;
     el.addEventListener("mousedown", function(e) {
       dragging = true; e.preventDefault();
       el.classList.add("dragging");
+      if (onStart) onStart(e.clientX);
     });
     document.addEventListener("mousemove", function(e) { if (dragging) onDrag(e.clientX); });
     document.addEventListener("mouseup", function() {
@@ -4833,16 +4834,22 @@ function initResizeHandles() {
   });
 
   // Dragger droit (entre canvas et panneau calques) : modifie le zoom du canvas
+  var _rr_naturalW = 0, _rr_wrapLeft = 0, _rr_startZoom = 1;
   makeDragger(document.getElementById("resize-right"), function(x) {
+    if (_rr_naturalW <= 0) return;
+    var newZoom = Math.max(0.3, Math.min(2.0, (x - _rr_wrapLeft) / _rr_naturalW));
+    var canvasWrap = document.querySelector('#canvas-area > div:nth-child(2)');
+    if (canvasWrap) canvasWrap.style.zoom = newZoom;
+    _saveLayout();
+  }, function() {
+    // Capturer les valeurs stables au moment du mousedown
     var canvasWrap = document.querySelector('#canvas-area > div:nth-child(2)');
     if (!canvasWrap) return;
-    var wrapRect = canvasWrap.getBoundingClientRect();
-    // La largeur naturelle du canvas wrap (avant zoom) sert de référence
-    var naturalW = canvasWrap.offsetWidth / (parseFloat(canvasWrap.style.zoom) || 1);
-    // On calcule le zoom voulu pour que le bord droit du canvas atteigne x
-    var newZoom = Math.max(0.3, Math.min(2.0, (x - wrapRect.left) / naturalW));
-    canvasWrap.style.zoom = newZoom;
-    _saveLayout();
+    _rr_startZoom = parseFloat(canvasWrap.style.zoom) || 1;
+    // offsetWidth avec zoom CSS : diviser par le zoom actuel pour avoir la largeur naturelle
+    _rr_naturalW = canvasWrap.offsetWidth / _rr_startZoom;
+    var rect = canvasWrap.getBoundingClientRect();
+    _rr_wrapLeft = rect.left;
   });
 
   // Dragger far-right (à droite du panneau calques) : réduit le panneau calques par la droite
