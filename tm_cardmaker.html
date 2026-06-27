@@ -347,9 +347,313 @@ input[type=number] { width: auto; }
   #canvas-area { flex-direction: column; }
   #layer-panel { max-width: 100%; }
 }
+
+/* ============================================================
+   BOUTON SETTINGS ⚙️ (toujours visible, coin supérieur droit)
+   ============================================================ */
+#settings-btn {
+  position: fixed; top: 12px; right: 14px; z-index: 1001;
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--panel); border: 1px solid var(--border);
+  color: var(--gold); font-size: 17px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s; box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+#settings-btn:hover { background: var(--mars); border-color: var(--rust); color: #fff; }
+
+/* ============================================================
+   MODALE SETTINGS
+   ============================================================ */
+#settings-overlay {
+  position: fixed; inset: 0; background: rgba(5,8,15,0.88); z-index: 600;
+  display: flex; align-items: center; justify-content: center;
+}
+#settings-overlay.hidden { display: none; }
+#settings-modal {
+  background: var(--navy); border: 1px solid var(--rust); border-radius: 10px;
+  padding: 0; box-shadow: 0 8px 48px rgba(0,0,0,0.8); min-width: 420px; max-width: 560px; width: 90vw;
+  max-height: 80vh; display: flex; flex-direction: column;
+}
+.smod-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px 0; border-bottom: 1px solid var(--border); padding-bottom: 0;
+}
+.smod-title {
+  font-family: "Montserrat", sans-serif; font-size: 13px; font-weight: 700;
+  color: var(--gold); letter-spacing: 0.06em; text-transform: uppercase;
+}
+.smod-close {
+  background: none; border: none; color: var(--muted); font-size: 18px;
+  cursor: pointer; padding: 4px 8px; border-radius: 4px; transition: all 0.12s;
+}
+.smod-close:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+.smod-tabs {
+  display: flex; border-bottom: 1px solid var(--border); padding: 0 20px; gap: 0;
+}
+.smod-tab {
+  padding: 10px 16px; background: none; border: none; border-bottom: 2px solid transparent;
+  color: var(--muted); font-size: 12px; font-family: "Montserrat", sans-serif;
+  font-weight: 700; cursor: pointer; letter-spacing: 0.05em; transition: all 0.15s;
+  margin-bottom: -1px;
+}
+.smod-tab:hover { color: var(--text); }
+.smod-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+.smod-body { padding: 20px; overflow-y: auto; flex: 1; }
+.smod-section { margin-bottom: 20px; }
+.smod-section-title {
+  font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--rust); margin-bottom: 10px; padding-bottom: 4px; border-bottom: 1px solid var(--border);
+}
+.smod-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.smod-label { color: var(--muted); font-size: 12px; }
+
+/* Toggle langue FR/EN */
+.lang-toggle {
+  display: flex; border-radius: 6px; overflow: hidden; border: 1px solid var(--border);
+}
+.lang-btn {
+  padding: 6px 18px; background: transparent; border: none; color: var(--muted);
+  font-size: 12px; font-family: "Montserrat", sans-serif; font-weight: 700;
+  cursor: pointer; transition: all 0.15s; letter-spacing: 0.05em;
+}
+.lang-btn.active { background: var(--mars); color: #fff; }
+.lang-btn:hover:not(.active) { color: var(--text); }
+
+/* Checkbox settings */
+.smod-cb { accent-color: var(--rust); width: 14px; height: 14px; cursor: pointer; }
+
+/* Bouton reset tuto */
+.smod-btn {
+  padding: 7px 14px; border-radius: 5px; border: 1px solid var(--border);
+  background: transparent; color: var(--muted); font-size: 11px;
+  font-family: "Montserrat", sans-serif; font-weight: 700; cursor: pointer;
+  transition: all 0.15s; letter-spacing: 0.04em;
+}
+.smod-btn:hover { background: var(--mars); color: #fff; border-color: var(--rust); }
+
+/* Table raccourcis */
+.shortcuts-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+.shortcuts-table th {
+  text-align: left; color: var(--rust); font-size: 9px; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 4px 8px; border-bottom: 1px solid var(--border);
+}
+.shortcuts-table td { padding: 5px 8px; color: var(--muted); border-bottom: 1px solid rgba(255,255,255,0.04); }
+.shortcuts-table td:first-child { color: var(--gold); font-family: monospace; font-size: 11px; white-space: nowrap; }
+.shortcuts-table tr:last-child td { border-bottom: none; }
+
+/* Mini guide */
+.guide-steps { list-style: none; padding: 0; margin: 0; }
+.guide-step {
+  display: flex; gap: 10px; align-items: flex-start; padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.guide-step:last-child { border-bottom: none; }
+.guide-step-num {
+  width: 20px; height: 20px; border-radius: 50%; background: var(--mars);
+  color: #fff; font-size: 10px; font-weight: 700; display: flex; align-items: center;
+  justify-content: center; flex-shrink: 0; margin-top: 1px;
+}
+.guide-step-text { color: var(--muted); font-size: 11px; line-height: 1.5; }
+.guide-step-text strong { color: var(--text); }
+
+/* ============================================================
+   TUTORIEL INTERACTIF (coach marks)
+   ============================================================ */
+#tutorial-overlay {
+  position: fixed; inset: 0; z-index: 800; pointer-events: none;
+}
+#tutorial-overlay.hidden { display: none; }
+#tutorial-backdrop {
+  position: absolute; inset: 0; background: rgba(5,8,15,0.75); pointer-events: all;
+}
+#tutorial-bubble {
+  position: absolute; background: var(--navy); border: 1px solid var(--rust);
+  border-radius: 10px; padding: 16px 18px; max-width: 280px; min-width: 220px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.7); pointer-events: all; z-index: 1;
+}
+.tut-step-label {
+  font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em;
+  margin-bottom: 6px;
+}
+.tut-title {
+  font-family: "Montserrat", sans-serif; font-size: 12px; font-weight: 700;
+  color: var(--gold); margin-bottom: 8px;
+}
+.tut-text { font-size: 11px; color: var(--muted); line-height: 1.5; margin-bottom: 14px; }
+.tut-actions { display: flex; gap: 7px; justify-content: flex-end; }
+.tut-btn-skip {
+  padding: 5px 10px; background: transparent; border: 1px solid var(--border);
+  color: var(--muted); font-size: 10px; font-family: "Montserrat", sans-serif;
+  font-weight: 700; border-radius: 4px; cursor: pointer; transition: all 0.12s;
+}
+.tut-btn-skip:hover { color: var(--text); border-color: var(--muted); }
+.tut-btn-next {
+  padding: 5px 14px; background: linear-gradient(135deg, var(--mars), var(--rust));
+  border: none; color: #fff; font-size: 10px; font-family: "Montserrat", sans-serif;
+  font-weight: 700; border-radius: 4px; cursor: pointer; transition: all 0.12s;
+}
+.tut-btn-next:hover { filter: brightness(1.1); }
+/* Flèche de la bulle */
+#tutorial-bubble::before {
+  content: ""; position: absolute; width: 10px; height: 10px;
+  background: var(--navy); border: 1px solid var(--rust);
+  transform: rotate(45deg);
+}
+#tutorial-bubble.arrow-left::before { left: -6px; top: 18px; border-right: none; border-top: none; }
+#tutorial-bubble.arrow-right::before { right: -6px; top: 18px; border-left: none; border-bottom: none; }
+#tutorial-bubble.arrow-top::before { top: -6px; left: 20px; border-bottom: none; border-right: none; }
+#tutorial-bubble.arrow-bottom::before { bottom: -6px; left: 20px; border-top: none; border-left: none; }
+
+/* Highlight zone cible */
+.tut-highlight {
+  position: absolute; border: 2px solid var(--rust); border-radius: 6px;
+  box-shadow: 0 0 0 3000px rgba(5,8,15,0.75);
+  pointer-events: none; z-index: 0; transition: all 0.3s;
+}
+
+/* ============================================================
+   FILIGRANE RACCOURCIS
+   ============================================================ */
+#shortcuts-watermark {
+  position: fixed; right: 56px; top: 50%; transform: translateY(-50%);
+  z-index: 5; pointer-events: none; user-select: none;
+  display: flex; flex-direction: column; gap: 3px;
+}
+#shortcuts-watermark.hidden { display: none; }
+.wm-row { display: flex; gap: 8px; align-items: center; }
+.wm-key {
+  font-family: monospace; font-size: 9px; color: rgba(232,168,56,0.25);
+  white-space: nowrap; letter-spacing: 0.02em;
+}
+.wm-desc { font-size: 9px; color: rgba(240,230,211,0.12); white-space: nowrap; }
+
+/* ============================================================
+   INVITATION TUTORIEL (écran de démarrage)
+   ============================================================ */
+#tuto-invite {
+  margin-top: 18px; padding: 14px 22px; background: rgba(193,68,14,0.12);
+  border: 1px solid var(--border); border-radius: 8px; text-align: center;
+  max-width: 480px;
+}
+#tuto-invite p { color: var(--muted); font-size: 12px; margin-bottom: 12px; }
+.tuto-invite-btns { display: flex; gap: 10px; justify-content: center; }
+
 </style>
 
 <body>
+
+
+<!-- ============================================================
+     BOUTON SETTINGS ⚙️
+     ============================================================ -->
+<button id="settings-btn" onclick="openSettings()" title="Paramètres">⚙️</button>
+
+<!-- ============================================================
+     FILIGRANE RACCOURCIS
+     ============================================================ -->
+<div id="shortcuts-watermark" class="hidden">
+  <div class="wm-row"><span class="wm-key">Ctrl+Z</span><span class="wm-desc" data-i18n="sc_undo">Annuler</span></div>
+  <div class="wm-row"><span class="wm-key">Ctrl+Y</span><span class="wm-desc" data-i18n="sc_redo">Refaire</span></div>
+  <div class="wm-row"><span class="wm-key">Suppr</span><span class="wm-desc" data-i18n="sc_del">Supprimer calque</span></div>
+  <div class="wm-row"><span class="wm-key">←↑→↓</span><span class="wm-desc" data-i18n="sc_move1">Déplacer 1px</span></div>
+  <div class="wm-row"><span class="wm-key">Shift+←↑→↓</span><span class="wm-desc" data-i18n="sc_move25">Déplacer 25px</span></div>
+  <div class="wm-row"><span class="wm-key">Alt+↑↓</span><span class="wm-desc" data-i18n="sc_resizev">Redimensionner ↕</span></div>
+  <div class="wm-row"><span class="wm-key">Alt+←→</span><span class="wm-desc" data-i18n="sc_resizeh">Redimensionner ↔</span></div>
+  <div class="wm-row"><span class="wm-key">Ctrl+clic</span><span class="wm-desc" data-i18n="sc_group">Mode groupe</span></div>
+  <div class="wm-row"><span class="wm-key">Dbl-clic</span><span class="wm-desc" data-i18n="sc_edit">Éditer texte</span></div>
+</div>
+
+<!-- ============================================================
+     MODALE SETTINGS
+     ============================================================ -->
+<div id="settings-overlay" class="hidden">
+  <div id="settings-modal">
+    <div class="smod-header">
+      <div class="smod-title" data-i18n="settings_title">Paramètres</div>
+      <button class="smod-close" onclick="closeSettings()">✕</button>
+    </div>
+    <div class="smod-tabs">
+      <button class="smod-tab active" onclick="switchSettingsTab('params')" id="tab-params" data-i18n="tab_params">Paramètres</button>
+      <button class="smod-tab" onclick="switchSettingsTab('help')" id="tab-help" data-i18n="tab_help">Aide</button>
+    </div>
+    <div class="smod-body">
+      <!-- ONGLET PARAMÈTRES -->
+      <div id="stab-params">
+        <div class="smod-section">
+          <div class="smod-section-title" data-i18n="lang_section">Langue / Language</div>
+          <div class="smod-row">
+            <span class="smod-label" data-i18n="lang_label">Langue de l'interface</span>
+            <div class="lang-toggle">
+              <button class="lang-btn active" id="lang-fr" onclick="setLang('fr')">FR</button>
+              <button class="lang-btn" id="lang-en" onclick="setLang('en')">EN</button>
+            </div>
+          </div>
+        </div>
+        <div class="smod-section">
+          <div class="smod-section-title" data-i18n="display_section">Affichage</div>
+          <div class="smod-row">
+            <span class="smod-label" data-i18n="watermark_label">Afficher les raccourcis en filigrane</span>
+            <input type="checkbox" class="smod-cb" id="cb-watermark" onchange="toggleWatermark(this.checked)">
+          </div>
+        </div>
+        <div class="smod-section">
+          <div class="smod-section-title" data-i18n="tuto_section">Tutoriel</div>
+          <div class="smod-row">
+            <span class="smod-label" data-i18n="tuto_reset_label">Réactiver le tutoriel au prochain lancement</span>
+            <button class="smod-btn" onclick="resetTutorial()" data-i18n="tuto_reset_btn">Réactiver</button>
+          </div>
+        </div>
+      </div>
+      <!-- ONGLET AIDE -->
+      <div id="stab-help" style="display:none;">
+        <div class="smod-section">
+          <div class="smod-section-title" data-i18n="shortcuts_section">Raccourcis clavier</div>
+          <table class="shortcuts-table">
+            <thead><tr><th data-i18n="sc_th_key">Touche</th><th data-i18n="sc_th_action">Action</th></tr></thead>
+            <tbody>
+              <tr><td>Ctrl+Z</td><td data-i18n="sc_undo">Annuler</td></tr>
+              <tr><td>Ctrl+Y</td><td data-i18n="sc_redo">Refaire</td></tr>
+              <tr><td data-i18n="sc_key_del">Suppr / Backspace</td><td data-i18n="sc_del">Supprimer calque</td></tr>
+              <tr><td>← ↑ → ↓</td><td data-i18n="sc_move1">Déplacer de 1px</td></tr>
+              <tr><td>Shift + ← ↑ → ↓</td><td data-i18n="sc_move25">Déplacer de 25px</td></tr>
+              <tr><td>Alt + ↑ ↓</td><td data-i18n="sc_resizev">Redimensionner verticalement</td></tr>
+              <tr><td>Alt + ← →</td><td data-i18n="sc_resizeh">Redimensionner horizontalement</td></tr>
+              <tr><td>Ctrl + clic</td><td data-i18n="sc_group">Ajouter/retirer du groupe</td></tr>
+              <tr><td data-i18n="sc_key_dbl">Double-clic</td><td data-i18n="sc_edit">Éditer un texte</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="smod-section">
+          <div class="smod-section-title" data-i18n="guide_section">Guide de démarrage rapide</div>
+          <ol class="guide-steps">
+            <li class="guide-step"><div class="guide-step-num">1</div><div class="guide-step-text" data-i18n="guide_1"><strong>Choisir un type de carte</strong> depuis l'écran d'accueil ou via "Nouvelle carte".</div></li>
+            <li class="guide-step"><div class="guide-step-num">2</div><div class="guide-step-text" data-i18n="guide_2"><strong>Ajouter des éléments</strong> depuis la sidebar : badges, ressources, tuiles, textes…</div></li>
+            <li class="guide-step"><div class="guide-step-num">3</div><div class="guide-step-text" data-i18n="guide_3"><strong>Déplacer</strong> les éléments en cliquant-glissant sur le canvas.</div></li>
+            <li class="guide-step"><div class="guide-step-num">4</div><div class="guide-step-text" data-i18n="guide_4"><strong>Redimensionner</strong> avec les carrés oranges aux coins de l'élément sélectionné.</div></li>
+            <li class="guide-step"><div class="guide-step-num">5</div><div class="guide-step-text" data-i18n="guide_5"><strong>Ordonner les calques</strong> par glisser-déposer dans le panneau de droite.</div></li>
+            <li class="guide-step"><div class="guide-step-num">6</div><div class="guide-step-text" data-i18n="guide_6"><strong>Exporter</strong> via Fichier → Sauvegarder (PNG) ou Exporter projet.</div></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     OVERLAY TUTORIEL
+     ============================================================ -->
+<div id="tutorial-overlay" class="hidden">
+  <div id="tutorial-backdrop" onclick="tutorialSkip()"></div>
+  <div id="tutorial-bubble" class="arrow-left">
+    <div class="tut-step-label" id="tut-step-label">Étape 1 / 11</div>
+    <div class="tut-title" id="tut-title">Titre</div>
+    <div class="tut-text" id="tut-text">Texte</div>
+    <div class="tut-actions">
+      <button class="tut-btn-skip" onclick="tutorialSkip()" id="tut-skip-btn" data-i18n="tut_skip">Passer</button>
+      <button class="tut-btn-next" onclick="tutorialNext()" id="tut-next-btn" data-i18n="tut_next">Suivant →</button>
+    </div>
+  </div>
+</div>
 
 <!-- ============================================================
      ÉCRAN DE DÉMARRAGE
@@ -681,6 +985,344 @@ function fitImages(imgList, minWidth) {
      JAVASCRIPT — APPLICATION PRINCIPALE
      ============================================================ -->
 <script>
+// ============================================================
+// SYSTÈME I18N — Traductions FR / EN
+// ============================================================
+var LANG = localStorage.getItem('tm_lang') || 'fr';
+var WATERMARK_ON = localStorage.getItem('tm_watermark') === '1';
+var TUTORIAL_DONE = localStorage.getItem('tm_tutorial_done') === '1';
+
+var I18N = {
+  fr: {
+    // Écran de démarrage
+    start_subtitle: "Crée tes propres cartes pour Terraforming Mars",
+    start_load: "📂 Charger un projet",
+    start_choose: "Choisir un type de carte",
+    tpl_green_name: "Carte Verte", tpl_green_sub: "Standard",
+    tpl_blue_name: "Carte Bleue", tpl_blue_sub: "Standard",
+    tpl_red_name: "Carte Rouge", tpl_red_sub: "Standard",
+    tpl_prelude_name: "Prélude", tpl_prelude_sub: "Horizontale",
+    tpl_corp_name: "Corporation", tpl_corp_sub: "Horizontale",
+    tuto_invite_text: "C'est votre première visite ! Voulez-vous faire un tour guidé de l'outil ?",
+    tuto_invite_start: "🎓 Démarrer le tutoriel",
+    tuto_invite_skip: "Passer",
+    // Sidebar
+    sb_subtitle: "Outil Fan Made",
+    btn_undo: "↩ Annuler", btn_redo: "Refaire ↪",
+    btn_new: "＋ Nouvelle carte",
+    sec_file: "Fichier", sec_tags: "Badges", sec_vps: "Points de victoire",
+    sec_parties: "Partis", sec_resources: "Ressources", sec_tiles: "Tuiles",
+    sec_tools: "Texte & outils", sec_requisites: "Prérequis",
+    sec_global: "Paramètres globaux", sec_misc: "Divers", sec_templates: "Modèles",
+    file_save: "💾 Sauvegarder", file_open: "📂 Ouvrir projet", file_export: "📦 Exporter projet",
+    tool_textbox: "🔤 Zone de texte", tool_production: "⬛ Boîte production",
+    tool_effect: "✦ Boîte effet", tool_line: "— Ligne",
+    tool_webimg: "🌐 Image web", tool_localimg: "📁 Image locale", tool_webfont: "🔡 Police web",
+    // Panneau calques
+    layers_title: "Calques",
+    layers_hint: "Double-clic sur texte = éditer",
+    group_mode: "Mode groupe",
+    // Params
+    pt_position: "Position & Taille",
+    pl_x: "X", pl_y: "Y", pl_width: "Largeur", pl_height: "Hauteur",
+    pl_ratio: "Ratio fixe", pl_angle: "Angle", pl_len: "Longueur",
+    pt_crop: "Recadrage image",
+    pl_opacity: "Opacité %", pl_sx: "Source X", pl_sy: "Source Y",
+    pl_sw: "Source L", pl_sh: "Source H",
+    pl_otherbg: "Fond autres", pl_thickness: "Épaisseur",
+    pl_lockedh: "Figer hauteur",
+    pt_text: "Texte",
+    pl_content: "Contenu", pl_linespace: "Interligne", pl_font: "Police",
+    pl_style: "Style", pl_weight: "Graisse", pl_align: "Alignement",
+    style_normal: "Normal", style_italic: "Italique",
+    weight_normal: "Normal", weight_bold: "Gras",
+    align_center: "Centré", align_left: "Gauche", align_right: "Droite",
+    pt_color: "Couleur", pl_color: "Couleur",
+    preset_select: "Sélectionner…",
+    preset_label: "Préréglage :",
+    // Chargement
+    loading_label: "Chargement :",
+    // Modales
+    modal_webimg_title: "Charger une image web",
+    modal_webimg_url: "URL de l'image :",
+    modal_webimg_ph: "https://exemple.com/image.png",
+    modal_cancel: "Annuler", modal_load: "Charger",
+    modal_font_title: "Charger une police web",
+    modal_font_url: "URL Google Fonts :",
+    modal_font_ph: "https://fonts.googleapis.com/css2?family=...",
+    // Settings
+    settings_title: "Paramètres",
+    tab_params: "Paramètres", tab_help: "Aide",
+    lang_section: "Langue / Language",
+    lang_label: "Langue de l'interface",
+    display_section: "Affichage",
+    watermark_label: "Afficher les raccourcis en filigrane",
+    tuto_section: "Tutoriel",
+    tuto_reset_label: "Réactiver le tutoriel au prochain lancement",
+    tuto_reset_btn: "Réactiver",
+    // Aide — raccourcis
+    shortcuts_section: "Raccourcis clavier",
+    sc_th_key: "Touche", sc_th_action: "Action",
+    sc_undo: "Annuler", sc_redo: "Refaire",
+    sc_key_del: "Suppr / Backspace", sc_del: "Supprimer calque",
+    sc_move1: "Déplacer de 1px", sc_move25: "Déplacer de 25px",
+    sc_resizev: "Redimensionner verticalement",
+    sc_resizeh: "Redimensionner horizontalement",
+    sc_group: "Ajouter/retirer du groupe",
+    sc_key_dbl: "Double-clic", sc_edit: "Éditer un texte",
+    // Guide
+    guide_section: "Guide de démarrage rapide",
+    guide_1: "<strong>Choisir un type de carte</strong> depuis l'écran d'accueil ou via \"Nouvelle carte\".",
+    guide_2: "<strong>Ajouter des éléments</strong> depuis la sidebar : badges, ressources, tuiles, textes…",
+    guide_3: "<strong>Déplacer</strong> les éléments en cliquant-glissant sur le canvas.",
+    guide_4: "<strong>Redimensionner</strong> avec les carrés oranges aux coins de l'élément sélectionné.",
+    guide_5: "<strong>Ordonner les calques</strong> par glisser-déposer dans le panneau de droite.",
+    guide_6: "<strong>Exporter</strong> via Fichier → Sauvegarder (PNG) ou Exporter projet.",
+    // Tutoriel
+    tut_skip: "Passer", tut_next: "Suivant →", tut_finish: "Terminer",
+    tut_of: "/",
+    tut_steps: [
+      { title: "Nouvelle carte", text: "Le bouton <strong>Nouvelle carte</strong> vous permet de repartir de zéro en choisissant un nouveau type de carte." },
+      { title: "Les Badges", text: "Cette section contient tous les <strong>badges</strong> disponibles (Espace, Construction, Science…). Cliquez sur un badge pour l'ajouter à votre carte." },
+      { title: "Les Ressources", text: "Cette section contient toutes les <strong>ressources</strong> du jeu (Acier, Titane, Plante, Énergie…). Cliquez pour ajouter." },
+      { title: "Ajouter un badge", text: "Cliquez sur un badge pour le tester ! Les 3 premiers badges se placent automatiquement en haut à droite de la carte." },
+      { title: "Déplacer un élément", text: "Cliquez sur un élément du canvas et <strong>faites-le glisser</strong> pour le repositionner librement." },
+      { title: "Redimensionner", text: "Sélectionnez un élément puis utilisez les <strong>petits carrés oranges aux coins</strong> pour le redimensionner." },
+      { title: "Ordre des calques", text: "Dans ce panneau, <strong>glissez-déposez</strong> les calques pour les mettre en avant ou en arrière. Le premier calque de la liste est dessiné en dernier (au-dessus)." },
+      { title: "Image locale", text: "Utilisez <strong>Image locale</strong> pour importer une illustration depuis votre ordinateur et l'utiliser sur votre carte." },
+      { title: "Prérequis", text: "Ajoutez un prérequis (min ou max) puis ajustez sa <strong>largeur</strong> librement dans le panneau de paramètres." },
+      { title: "Fond autres", text: "La case <strong>Fond autres</strong> ajoute un contour orangé autour des ressources, badges et tuiles pour les faire ressortir." },
+      { title: "Raccourcis clavier", text: "<strong>Ctrl+Z</strong> Annuler &nbsp;|&nbsp; <strong>Ctrl+Y</strong> Refaire<br><strong>Suppr</strong> Supprimer calque<br><strong>←↑→↓</strong> Déplacer 1px &nbsp;|&nbsp; <strong>Shift+flèches</strong> 25px<br><strong>Alt+flèches</strong> Redimensionner<br><strong>Ctrl+clic</strong> Mode groupe &nbsp;|&nbsp; <strong>Dbl-clic</strong> Éditer texte" }
+    ],
+    // Confirmations
+    confirm_new: "Supprimer le travail actuel et recommencer ?",
+    confirm_locked: "Ce calque est verrouillé. Supprimer quand même ?",
+    confirm_done: "Cliquez quand c'est terminé.",
+    confirm_resize: "Les données semblent sauvegardées à l'ancienne taille. Redimensionner automatiquement ?",
+    alert_not_image: "Ce fichier n'est pas une image.",
+    alert_load_error: "Erreur lors du chargement du fichier.",
+    alert_project_error: "Erreur lors du chargement du projet : ",
+    alert_local_files: "Fichiers locaux non rechargés. Vous devez le faire manuellement.",
+    // Labels blockList (icônes sidebar)
+    bl_arrow: "Action", bl_asterisk: "Astérisque", bl_slash: "Slash",
+    bl_chairman: "Président", bl_delegate: "Délégué", bl_influence: "Influence",
+    bl_party_leader: "Chef de parti", bl_tag_holder: "Support badge",
+    bl_effect_bg: "Effet (fond)", bl_megacredit: "M€",
+    bl_max_req: "Prérequis maximum", bl_min_req: "Prérequis minimum", bl_no_req: "Sans prérequis",
+    bl_vp_bg: "Fond PV", bl_vp_neg: "-PV", bl_vp_nfor: "/ PV",
+    // Presets labels
+    pr_card_cost: "Coût de carte", pr_card_name: "Nom de carte",
+    pr_description: "Description", pr_flavor: "Texte d'ambiance",
+    pr_fan_made: "FAN MADE",
+    pr_no_req: "Sans prérequis", pr_max: "Max", pr_min: "Min",
+    pr_std_tile: "Tuile standard", pr_positif: "Positif", pr_negatif: "Négatif",
+    pr_corps: "Corps de carte", pr_prerequis: "Prérequis",
+    pr_flavor1: "Ambiance 1 ligne", pr_flavor2: "Ambiance 2 lignes",
+    // Templates sidebar
+    tpl_list: {
+      green_normal: "🟢 Verte Standard", green_small_bottom: "🟢 Verte Petit bas",
+      green_big_bottom: "🟢 Verte Grand bas", blue_normal: "🔵 Bleue Standard",
+      blue_big_bottom: "🔵 Bleue Grand bas", blue_big_top: "🔵 Bleue Grand haut",
+      red_normal: "🔴 Rouge Standard", red_small_bottom: "🔴 Rouge Petit bas",
+      prelude: "💜 Prélude", corporation: "🏢 Corporation"
+    },
+    // Textes par défaut des calques (dans les templates)
+    default_card_name: "NOM DE LA CARTE",
+    default_description: "Description de carte\nPlusieurs lignes\net elles peuvent être beaucoup, beaucoup plus longues\n'Interligne' contrôle l'espacement entre les lignes",
+    default_flavor: "Texte d'ambiance !",
+    default_effect_action: "Texte d'effet ou d'action !",
+    default_replace: "Remplacez ce texte !",
+    // Noms calques auto
+    layer_text: "Texte:",
+    layer_production: "Production",
+    layer_effect: "Boîte effet",
+    layer_line: "Ligne",
+    layer_local: "Local:",
+    layer_web: "Image web",
+    layer_base: "Base",
+    // Verrou
+    lock_lock: "Verrouiller", lock_unlock: "Déverrouiller",
+    // Mode groupe
+    grp_mode: "Mode groupe",
+    // Boutons GP/VP
+    btn_corps: "Corps de carte", btn_prereq: "Prérequis",
+    btn_positif: "Positif", btn_negatif: "Négatif",
+  },
+  en: {
+    // Start screen
+    start_subtitle: "Create your own cards for Terraforming Mars",
+    start_load: "📂 Load project",
+    start_choose: "Choose a card type",
+    tpl_green_name: "Green Card", tpl_green_sub: "Standard",
+    tpl_blue_name: "Blue Card", tpl_blue_sub: "Standard",
+    tpl_red_name: "Red Card", tpl_red_sub: "Standard",
+    tpl_prelude_name: "Prelude", tpl_prelude_sub: "Horizontal",
+    tpl_corp_name: "Corporation", tpl_corp_sub: "Horizontal",
+    tuto_invite_text: "This is your first visit! Would you like a guided tour of the tool?",
+    tuto_invite_start: "🎓 Start tutorial",
+    tuto_invite_skip: "Skip",
+    // Sidebar
+    sb_subtitle: "Fan Made Tool",
+    btn_undo: "↩ Undo", btn_redo: "Redo ↪",
+    btn_new: "＋ New card",
+    sec_file: "File", sec_tags: "Tags", sec_vps: "Victory Points",
+    sec_parties: "Parties", sec_resources: "Resources", sec_tiles: "Tiles",
+    sec_tools: "Text & tools", sec_requisites: "Requirements",
+    sec_global: "Global Parameters", sec_misc: "Misc", sec_templates: "Templates",
+    file_save: "💾 Save", file_open: "📂 Open project", file_export: "📦 Export project",
+    tool_textbox: "🔤 Text box", tool_production: "⬛ Production box",
+    tool_effect: "✦ Effect box", tool_line: "— Line",
+    tool_webimg: "🌐 Web image", tool_localimg: "📁 Local image", tool_webfont: "🔡 Web font",
+    // Layer panel
+    layers_title: "Layers",
+    layers_hint: "Double-click on text = edit",
+    group_mode: "Group mode",
+    // Params
+    pt_position: "Position & Size",
+    pl_x: "X", pl_y: "Y", pl_width: "Width", pl_height: "Height",
+    pl_ratio: "Fixed ratio", pl_angle: "Angle", pl_len: "Length",
+    pt_crop: "Image crop",
+    pl_opacity: "Opacity %", pl_sx: "Source X", pl_sy: "Source Y",
+    pl_sw: "Source W", pl_sh: "Source H",
+    pl_otherbg: "Other bg", pl_thickness: "Thickness",
+    pl_lockedh: "Lock height",
+    pt_text: "Text",
+    pl_content: "Content", pl_linespace: "Line spacing", pl_font: "Font",
+    pl_style: "Style", pl_weight: "Weight", pl_align: "Alignment",
+    style_normal: "Normal", style_italic: "Italic",
+    weight_normal: "Normal", weight_bold: "Bold",
+    align_center: "Center", align_left: "Left", align_right: "Right",
+    pt_color: "Color", pl_color: "Color",
+    preset_select: "Select…",
+    preset_label: "Preset:",
+    // Loading
+    loading_label: "Loading:",
+    // Modals
+    modal_webimg_title: "Load web image",
+    modal_webimg_url: "Image URL:",
+    modal_webimg_ph: "https://example.com/image.png",
+    modal_cancel: "Cancel", modal_load: "Load",
+    modal_font_title: "Load web font",
+    modal_font_url: "Google Fonts URL:",
+    modal_font_ph: "https://fonts.googleapis.com/css2?family=...",
+    // Settings
+    settings_title: "Settings",
+    tab_params: "Settings", tab_help: "Help",
+    lang_section: "Langue / Language",
+    lang_label: "Interface language",
+    display_section: "Display",
+    watermark_label: "Show shortcuts as watermark",
+    tuto_section: "Tutorial",
+    tuto_reset_label: "Re-enable tutorial on next launch",
+    tuto_reset_btn: "Re-enable",
+    // Help — shortcuts
+    shortcuts_section: "Keyboard shortcuts",
+    sc_th_key: "Key", sc_th_action: "Action",
+    sc_undo: "Undo", sc_redo: "Redo",
+    sc_key_del: "Del / Backspace", sc_del: "Delete layer",
+    sc_move1: "Move 1px", sc_move25: "Move 25px",
+    sc_resizev: "Resize vertically",
+    sc_resizeh: "Resize horizontally",
+    sc_group: "Add/remove from group",
+    sc_key_dbl: "Double-click", sc_edit: "Edit text",
+    // Guide
+    guide_section: "Quick start guide",
+    guide_1: "<strong>Choose a card type</strong> from the home screen or via \"New card\".",
+    guide_2: "<strong>Add elements</strong> from the sidebar: tags, resources, tiles, text…",
+    guide_3: "<strong>Move</strong> elements by clicking and dragging on the canvas.",
+    guide_4: "<strong>Resize</strong> using the orange squares at the corners of the selected element.",
+    guide_5: "<strong>Reorder layers</strong> by drag and drop in the right panel.",
+    guide_6: "<strong>Export</strong> via File → Save (PNG) or Export project.",
+    // Tutorial
+    tut_skip: "Skip", tut_next: "Next →", tut_finish: "Finish",
+    tut_of: "/",
+    tut_steps: [
+      { title: "New card", text: "The <strong>New card</strong> button lets you start fresh by choosing a new card type." },
+      { title: "Tags", text: "This section contains all available <strong>tags</strong> (Space, Building, Science…). Click a tag to add it to your card." },
+      { title: "Resources", text: "This section contains all game <strong>resources</strong> (Steel, Titanium, Plant, Energy…). Click to add." },
+      { title: "Add a tag", text: "Click a tag to try it out! The first 3 tags are automatically placed in the top-right of the card." },
+      { title: "Move an element", text: "Click an element on the canvas and <strong>drag it</strong> to reposition it freely." },
+      { title: "Resize", text: "Select an element then use the <strong>small orange squares at the corners</strong> to resize it." },
+      { title: "Layer order", text: "In this panel, <strong>drag and drop</strong> layers to bring them forward or send them back. The first layer in the list is drawn last (on top)." },
+      { title: "Local image", text: "Use <strong>Local image</strong> to import an illustration from your computer and use it on your card." },
+      { title: "Requirements", text: "Add a requirement (min or max) then freely adjust its <strong>width</strong> in the parameters panel." },
+      { title: "Other background", text: "The <strong>Other bg</strong> checkbox adds an orange border around resources, tags and tiles to make them stand out." },
+      { title: "Keyboard shortcuts", text: "<strong>Ctrl+Z</strong> Undo &nbsp;|&nbsp; <strong>Ctrl+Y</strong> Redo<br><strong>Del</strong> Delete layer<br><strong>←↑→↓</strong> Move 1px &nbsp;|&nbsp; <strong>Shift+arrows</strong> 25px<br><strong>Alt+arrows</strong> Resize<br><strong>Ctrl+click</strong> Group mode &nbsp;|&nbsp; <strong>Dbl-click</strong> Edit text" }
+    ],
+    // Confirmations
+    confirm_new: "Delete current work and start over?",
+    confirm_locked: "This layer is locked. Delete anyway?",
+    confirm_done: "Click when done.",
+    confirm_resize: "Data seems saved at old size. Automatically resize?",
+    alert_not_image: "This file is not an image.",
+    alert_load_error: "Error loading file.",
+    alert_project_error: "Error loading project: ",
+    alert_local_files: "Local files not reloaded. You must do it manually.",
+    // blockList labels
+    bl_arrow: "Action", bl_asterisk: "Asterisk", bl_slash: "Slash",
+    bl_chairman: "Chairman", bl_delegate: "Delegate", bl_influence: "Influence",
+    bl_party_leader: "Party Leader", bl_tag_holder: "Tag Holder",
+    bl_effect_bg: "Effect (bg)", bl_megacredit: "M€",
+    bl_max_req: "Max Requirement", bl_min_req: "Min Requirement", bl_no_req: "No Requirement",
+    bl_vp_bg: "VP background", bl_vp_neg: "-VP", bl_vp_nfor: "/ VP",
+    // Presets labels
+    pr_card_cost: "Card Cost", pr_card_name: "Card Name",
+    pr_description: "Description", pr_flavor: "Flavor Text",
+    pr_fan_made: "FAN MADE",
+    pr_no_req: "No Req", pr_max: "Max", pr_min: "Min",
+    pr_std_tile: "Standard tile", pr_positif: "Positive", pr_negatif: "Negative",
+    pr_corps: "Card body", pr_prerequis: "Requirement",
+    pr_flavor1: "Flavor 1 line", pr_flavor2: "Flavor 2 lines",
+    // Templates sidebar
+    tpl_list: {
+      green_normal: "🟢 Green Standard", green_small_bottom: "🟢 Green Small Bottom",
+      green_big_bottom: "🟢 Green Big Bottom", blue_normal: "🔵 Blue Standard",
+      blue_big_bottom: "🔵 Blue Big Bottom", blue_big_top: "🔵 Blue Big Top",
+      red_normal: "🔴 Red Standard", red_small_bottom: "🔴 Red Small Bottom",
+      prelude: "💜 Prelude", corporation: "🏢 Corporation"
+    },
+    // Default layer texts
+    default_card_name: "CARD NAME",
+    default_description: "Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines",
+    default_flavor: "Flavor text!",
+    default_effect_action: "Effect or Action text!",
+    default_replace: "Replace this text!",
+    // Layer names
+    layer_text: "Text:",
+    layer_production: "Production",
+    layer_effect: "Effect Box",
+    layer_line: "Line",
+    layer_local: "Local:",
+    layer_web: "Web image",
+    layer_base: "Base",
+    // Lock
+    lock_lock: "Lock", lock_unlock: "Unlock",
+    // Group
+    grp_mode: "Group mode",
+    // GP/VP buttons
+    btn_corps: "Card body", btn_prereq: "Requirement",
+    btn_positif: "Positive", btn_negatif: "Negative",
+  }
+};
+
+// Textes par défaut des cartes (pour détecter si modifié)
+var DEFAULT_CARD_TEXTS = {
+  card_name:   ["CARD NAME", "NOM DE LA CARTE"],
+  description: [
+    "Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines",
+    "Description de carte\nPlusieurs lignes\net elles peuvent être beaucoup, beaucoup plus longues\n'Interligne' contrôle l'espacement entre les lignes"
+  ],
+  flavor:      ["Flavor text!", "Texte d'ambiance !"],
+  effect_action: ["Effect or Action text!", "Texte d'effet ou d'action !"],
+  replace:     ["Replace this text!", "Remplacez ce texte !"]
+};
+
+function t(key) {
+  return (I18N[LANG] && I18N[LANG][key] !== undefined) ? I18N[LANG][key] : (I18N['fr'][key] || key);
+}
+</script>
+
+<script>
 "use strict";
 
 // ============================================================
@@ -808,7 +1450,7 @@ function restoreHistory(idx) {
     nameInput.type = "text";
     nameInput.id = "layername" + savedId.replace("dragdropdiv","");
     nameInput.maxLength = 20; nameInput.size = 15;
-    nameInput.value = savedData.name || (isBase ? "Base" : savedData.type || "");
+    nameInput.value = savedData.name || (isBase ? t("layer_base") : savedData.type || "");
     nameInput.onchange = function() { updateLayerName(this); };
     childAdd.appendChild(nameInput);
 
@@ -823,7 +1465,7 @@ function restoreHistory(idx) {
         var divId = this.parentNode.parentNode.id;
         aLayers[divId].locked = !aLayers[divId].locked;
         this.innerText = aLayers[divId].locked ? "🔒" : "🔓";
-        this.title = aLayers[divId].locked ? "Déverrouiller" : "Verrouiller";
+        this.title = aLayers[divId].locked ? t("lock_unlock") : t("lock_lock");
         saveToHistory();
       };
       childAdd.appendChild(lk);
@@ -897,7 +1539,7 @@ document.addEventListener("keydown", function(e) {
       if (layerToDelete) {
         var layer = aLayers[selectedLayerId];
         if (layer && layer.locked) {
-          if (!confirm("Ce calque est verrouillé. Supprimer quand même ?")) return;
+          if (!confirm(t("confirm_locked"))) return;
         }
         if (domParams.parentNode === layerToDelete) layerToDelete.removeChild(domParams);
         delete aLayers[selectedLayerId];
@@ -1114,103 +1756,103 @@ var megaTemplates = {
     {type:"block", iNum:0,  x:0,   y:0,   width:826, height:1126, params:"allimages"},
     {type:"text",  data:"10",        x:118, y:147,  width:100, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
-    {type:"text",  data:"CARD NAME",   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
+    {type:"text",  data:t("default_card_name"),   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",    x:413, y:612,  width:150, height:24, color:"#24770d", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
-    {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:110, y:770, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",  data:t("default_description"), x:110, y:770, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
     {type:"line",  x:254, y:1012, width:2, angle:0, len:333, color:"#000000", params:"allangle alllen allpreset color", locked:true},
-    {type:"text",  data:"Flavor text!", x:413, y:1037, width:600, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
+    {type:"text",  data:t("default_flavor"), x:413, y:1037, width:600, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
   ]},
   green_big_bottom: { layers: [
     {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
     {type:"block", iNum:2,  x:0,   y:0,   width:826, height:1126, params:"allimages"},
     {type:"text",  data:"10",        x:118, y:147,  width:100, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
-    {type:"text",  data:"CARD NAME",   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
+    {type:"text",  data:t("default_card_name"),   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",    x:413, y:562,  width:150, height:24, color:"#24770d", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
-    {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:110, y:770, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",  data:t("default_description"), x:110, y:770, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
     {type:"line",  x:254, y:1012, width:2, angle:0, len:333, color:"#000000", params:"allangle alllen allpreset color", locked:true},
-    {type:"text",  data:"Flavor text!", x:413, y:1037, width:600, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
+    {type:"text",  data:t("default_flavor"), x:413, y:1037, width:600, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
   ]},
   green_small_bottom: { layers: [
     {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
     {type:"block", iNum:1,  x:0,   y:0,   width:826, height:1126, params:"allimages"},
     {type:"text",  data:"10",        x:118, y:147,  width:100, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
-    {type:"text",  data:"CARD NAME",   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
+    {type:"text",  data:t("default_card_name"),   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",    x:413, y:664,  width:150, height:24, color:"#24770d", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
-    {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:110, y:770, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",  data:t("default_description"), x:110, y:770, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
     {type:"line",  x:254, y:1012, width:2, angle:0, len:333, color:"#000000", params:"allangle alllen allpreset color", locked:true},
-    {type:"text",  data:"Flavor text!", x:413, y:1037, width:600, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
+    {type:"text",  data:t("default_flavor"), x:413, y:1037, width:600, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
   ]},
   blue_normal: { layers: [
     {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
     {type:"block", iNum:3,  x:0,   y:0,   width:826, height:1126, params:"allimages"},
     {type:"text",  data:"10",              x:118, y:147,  width:100, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
-    {type:"text",  data:"CARD NAME",         x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
+    {type:"text",  data:t("default_card_name"),         x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",          x:413, y:798,  width:150, height:24, color:"#0c5e84", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
-    {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:100, y:860, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",  data:t("default_description"), x:100, y:860, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
     {type:"block", iNum:13, x:355, y:265, width:116, height:55, params:"allimages allpreset"},
-    {type:"text",  data:"Effect or Action text!", x:413, y:360, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
+    {type:"text",  data:t("default_effect_action"), x:413, y:360, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
     {type:"line",  x:254, y:1012, width:2, angle:0, len:333, color:"#000000", params:"allangle alllen allpreset color", locked:true},
-    {type:"text",  data:"Flavor text!",      x:413, y:1037, width:600, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
+    {type:"text",  data:t("default_flavor"),      x:413, y:1037, width:600, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
   ]},
   blue_big_bottom: { layers: [
     {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
     {type:"block", iNum:4,  x:0,   y:0,   width:826, height:1126, params:"allimages"},
     {type:"text",  data:"10",              x:118, y:147,  width:100, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
-    {type:"text",  data:"CARD NAME",         x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
+    {type:"text",  data:t("default_card_name"),         x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",          x:413, y:753,  width:150, height:24, color:"#0c5e84", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
-    {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:100, y:860, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",  data:t("default_description"), x:100, y:860, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
     {type:"block", iNum:13, x:355, y:265, width:116, height:55, params:"allimages allpreset"},
-    {type:"text",  data:"Effect or Action text!", x:413, y:360, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
+    {type:"text",  data:t("default_effect_action"), x:413, y:360, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
     {type:"line",  x:254, y:1012, width:2, angle:0, len:333, color:"#000000", params:"allangle alllen allpreset color", locked:true},
-    {type:"text",  data:"Flavor text!",      x:413, y:1037, width:600, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
+    {type:"text",  data:t("default_flavor"),      x:413, y:1037, width:600, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
   ]},
   blue_big_top: { layers: [
     {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
     {type:"block", iNum:5,  x:0,   y:0,   width:826, height:1126, params:"allimages"},
     {type:"text",  data:"10",              x:118, y:147,  width:100, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
-    {type:"text",  data:"CARD NAME",         x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
+    {type:"text",  data:t("default_card_name"),         x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",          x:413, y:849,  width:150, height:24, color:"#0c5e84", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
-    {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:100, y:891, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",  data:t("default_description"), x:100, y:891, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
     {type:"block", iNum:13, x:355, y:265, width:116, height:55, params:"allimages allpreset"},
-    {type:"text",  data:"Effect or Action text!", x:413, y:360, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
+    {type:"text",  data:t("default_effect_action"), x:413, y:360, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
     {type:"line",  x:254, y:1012, width:2, angle:0, len:333, color:"#000000", params:"allangle alllen allpreset color", locked:true},
-    {type:"text",  data:"Flavor text!",      x:413, y:1037, width:600, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
+    {type:"text",  data:t("default_flavor"),      x:413, y:1037, width:600, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
   ]},
   red_normal: { layers: [
     {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
     {type:"block", iNum:6,  x:0,   y:0,   width:826, height:1126, params:"allimages"},
     {type:"text",  data:"10",        x:118, y:147,  width:100, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
-    {type:"text",  data:"CARD NAME",   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
+    {type:"text",  data:t("default_card_name"),   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",    x:413, y:685,  width:150, height:24, color:"#c36a17", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
-    {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:100, y:810, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",  data:t("default_description"), x:100, y:810, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
     {type:"line",  x:254, y:1012, width:2, angle:0, len:333, color:"#000000", params:"allangle alllen allpreset color", locked:true},
-    {type:"text",  data:"Flavor text!", x:413, y:1037, width:600, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
+    {type:"text",  data:t("default_flavor"), x:413, y:1037, width:600, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
   ]},
   red_small_bottom: { layers: [
     {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
     {type:"block", iNum:7,  x:0,   y:0,   width:826, height:1126, params:"allimages"},
     {type:"text",  data:"10",        x:118, y:147,  width:100, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
-    {type:"text",  data:"CARD NAME",   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
+    {type:"text",  data:t("default_card_name"),   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",    x:413, y:718,  width:150, height:24, color:"#c36a17", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
-    {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:100, y:810, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",  data:t("default_description"), x:100, y:810, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
     {type:"line",  x:254, y:1012, width:2, angle:0, len:333, color:"#000000", params:"allangle alllen allpreset color", locked:true},
-    {type:"text",  data:"Flavor text!", x:413, y:1037, width:600, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
+    {type:"text",  data:t("default_flavor"), x:413, y:1037, width:600, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
   ]},
   prelude: { layers: [
     {type:"base",  color:"#ffffff", height:826, width:1126, params:"color"},
     {type:"block", iNum:93, x:0,   y:0,   width:1126, height:826, params:"allimages"},
-    {type:"text",  data:"CARD NAME",   x:563, y:218, width:826, height:48, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
+    {type:"text",  data:t("default_card_name"),   x:563, y:218, width:826, height:48, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"text",  data:"FAN MADE",    x:563, y:500, width:150, height:24, color:"#ce809f", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"text",  data:"P R E L U D E", x:563, y:99, width:826, height:24, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
-    {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:110, y:560, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
-    {type:"text",  data:"Flavor text!", x:563, y:723, width:600, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"}
+    {type:"text",  data:t("default_description"), x:110, y:560, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",  data:t("default_flavor"), x:563, y:723, width:600, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"}
   ]},
   corporation: { layers: [
     {type:"base",   color:"#ffffff", height:826, width:1126, params:"color"},
@@ -1221,8 +1863,8 @@ var megaTemplates = {
     {type:"text",   data:"E F F E C T",             x:800, y:333, width:1126, height:22, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
     {type:"text",   data:"FAN MADE",                x:198, y:736, width:150,  height:24, color:"#c3c3c3", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
     {type:"text",   data:"C O R P O R A T I O N",  x:563, y:109, width:826,  height:24, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
-    {type:"text",   data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:110, y:560, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
-    {type:"text",   data:"Flavor text!", x:563, y:723, width:600, height:22, color:"#000000", font:"Pagella", style:"italic", weight:"bold", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"}
+    {type:"text",   data:t("default_description"), x:110, y:560, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",   data:t("default_flavor"), x:563, y:723, width:600, height:22, color:"#000000", font:"Pagella", style:"italic", weight:"bold", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"}
   ]}
 };
 
@@ -1380,7 +2022,7 @@ function startTemplate(name) {
   var isHorizontal = (name === "prelude" || name === "corporation");
   var baseW = isHorizontal ? 1126 : 826;
   var baseH = isHorizontal ? 826 : 1126;
-  addLayer("Base", {type:"base", color:"#ffffff", height:baseH, width:baseW, params:"color"});
+  addLayer(t("layer_base"), {type:"base", color:"#ffffff", height:baseH, width:baseW, params:"color"});
   loadFrom(megaTemplates[name].layers);
   applyCanvasZoom();
   updateTemplateList();
@@ -1516,7 +2158,7 @@ function createTextbox(txt) {
 function createLockIcon(layer) {
   var lk = document.createElement("span");
   lk.className = "layer-lock";
-  lk.title = layer.locked ? "Déverrouiller" : "Verrouiller";
+  lk.title = layer.locked ? t("lock_unlock") : t("lock_lock");
   lk.innerText = layer.locked ? "🔒" : "🔓";
   lk.style.cssText = "cursor:pointer;font-size:11px;flex-shrink:0;opacity:0.7;";
   lk.onclick = function(e) {
@@ -1524,7 +2166,7 @@ function createLockIcon(layer) {
     var divId = this.parentNode.parentNode.id;
     aLayers[divId].locked = !aLayers[divId].locked;
     this.innerText = aLayers[divId].locked ? "🔒" : "🔓";
-    this.title = aLayers[divId].locked ? "Déverrouiller" : "Verrouiller";
+    this.title = aLayers[divId].locked ? t("lock_unlock") : t("lock_lock");
     saveToHistory();
   };
   return lk;
@@ -1684,11 +2326,11 @@ function selectLayer() {
     gpDiv.id = "gp-mode-btns";
     gpDiv.style.cssText = "display:flex;gap:8px;margin-bottom:10px;padding-bottom:9px;border-bottom:1px solid var(--border);";
     var btnNorm = document.createElement("button");
-    btnNorm.className = "btn btn-g"; btnNorm.innerText = "Corps de carte";
+    btnNorm.className = "btn btn-g"; btnNorm.innerText = t("btn_corps");
     btnNorm.style.flex = "1";
     btnNorm.onclick = function() { applyGPMode(clickedNode.id, false); };
     var btnReq = document.createElement("button");
-    btnReq.className = "btn btn-g"; btnReq.innerText = "Prérequis";
+    btnReq.className = "btn btn-g"; btnReq.innerText = t("btn_prereq");
     btnReq.style.flex = "1";
     btnReq.onclick = function() { applyGPMode(clickedNode.id, true); };
     gpDiv.appendChild(btnNorm);
@@ -1704,11 +2346,11 @@ function selectLayer() {
     vpDiv.id = "vp-mode-btns";
     vpDiv.style.cssText = "display:flex;gap:8px;margin-bottom:10px;padding-bottom:9px;border-bottom:1px solid var(--border);";
     var btnPos = document.createElement("button");
-    btnPos.className = "btn btn-g"; btnPos.innerText = "Positif";
+    btnPos.className = "btn btn-g"; btnPos.innerText = t("btn_positif");
     btnPos.style.flex = "1";
     btnPos.onclick = function() { applyVPMode(clickedNode.id, false); };
     var btnNeg = document.createElement("button");
-    btnNeg.className = "btn btn-g"; btnNeg.innerText = "Négatif";
+    btnNeg.className = "btn btn-g"; btnNeg.innerText = t("btn_negatif");
     btnNeg.style.flex = "1";
     btnNeg.onclick = function() { applyVPMode(clickedNode.id, true); };
     vpDiv.appendChild(btnPos);
@@ -2079,7 +2721,7 @@ function resetProject(loadautosave) {
   groupSelection = [];
   document.getElementById("xcanvases").innerHTML = "";
   aCanvases = [];
-  addLayer("Base", {type:"base", color:"#ffffff", height:1126, width:826, params:"color"});
+  addLayer(t("layer_base"), {type:"base", color:"#ffffff", height:1126, width:826, params:"color"});
 
   // Enregistrer les menus de blocs
   for (var i = 0; i < blockList.length; i++) {
@@ -2160,7 +2802,7 @@ function loadFrom(saved, autoload) {
             if (ignore.indexOf(key4) !== -1) continue;
             newLayer[key4] = layer[key4];
             if (layer[key4] === 1050) {
-              if (confirm("Looks like data saved at old size. Do you want to automatically resize?")) {
+              if (confirm(t("confirm_resize"))) {
                 newLayer.height = 1126; newLayer.width = 826;
                 scale.x = scale.width = 826/750; scale.y = scale.height = 1126/1050;
                 break;
@@ -2180,7 +2822,7 @@ function loadFrom(saved, autoload) {
   } catch(e) {
     console.warn("Erreur lors du chargement :", e);
   }
-  if (unreloadable) alert("Fichiers locaux non rechargés. Vous devez le faire manuellement.");
+  if (unreloadable) alert(t("alert_local_files"));
   reloading = false;
   drawProject();
 }
@@ -2255,7 +2897,7 @@ function saveProjectCont(need2wait) {
 }
 
 function saveDone() {
-  confirm("Cliquez quand c'est terminé.");
+  confirm(t("confirm_done"));
   var c = document.getElementById("cmcanvas");
   c.height -= extraRows;
   extraRows = 0;
@@ -2635,13 +3277,13 @@ function addBlock(th) {
 }
 
 function addMegaTemplate() {
-  if (!confirm("Toutes les données actuelles seront perdues. Continuer ?")) return;
+  if (!confirm(t("confirm_new"))) return;
   if (this.id.slice(0,4) !== "mega") return;
   var mega = this.id.slice(4);
   if (!megaTemplates[mega]) return;
   document.getElementById("layerlist").innerHTML = "";
   ddcount = 0; aLayers = {}; tagCount = 0; undoHistory = []; undoIndex = -1;
-  addLayer("Base", {type:"base", color:"#ffffff", height:1126, width:826, params:"color"});
+  addLayer(t("layer_base"), {type:"base", color:"#ffffff", height:1126, width:826, params:"color"});
   loadFrom(megaTemplates[mega].layers);
 }
 
@@ -2653,12 +3295,12 @@ function addTextBox(th) {
     lineSpace:4, justify:"center", params:"allimages color alltext allpreset"
   };
   if (typeof th === "string" || typeof th === "number") { layer.data = th; }
-  else { layer.data = "Replace this text!"; }
+  else { layer.data = t("default_replace"); }
   var c = document.getElementById("cmcanvas");
   layer.x = Math.round(c.width / 2);
   layer.y = Math.round(c.height / 2);
   layer.width = 600;
-  var newLayer = addLayer("Text:" + layer.data.substr(0, 10), layer);
+  var newLayer = addLayer(t("layer_text") + layer.data.substr(0, 10), layer);
   drawProject();
   // Point 2 : sélection auto (sauf si appelé depuis loadFrom)
   if (!reloading) {
@@ -2672,7 +3314,7 @@ function addTextBox(th) {
 type2FuncList.production = addProduction;
 function addProduction() {
   var layer = {type:"production", x:200, y:643, width:130, height:130, params:"allimages allpreset"};
-  var newLayer = addLayer("Production", layer);
+  var newLayer = addLayer(t("layer_production"), layer);
   var thisBlock = blockList[hiddenImage["prod_nxn"]];
   if (thisBlock.obj) drawProject(); else fetchBlock(hiddenImage["prod_nxn"]);
   // Point 2 : sélection auto
@@ -2689,7 +3331,7 @@ function addEffectBox() {
   var c = document.getElementById("cmcanvas");
   var eW = 400, eH = 300;
   var layer = {type:"effect", x:Math.round(c.width/2 - eW/2), y:Math.round(c.height/2 - eH/2), width:eW, height:eH, params:"allimages allpreset"};
-  var newLayer = addLayer("Effect Box", layer);
+  var newLayer = addLayer(t("layer_effect"), layer);
   drawProject();
   // Point 2 : sélection auto
   if (!reloading) {
@@ -2712,7 +3354,7 @@ function addLine() {
   // Point 12 : valeurs par défaut corrigées + preset allpreset pour ligne
   var layer = {type:"line", x:254, y:1012, width:2, angle:0, len:333, color:"#000000", opacity:1, locked:true, params:"allangle alllen allpreset color"};
   layer._appliedPreset = "Flavor 1 ligne";
-  var newLayer = addLayer("Ligne", layer);
+  var newLayer = addLayer(t("layer_line"), layer);
   drawProject();
   // Point 2 : sélection auto
   var newDivId = "dragdropdiv" + (ddcount - 1);
@@ -2728,7 +3370,7 @@ function addUserFile(th) {
   if (!th.value) return;
   try {
     var file = th.files[0];
-    if (file.type && file.type.indexOf("image") === -1) { alert("Ce fichier n'est pas une image."); return; }
+    if (file.type && file.type.indexOf("image") === -1) { alert(t("alert_not_image")); return; }
     mostRecentFile = file;
     var reader = new FileReader();
     reader.addEventListener("load", function() {
@@ -2740,7 +3382,7 @@ function addUserFile(th) {
     reader.readAsDataURL(file);
   } catch(e) {
     projectLoad = false;
-    alert("Erreur lors du chargement du fichier.");
+    alert(t("alert_load_error"));
   }
   th.value = "";
 }
@@ -2779,7 +3421,7 @@ function loadInitialProject(url) {
     });
   } catch(e) {
     projectLoad = false;
-    alert("Erreur lors du chargement du projet : " + e);
+    alert(t("alert_project_error") + e);
   }
 }
 
@@ -2863,7 +3505,7 @@ function userImageLoaded() {
     var childAddU = document.createElement("div");
     childAddU.classList.add("inside");
     childAddU.appendChild(createLayerThumb(layer));
-    childAddU.appendChild(createTextbox("Local:" + layer.filename));
+    childAddU.appendChild(createTextbox(t("layer_local") + layer.filename));
     childAddU.onclick = selectLayer;
     childAddU.appendChild(createLockIcon(layer));
     childAddU.appendChild(deleteButton());
@@ -2902,7 +3544,7 @@ function webImageLoaded(th) {
     filename:th.src, params:"allimages clipimages"
   };
   userImageList.push(th);
-  addLayer("Web image", layer);
+  addLayer(t("layer_web"), layer);
   drawProject();
 }
 
@@ -3764,11 +4406,11 @@ function swapTemplate(name) {
 
 
 function clickNew() {
-  if (confirm("Supprimer le travail actuel et recommencer ?")) resetProject(false);
+  if (confirm(t("confirm_new"))) resetProject(false);
 }
 
 function clickLoadNewProject() {
-  if (confirm("Supprimer le travail actuel et recommencer ?")) {
+  if (confirm(t("confirm_new"))) {
     resetProject(false);
     clickLoadProject();
   }
@@ -3848,16 +4490,16 @@ function applyCanvasZoom() {
 // LISTE TEMPLATES FILTRÉE SELON FORMAT
 // ============================================================
 var ALL_TEMPLATES = [
-  {name:"green_normal",      label:"🟢 Verte Standard",  horiz:false},
-  {name:"green_small_bottom",label:"🟢 Verte Petit bas",  horiz:false},
-  {name:"green_big_bottom",  label:"🟢 Verte Grand bas",  horiz:false},
-  {name:"blue_normal",       label:"🔵 Bleue Standard",   horiz:false},
-  {name:"blue_big_bottom",   label:"🔵 Bleue Grand bas",  horiz:false},
-  {name:"blue_big_top",      label:"🔵 Bleue Grand haut", horiz:false},
-  {name:"red_normal",        label:"🔴 Rouge Standard",   horiz:false},
-  {name:"red_small_bottom",  label:"🔴 Rouge Petit bas",  horiz:false},
-  {name:"prelude",           label:"💜 Prélude",           horiz:true},
-  {name:"corporation",       label:"🏢 Corporation",       horiz:true}
+  {name:"green_normal",      get label(){ return t('tpl_list').green_normal; },      horiz:false},
+  {name:"green_small_bottom",get label(){ return t('tpl_list').green_small_bottom; }, horiz:false},
+  {name:"green_big_bottom",  get label(){ return t('tpl_list').green_big_bottom; },   horiz:false},
+  {name:"blue_normal",       get label(){ return t('tpl_list').blue_normal; },        horiz:false},
+  {name:"blue_big_bottom",   get label(){ return t('tpl_list').blue_big_bottom; },    horiz:false},
+  {name:"blue_big_top",      get label(){ return t('tpl_list').blue_big_top; },       horiz:false},
+  {name:"red_normal",        get label(){ return t('tpl_list').red_normal; },         horiz:false},
+  {name:"red_small_bottom",  get label(){ return t('tpl_list').red_small_bottom; },   horiz:false},
+  {name:"prelude",           get label(){ return t('tpl_list').prelude; },            horiz:true},
+  {name:"corporation",       get label(){ return t('tpl_list').corporation; },        horiz:true}
 ];
 
 function updateTemplateList() {
@@ -3979,7 +4621,697 @@ function initResizeHandles() {
   } else {
     resetProject(true);
   }
+  // Appliquer la langue et afficher l'invitation tutoriel
+  setTimeout(function() {
+    applyLang();
+    injectTutoInvite();
+    // Sync watermark checkbox
+    var cbWm = document.getElementById('cb-watermark');
+    if (cbWm) cbWm.checked = WATERMARK_ON;
+  }, 50);
 })();
 </script>
 </body>
 </html>
+
+<script>
+// ============================================================
+// SYSTÈME I18N — Traductions FR / EN
+// ============================================================
+
+// ============================================================
+// APPLICATION DE LA LANGUE
+// ============================================================
+function applyLang() {
+  // Boutons lang toggle
+  document.getElementById('lang-fr').classList.toggle('active', LANG === 'fr');
+  document.getElementById('lang-en').classList.toggle('active', LANG === 'en');
+
+  // Écran de démarrage
+  var startSub = document.querySelector('.start-sub');
+  if (startSub) startSub.textContent = t('start_subtitle');
+  var startLoad = document.querySelector('.start-actions .sbtn-ghost');
+  if (startLoad) startLoad.textContent = t('start_load');
+  var tplLabel = document.querySelector('.tpl-label');
+  if (tplLabel) tplLabel.textContent = t('start_choose');
+
+  // Cartes template écran démarrage
+  var tplCards = document.querySelectorAll('.tpl-card');
+  var tplKeys = [
+    {name:'tpl_green_name', sub:'tpl_green_sub'},
+    {name:'tpl_blue_name',  sub:'tpl_blue_sub'},
+    {name:'tpl_red_name',   sub:'tpl_red_sub'},
+    {name:'tpl_prelude_name', sub:'tpl_prelude_sub'},
+    {name:'tpl_corp_name',  sub:'tpl_corp_sub'}
+  ];
+  tplCards.forEach(function(card, i) {
+    if (tplKeys[i]) {
+      var nm = card.querySelector('.tpl-name');
+      var sb = card.querySelector('.tpl-sub');
+      if (nm) nm.textContent = t(tplKeys[i].name);
+      if (sb) sb.textContent = t(tplKeys[i].sub);
+    }
+  });
+
+  // Invitation tutoriel
+  var tutp = document.querySelector('#tuto-invite p');
+  if (tutp) tutp.textContent = t('tuto_invite_text');
+  var tutStart = document.getElementById('tuto-invite-start');
+  if (tutStart) tutStart.textContent = t('tuto_invite_start');
+  var tutSkipInv = document.getElementById('tuto-invite-skip');
+  if (tutSkipInv) tutSkipInv.textContent = t('tuto_invite_skip');
+
+  // Sidebar
+  var sbSpan = document.querySelector('.sb-title span');
+  if (sbSpan) sbSpan.textContent = t('sb_subtitle');
+  var btnUndo = document.getElementById('btn-undo');
+  if (btnUndo) btnUndo.textContent = t('btn_undo');
+  var btnRedo = document.getElementById('btn-redo');
+  if (btnRedo) btnRedo.textContent = t('btn_redo');
+  var newBtn = document.querySelector('.new-btn');
+  if (newBtn) newBtn.textContent = t('btn_new');
+
+  // Sections sidebar
+  var sectionMap = {
+    'sf': 'sec_file', 'st': 'sec_tags', 'sv': 'sec_vps',
+    'sp': 'sec_parties', 'sr': 'sec_resources', 'sti': 'sec_tiles',
+    'so': 'sec_tools', 'sq': 'sec_requisites', 'sg': 'sec_global',
+    'sm': 'sec_misc', 'stpl': 'sec_templates'
+  };
+  Object.keys(sectionMap).forEach(function(secId) {
+    var el = document.getElementById(secId);
+    if (!el) return;
+    var btn = el.previousElementSibling;
+    if (btn && btn.classList.contains('sb-sec-btn')) {
+      var arr = btn.querySelector('.arr');
+      btn.childNodes[0].textContent = t(sectionMap[secId]) + ' ';
+      if (arr) btn.appendChild(arr);
+    }
+  });
+
+  // Items fichier
+  var fileItems = document.querySelectorAll('#sf .sb-item');
+  if (fileItems[0]) fileItems[0].textContent = t('file_save');
+  if (fileItems[1]) fileItems[1].textContent = t('file_open');
+  if (fileItems[2]) fileItems[2].textContent = t('file_export');
+
+  // Items texte & outils
+  var toolItems = document.querySelectorAll('#so .sb-item');
+  var toolKeys = ['tool_textbox','tool_production','tool_effect','tool_line','tool_webimg','tool_localimg','tool_webfont'];
+  toolItems.forEach(function(item, i) {
+    if (toolKeys[i] && !item.id) item.textContent = t(toolKeys[i]);
+    else if (item.id === 'sb-prod-btn') item.textContent = t('tool_production');
+    else if (item.id === 'sb-effect-btn') item.textContent = t('tool_effect');
+  });
+
+  // Panneau calques
+  var layerH2 = document.querySelector('#layer-panel h2');
+  if (layerH2) layerH2.innerHTML = t('layers_title') + ' — <small style="color:var(--muted);font-size:9px;">' + t('layers_hint') + '</small>';
+  var grpLabel = document.querySelector('label[for="groupmode"]');
+  if (grpLabel) grpLabel.textContent = t('grp_mode');
+
+  // Params — labels
+  var paramLabelMap = {
+    'inputx': 'pl_x', 'inputy': 'pl_y', 'inputwidth': 'pl_width', 'inputheight': 'pl_height',
+    'lar': 'pl_ratio', 'inputangle': 'pl_angle', 'inputlen': 'pl_len',
+    'inputalpha': 'pl_opacity', 'inputsx': 'pl_sx', 'inputsy': 'pl_sy',
+    'inputswidth': 'pl_sw', 'inputsheight': 'pl_sh', 'slar': 'pl_ratio',
+    'inputobg': 'pl_otherbg', 'inputobgSize': 'pl_thickness',
+    'inputlockedHeight': 'pl_lockedh',
+    'inputdata': 'pl_content', 'inputlineSpace': 'pl_linespace',
+    'inputfont': 'pl_font', 'inputstyle': 'pl_style', 'inputweight': 'pl_weight',
+    'inputjustify': 'pl_align', 'inputcolor': 'pl_color'
+  };
+  Object.keys(paramLabelMap).forEach(function(inputId) {
+    var el = document.getElementById(inputId);
+    if (!el) return;
+    var pr = el.closest('.pr');
+    if (!pr) return;
+    var pl = pr.querySelector('.pl');
+    if (pl) pl.textContent = t(paramLabelMap[inputId]);
+  });
+
+  // Sections params
+  var ptMap = {'allall': 'pt_position', 'clipimages': 'pt_crop', 'alltext': 'pt_text', 'color': 'pt_color'};
+  Object.keys(ptMap).forEach(function(divId) {
+    var div = document.getElementById(divId);
+    if (!div) return;
+    var pt = div.querySelector('.pt');
+    if (pt) pt.textContent = t(ptMap[divId]);
+  });
+
+  // Select options params
+  var styleEl = document.getElementById('inputstyle');
+  if (styleEl) {
+    styleEl.options[0].text = t('style_normal');
+    styleEl.options[1].text = t('style_italic');
+  }
+  var weightEl = document.getElementById('inputweight');
+  if (weightEl) {
+    weightEl.options[0].text = t('weight_normal');
+    weightEl.options[1].text = t('weight_bold');
+  }
+  var justifyEl = document.getElementById('inputjustify');
+  if (justifyEl) {
+    justifyEl.options[0].text = t('align_center');
+    justifyEl.options[1].text = t('align_left');
+    justifyEl.options[2].text = t('align_right');
+  }
+
+  // Preset label + select placeholder
+  var pbar = document.querySelector('.pbar label');
+  if (pbar) pbar.textContent = t('preset_label');
+  var presetsEl = document.getElementById('presets');
+  if (presetsEl && presetsEl.options[0]) presetsEl.options[0].text = t('preset_select');
+
+  // Chargement
+  var loadLabel = document.querySelector('#loadprogress label');
+  if (loadLabel) loadLabel.textContent = t('loading_label');
+
+  // Modales
+  var wimg = document.querySelector('#overlay .modal h3');
+  if (wimg) wimg.textContent = t('modal_webimg_title');
+  var wimgp = document.querySelector('#overlay .modal p');
+  if (wimgp) wimgp.textContent = t('modal_webimg_url');
+  var wimginput = document.getElementById('url2load');
+  if (wimginput) wimginput.placeholder = t('modal_webimg_ph');
+  var wfont = document.querySelector('#fontoverlay .modal h3');
+  if (wfont) wfont.textContent = t('modal_font_title');
+  var wfontp = document.querySelector('#fontoverlay .modal p');
+  if (wfontp) wfontp.textContent = t('modal_font_url');
+  var wfontinput = document.getElementById('fonturl2load');
+  if (wfontinput) wfontinput.placeholder = t('modal_font_ph');
+
+  // Boutons cancel/load des modales
+  document.querySelectorAll('.btn-g').forEach(function(b) {
+    if (b.getAttribute('onclick') && b.getAttribute('onclick').indexOf('closeOverlay') !== -1) {
+      b.textContent = t('modal_cancel');
+    }
+  });
+  document.querySelectorAll('.btn-p').forEach(function(b) {
+    var oc = b.getAttribute('onclick') || '';
+    if (oc.indexOf('loadWebImage') !== -1) b.textContent = t('modal_load');
+    if (oc.indexOf('loadSpecifiedFont') !== -1) b.textContent = t('modal_load');
+  });
+
+  // Settings modale — éléments data-i18n
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    var val = t(key);
+    if (val && val !== key) el.textContent = val;
+  });
+
+  // Filigrane
+  document.querySelectorAll('#shortcuts-watermark [data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    el.textContent = t(key);
+  });
+
+  // Noms calques existants (auto-générés non modifiés)
+  applyLangToLayers();
+
+  // Textes par défaut des calques
+  applyLangToDefaultTexts();
+
+  // Labels blockList (noms icônes sidebar)
+  applyLangToBlockList();
+
+  // Presets labels
+  applyLangToPresets();
+
+  // Boutons GP/VP dynamiques
+  applyLangToGPVPButtons();
+
+  // Boutons verrou
+  applyLangToLockIcons();
+
+  // Liste templates sidebar
+  updateTemplateList();
+}
+
+function applyLangToLayers() {
+  // Calques dont le nom est généré automatiquement (non édités par l'utilisateur)
+  var autoNames = {
+    fr: { production: 'Production', effect: 'Boîte effet', line: 'Ligne', base: 'Base' },
+    en: { production: 'Production', effect: 'Effect Box', line: 'Line', base: 'Base' }
+  };
+  var other = LANG === 'fr' ? 'en' : 'fr';
+  var layerDivs = document.getElementsByClassName('divRec');
+  for (var i = 0; i < layerDivs.length; i++) {
+    var lid = layerDivs[i].id;
+    var lyr = aLayers[lid];
+    if (!lyr) continue;
+    var nameEl = layerDivs[i].querySelector('input[type=text]');
+    if (!nameEl) continue;
+    var curName = nameEl.value;
+    // Base
+    if (lyr.type === 'base') { nameEl.value = t('layer_base'); continue; }
+    // Production, effect, line
+    var autoType = ['production','effect','line'];
+    for (var at = 0; at < autoType.length; at++) {
+      if (lyr.type === autoType[at]) {
+        var frName = autoNames.fr[autoType[at]];
+        var enName = autoNames.en[autoType[at]];
+        if (curName === frName || curName === enName) {
+          nameEl.value = t('layer_' + autoType[at]);
+        }
+      }
+    }
+    // Text: prefix
+    if (lyr.type === 'text' && curName.indexOf('Text:') === 0) {
+      var suffix = curName.slice(5);
+      nameEl.value = t('layer_text') + suffix;
+    }
+    if (lyr.type === 'text' && curName.indexOf('Texte:') === 0) {
+      var suffix2 = curName.slice(6);
+      nameEl.value = t('layer_text') + suffix2;
+    }
+    // Web image
+    if ((lyr.type === 'webFile') && (curName === 'Web image' || curName === 'Image web')) {
+      nameEl.value = t('layer_web');
+    }
+    if (lyr.name) lyr.name = nameEl.value;
+  }
+}
+
+function applyLangToDefaultTexts() {
+  // Bascule les textes par défaut non modifiés par l'utilisateur
+  var layerDivs = document.getElementsByClassName('divRec');
+  for (var i = 0; i < layerDivs.length; i++) {
+    var lyr = aLayers[layerDivs[i].id];
+    if (!lyr || lyr.type !== 'text') continue;
+    var data = lyr.data;
+    if (!data) continue;
+    // Card name
+    if (DEFAULT_CARD_TEXTS.card_name.indexOf(data) !== -1) {
+      lyr.data = t('default_card_name');
+    }
+    // Description
+    if (DEFAULT_CARD_TEXTS.description.indexOf(data) !== -1) {
+      lyr.data = t('default_description');
+    }
+    // Flavor
+    if (DEFAULT_CARD_TEXTS.flavor.indexOf(data) !== -1) {
+      lyr.data = t('default_flavor');
+    }
+    // Effect/action
+    if (DEFAULT_CARD_TEXTS.effect_action.indexOf(data) !== -1) {
+      lyr.data = t('default_effect_action');
+    }
+    // Replace
+    if (DEFAULT_CARD_TEXTS.replace.indexOf(data) !== -1) {
+      lyr.data = t('default_replace');
+    }
+  }
+  // Mettre à jour le champ textarea si un calque est sélectionné
+  if (selectedLayerId && aLayers[selectedLayerId] && aLayers[selectedLayerId].type === 'text') {
+    var ta = document.getElementById('inputdata');
+    if (ta) ta.value = aLayers[selectedLayerId].data;
+  }
+  drawProject();
+}
+
+function applyLangToBlockList() {
+  // Mapping src -> clé i18n
+  var srcToKey = {
+    'arrow': 'bl_arrow', 'asterisc': 'bl_asterisk', 'bar': 'bl_slash',
+    'chairman': 'bl_chairman', 'delegate': 'bl_delegate', 'influence': 'bl_influence',
+    'party_leader': 'bl_party_leader', 'corp_tag_holder': 'bl_tag_holder',
+    'effect': 'bl_effect_bg', 'megacredit': 'bl_megacredit',
+    'max_big': 'bl_max_req', 'min_medium': 'bl_min_req', 'normal': 'bl_no_req',
+    'blank': 'bl_vp_bg', 'VPnegative': 'bl_vp_neg', 'n_for': 'bl_vp_nfor'
+  };
+  // Tags src -> FR name
+  var tagNames = {
+    fr: { animal:'Animal', building:'Construction', city:'Cité', earth:'Terre', event:'Événement',
+          galactic:'Galactique', infrastructure:'Infrastructure', jovian:'Jovien', mars:'Mars',
+          microbe:'Microbe', moon:'Lune', planetary:'Planète', plant:'Plante', power:'Énergie',
+          radioactive:'Radioactif', science:'Science', space:'Espace', venus:'Vénus',
+          wild:'Joker', multitag:'Multi-badge', mercury:'Mercure' },
+    en: { animal:'Animal', building:'Building', city:'City', earth:'Earth', event:'Event',
+          galactic:'Galactic', infrastructure:'Infrastructure', jovian:'Jovian', mars:'Mars',
+          microbe:'Microbe', moon:'Moon', planetary:'Planetary', plant:'Plant', power:'Power',
+          radioactive:'Radioactive', science:'Science', space:'Space', venus:'Venus',
+          wild:'Wild', multitag:'Multitag', mercury:'Mercury' }
+  };
+  var resNames = {
+    fr: { animal:'Animal', card:'Carte', data:'Data', fighter:'Fighter', floater:'Flotteur',
+          heat:'Chaleur', microbe:'Microbe', plant:'Plante', power:'Énergie',
+          radiation:'Radiation', science:'Science', steel:'Acier', titanium:'Titane',
+          TR:'NT', wild:'Joker', asteroid:'Astéroïde', ore:'Minerai' },
+    en: { animal:'Animal', card:'Card', data:'Data', fighter:'Fighter', floater:'Floater',
+          heat:'Heat', microbe:'Microbe', plant:'Plant', power:'Power',
+          radiation:'Radiation', science:'Science', steel:'Steel', titanium:'Titanium',
+          TR:'TR', wild:'Wild', asteroid:'Asteroid', ore:'Ore' }
+  };
+  var tileNames = {
+    fr: { city:'Cité', colony:'Colonie', empty:'Vide', greenery_no_O2:'Forêt sans O₂',
+          greenery:'Forêt', ocean:'Océan', 'off-world_city':'Cité hors-monde',
+          special:'Spéciale', trade:'Commerce' },
+    en: { city:'City', colony:'Colony', empty:'Empty', greenery_no_O2:'Greenery no O₂',
+          greenery:'Greenery', ocean:'Ocean', 'off-world_city':'Off-world city',
+          special:'Special', trade:'Trade' }
+  };
+  var partyNames = {
+    fr: { bureacrats:'Bureaucrates', centrists:'Centristes', empower:'Émancipateurs',
+          greens:'Verts', kelvinists:'Kelvinistes', mars_first:'Priorité Mars',
+          populists:'Populistes', reds:'Rouges', scientists:'Scientifiques',
+          spome:'Spome', transhumanists:'Transhumanistes', unity:'Unitaires' },
+    en: { bureacrats:'Bureaucrats', centrists:'Centrists', empower:'Empower',
+          greens:'Greens', kelvinists:'Kelvinists', mars_first:'Mars First',
+          populists:'Populists', reds:'Reds', scientists:'Scientists',
+          spome:'Spome', transhumanists:'Transhumanists', unity:'Unity' }
+  };
+  var gpNames = {
+    fr: { oxygen:'Oxygène', temperature:'Température', venus:'Vénus' },
+    en: { oxygen:'Oxygen', temperature:'Temperature', venus:'Venus' }
+  };
+  var tplNames = {
+    fr: { green_normal:'Carte Verte', green_small_bottom:'Verte Petit bas', green_big_bottom:'Verte Grand bas',
+          blue_normal:'Carte Bleue', blue_big_bottom:'Bleue Grand bas', blue_big_top:'Bleue Grand haut',
+          red_normal:'Carte Rouge', red_small_bottom:'Rouge Petit bas',
+          prelude:'Prélude', corporation:'Corporation' },
+    en: { green_normal:'Green Card', green_small_bottom:'Green Small Bottom', green_big_bottom:'Green Big Bottom',
+          blue_normal:'Blue Card', blue_big_bottom:'Blue Big Bottom', blue_big_top:'Blue Big Top',
+          red_normal:'Red Card', red_small_bottom:'Red Small Bottom',
+          prelude:'Prelude', corporation:'Corporation' }
+  };
+  var miscNames = {
+    fr: { megacredit:'M€', arrow:'Action', asterisc:'Astérisque', bar:'Slash',
+          chairman:'Président', colon:'Deux-points', delegate:'Délégué', influence:'Influence',
+          party_leader:'Chef de parti', corp_tag_holder:'Support badge', effect:'Effet (fond)' },
+    en: { megacredit:'M€', arrow:'Action', asterisc:'Asterisk', bar:'Slash',
+          chairman:'Chairman', colon:'Colon', delegate:'Delegate', influence:'Influence',
+          party_leader:'Party Leader', corp_tag_holder:'Tag Holder', effect:'Effect (bg)' }
+  };
+
+  var allNameMaps = [tagNames, resNames, tileNames, partyNames, gpNames, tplNames, miscNames];
+
+  for (var idx = 0; idx < blockList.length; idx++) {
+    var bl = blockList[idx];
+    if (bl.hidden) continue;
+    var newName = null;
+
+    // Chercher dans les maps
+    for (var m = 0; m < allNameMaps.length; m++) {
+      if (allNameMaps[m][LANG] && allNameMaps[m][LANG][bl.src] !== undefined) {
+        newName = allNameMaps[m][LANG][bl.src];
+        break;
+      }
+    }
+    // VPs numérotés
+    var vpNumMap = {'1_for':'1 PV/', '1':'1 PV', '2_for':'2 PV/', '2':'2 PV', '3':'3 PV', '4':'4 PV', '5':'5 PV'};
+    if (bl.putUnder === 'VPs' && vpNumMap[bl.src]) newName = vpNumMap[bl.src];
+
+    if (newName !== null) {
+      bl.text = newName;
+      var iconEl = document.getElementById('image' + idx);
+      if (iconEl) {
+        var lbl = iconEl.querySelector('span');
+        if (lbl) lbl.textContent = newName;
+      }
+    }
+  }
+}
+
+function applyLangToPresets() {
+  // Mise à jour des labels dans blockDefaults
+  var presetsMap = {
+    fr: {
+      'First Tag':'1er Badge', 'Second Tag':'2ème Badge', 'Third Tag':'3ème Badge',
+      'Small Tag':'Petit Badge', 'First (Prel)':'1er (Pré)', 'Second (Prel)':'2ème (Pré)',
+      'Third (Prel)':'3ème (Pré)', 'First (Corp)':'1er (Corp)', 'Second (Corp)':'2ème (Corp)',
+      'Vertical Card':'Carte verticale', 'Horizontal Card':'Carte horizontale',
+      'Card Cost':'Coût de carte', 'Card Name':'Nom de carte', 'Description':'Description',
+      'Flavor Text':'Texte d\'ambiance', 'FAN MADE':'FAN MADE',
+      'Standard':'Standard', 'Card':'Carte', 'TR':'NT', 'No Req':'Sans prérequis',
+      'Max':'Max', 'Min':'Min', 'Standard tile':'Tuile standard',
+      'Positive':'Positif', 'Negative':'Négatif', 'Positif':'Positif', 'Négatif':'Négatif',
+      'Party':'Parti', 'MC':'M€', 'Arrow':'Action', 'Asterisk':'Astérisque', 'Slash':'Slash',
+      'Chairman':'Président', 'Colon':'Deux-points', 'Delegate':'Délégué',
+      'Effect (bg)':'Effet (fond)', 'Influence':'Influence', 'Party Leader':'Chef de parti',
+      'Tag Holder 0':'Support badge 0', 'Tag Holder 1':'Support badge 1', 'Tag Holder 2':'Support badge 2',
+      'Flavor 1 ligne':'Ambiance 1 ligne', 'Flavor 2 lignes':'Ambiance 2 lignes',
+      'Corps de carte (Oxygen)':'Corps carte (Oxygène)', 'Prérequis (Oxygen)':'Prérequis (Oxygène)',
+      'Corps de carte (Temp)':'Corps carte (Temp)', 'Prérequis (Temp)':'Prérequis (Temp)',
+      'Corps de carte (Venus)':'Corps carte (Vénus)', 'Prérequis (Venus)':'Prérequis (Vénus)',
+      '1x height':'1x hauteur', '2x height':'2x hauteur', '1x width':'1x largeur',
+      '1.5x width':'1.5x largeur', '2x width':'2x largeur', '2.5x width':'2.5x largeur', '3x width':'3x largeur'
+    },
+    en: {
+      '1er Badge':'First Tag', '2ème Badge':'Second Tag', '3ème Badge':'Third Tag',
+      'Petit Badge':'Small Tag', '1er (Pré)':'First (Prel)', '2ème (Pré)':'Second (Prel)',
+      '3ème (Pré)':'Third (Prel)', '1er (Corp)':'First (Corp)', '2ème (Corp)':'Second (Corp)',
+      'Carte verticale':'Vertical Card', 'Carte horizontale':'Horizontal Card',
+      'Coût de carte':'Card Cost', 'Nom de carte':'Card Name',
+      "Texte d'ambiance":"Flavor Text",
+      'Sans prérequis':'No Req', 'Tuile standard':'Standard tile',
+      'Positif':'Positive', 'Négatif':'Negative',
+      'Parti':'Party', 'Action':'Arrow label', 'Astérisque':'Asterisk',
+      'Président':'Chairman', 'Deux-points':'Colon', 'Délégué':'Delegate',
+      'Effet (fond)':'Effect (bg)', 'Chef de parti':'Party Leader',
+      'Support badge 0':'Tag Holder 0', 'Support badge 1':'Tag Holder 1', 'Support badge 2':'Tag Holder 2',
+      'Ambiance 1 ligne':'Flavor 1 ligne', 'Ambiance 2 lignes':'Flavor 2 lignes',
+      'Corps carte (Oxygène)':'Card body (Oxygen)', 'Prérequis (Oxygène)':'Requirement (Oxygen)',
+      'Corps carte (Temp)':'Card body (Temp)', 'Prérequis (Temp)':'Requirement (Temp)',
+      'Corps carte (Vénus)':'Card body (Venus)', 'Prérequis (Vénus)':'Requirement (Venus)',
+      '1x hauteur':'1x height', '2x hauteur':'2x height', '1x largeur':'1x width',
+      '1.5x largeur':'1.5x width', '2x largeur':'2x width', '2.5x largeur':'2.5x width', '3x largeur':'3x width'
+    }
+  };
+  // On ne traduit pas les labels dans blockDefaults dynamiquement (trop complexe),
+  // on met à jour les options du select presets à l'affichage via selectLayer
+}
+
+function applyLangToGPVPButtons() {
+  var gpDiv = document.getElementById('gp-mode-btns');
+  if (gpDiv) {
+    var btns = gpDiv.querySelectorAll('button');
+    if (btns[0]) btns[0].innerText = t('btn_corps');
+    if (btns[1]) btns[1].innerText = t('btn_prereq');
+  }
+  var vpDiv = document.getElementById('vp-mode-btns');
+  if (vpDiv) {
+    var vbtns = vpDiv.querySelectorAll('button');
+    if (vbtns[0]) vbtns[0].innerText = t('btn_positif');
+    if (vbtns[1]) vbtns[1].innerText = t('btn_negatif');
+  }
+}
+
+function applyLangToLockIcons() {
+  var locks = document.querySelectorAll('.layer-lock');
+  locks.forEach(function(lk) {
+    var divId = lk.parentNode.parentNode.id;
+    if (aLayers[divId]) {
+      lk.title = aLayers[divId].locked ? t('lock_lock') : t('lock_unlock');
+    }
+  });
+}
+
+// ============================================================
+// FONCTIONS SETTINGS
+// ============================================================
+function openSettings() {
+  document.getElementById('settings-overlay').classList.remove('hidden');
+  // Sync état checkbox watermark
+  document.getElementById('cb-watermark').checked = WATERMARK_ON;
+}
+function closeSettings() {
+  document.getElementById('settings-overlay').classList.add('hidden');
+}
+// Fermer en cliquant hors de la modale
+document.getElementById('settings-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeSettings();
+});
+
+function switchSettingsTab(tab) {
+  document.getElementById('stab-params').style.display = tab === 'params' ? '' : 'none';
+  document.getElementById('stab-help').style.display = tab === 'help' ? '' : 'none';
+  document.getElementById('tab-params').classList.toggle('active', tab === 'params');
+  document.getElementById('tab-help').classList.toggle('active', tab === 'help');
+}
+
+function setLang(lang) {
+  LANG = lang;
+  localStorage.setItem('tm_lang', lang);
+  applyLang();
+}
+
+function toggleWatermark(on) {
+  WATERMARK_ON = on;
+  localStorage.setItem('tm_watermark', on ? '1' : '0');
+  var wm = document.getElementById('shortcuts-watermark');
+  if (wm) wm.classList.toggle('hidden', !on);
+}
+
+function resetTutorial() {
+  localStorage.removeItem('tm_tutorial_done');
+  TUTORIAL_DONE = false;
+  var btn = document.querySelector('.smod-btn[onclick="resetTutorial()"]');
+  if (btn) {
+    btn.textContent = LANG === 'fr' ? '✓ Sera actif au prochain lancement' : '✓ Will activate on next launch';
+    setTimeout(function() { btn.textContent = t('tuto_reset_btn'); }, 2500);
+  }
+}
+
+// ============================================================
+// INVITATION TUTORIEL (écran de démarrage)
+// ============================================================
+function injectTutoInvite() {
+  if (TUTORIAL_DONE) return;
+  var startScreen = document.getElementById('start-screen');
+  if (!startScreen) return;
+  if (document.getElementById('tuto-invite')) return;
+  var div = document.createElement('div');
+  div.id = 'tuto-invite';
+  div.innerHTML = '<p>' + t('tuto_invite_text') + '</p>' +
+    '<div class="tuto-invite-btns">' +
+    '<button class="sbtn sbtn-ghost" id="tuto-invite-skip" onclick="skipTutoInvite()">' + t('tuto_invite_skip') + '</button>' +
+    '<button class="sbtn sbtn-primary" id="tuto-invite-start" onclick="startTutorial()">' + t('tuto_invite_start') + '</button>' +
+    '</div>';
+  startScreen.appendChild(div);
+}
+
+function skipTutoInvite() {
+  TUTORIAL_DONE = true;
+  localStorage.setItem('tm_tutorial_done', '1');
+  var inv = document.getElementById('tuto-invite');
+  if (inv) inv.remove();
+}
+
+// ============================================================
+// TUTORIEL — Coach marks
+// ============================================================
+var tutStep = 0;
+
+// Cibles des étapes : sélecteur CSS ou null (pas de highlight)
+var TUT_TARGETS = [
+  '.new-btn',           // 0 — Nouvelle carte
+  '#st',                // 1 — Badges
+  '#sr',                // 2 — Ressources
+  '#st .sb-icon-grid',  // 3 — Ajouter un badge
+  '#cmcanvas',          // 4 — Déplacer
+  '#cmcanvas',          // 5 — Redimensionner
+  '#layer-panel',       // 6 — Ordre calques
+  '#so .sb-item:nth-child(6)', // 7 — Image locale
+  '#sq',                // 8 — Prérequis
+  null,                 // 9 — Fond autres (dans params, pas toujours visible)
+  null                  // 10 — Raccourcis
+];
+
+function startTutorial() {
+  skipTutoInvite();
+  // Charger une carte verte
+  startTemplate('green_normal');
+  tutStep = 0;
+  document.getElementById('tutorial-overlay').classList.remove('hidden');
+  showTutStep(0);
+}
+
+function showTutStep(step) {
+  var steps = t('tut_steps');
+  if (!steps || step >= steps.length) { endTutorial(); return; }
+  var s = steps[step];
+  var total = steps.length;
+  document.getElementById('tut-step-label').textContent = (LANG === 'fr' ? 'Étape ' : 'Step ') + (step+1) + ' ' + t('tut_of') + ' ' + total;
+  document.getElementById('tut-title').textContent = s.title;
+  document.getElementById('tut-text').innerHTML = s.text;
+  var nextBtn = document.getElementById('tut-next-btn');
+  nextBtn.textContent = (step === total-1) ? t('tut_finish') : t('tut_next');
+  document.getElementById('tut-skip-btn').textContent = t('tut_skip');
+
+  // Positionner la bulle
+  positionTutBubble(step);
+}
+
+function positionTutBubble(step) {
+  var bubble = document.getElementById('tutorial-bubble');
+  var overlay = document.getElementById('tutorial-overlay');
+  // Supprimer ancien highlight
+  var oldHl = overlay.querySelector('.tut-highlight');
+  if (oldHl) oldHl.remove();
+
+  var target = TUT_TARGETS[step] ? document.querySelector(TUT_TARGETS[step]) : null;
+  bubble.className = 'arrow-left'; // reset
+
+  if (target) {
+    var rect = target.getBoundingClientRect();
+    var bW = 280, bH = 200;
+    var left, top, arrowClass;
+
+    if (rect.right + bW + 20 < window.innerWidth) {
+      // Bulle à droite de la cible
+      left = rect.right + 12;
+      top = Math.max(10, rect.top + rect.height/2 - bH/2);
+      arrowClass = 'arrow-left';
+    } else if (rect.left - bW - 20 > 0) {
+      // Bulle à gauche
+      left = rect.left - bW - 12;
+      top = Math.max(10, rect.top + rect.height/2 - bH/2);
+      arrowClass = 'arrow-right';
+    } else if (rect.top - bH - 20 > 0) {
+      // Bulle au-dessus
+      left = Math.max(10, rect.left + rect.width/2 - bW/2);
+      top = rect.top - bH - 12;
+      arrowClass = 'arrow-bottom';
+    } else {
+      // Bulle en dessous
+      left = Math.max(10, rect.left + rect.width/2 - bW/2);
+      top = rect.bottom + 12;
+      arrowClass = 'arrow-top';
+    }
+
+    // Clamp
+    left = Math.min(left, window.innerWidth - bW - 10);
+    top  = Math.min(top,  window.innerHeight - bH - 10);
+    bubble.style.left = left + 'px';
+    bubble.style.top  = top + 'px';
+    bubble.className = arrowClass;
+
+    // Highlight
+    var hl = document.createElement('div');
+    hl.className = 'tut-highlight';
+    hl.style.left   = (rect.left - 4) + 'px';
+    hl.style.top    = (rect.top  - 4) + 'px';
+    hl.style.width  = (rect.width  + 8) + 'px';
+    hl.style.height = (rect.height + 8) + 'px';
+    overlay.appendChild(hl);
+  } else {
+    // Centré
+    bubble.style.left = '50%';
+    bubble.style.top  = '50%';
+    bubble.style.transform = 'translate(-50%,-50%)';
+    bubble.className = '';
+  }
+}
+
+function tutorialNext() {
+  tutStep++;
+  var steps = t('tut_steps');
+  if (tutStep >= steps.length) { endTutorial(); return; }
+  showTutStep(tutStep);
+}
+
+function tutorialSkip() { endTutorial(); }
+
+function endTutorial() {
+  document.getElementById('tutorial-overlay').classList.add('hidden');
+  // Supprimer highlights
+  document.querySelectorAll('.tut-highlight').forEach(function(el){ el.remove(); });
+  TUTORIAL_DONE = true;
+  localStorage.setItem('tm_tutorial_done', '1');
+}
+
+// ============================================================
+// INIT SETTINGS AU DÉMARRAGE
+// ============================================================
+(function initSettings() {
+  // Appliquer watermark
+  if (!WATERMARK_ON) {
+    var wm = document.getElementById('shortcuts-watermark');
+    if (wm) wm.classList.add('hidden');
+  }
+  // Appliquer langue après que tout le DOM/JS soit chargé
+  // (appelé depuis init() après resetProject)
+})();
+</script>
