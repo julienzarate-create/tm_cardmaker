@@ -242,7 +242,18 @@ body {
   content: ""; position: absolute; top: 50%; left: 50%;
   transform: translate(-50%, -50%);
   width: 2px; height: 40px; border-radius: 2px;
-  background: var(--border);
+  background: var(--rust); opacity: 0;
+}
+.resize-handle:hover::after, .resize-handle.dragging::after { opacity: 0.5; }
+
+/* Poignée sur toute la hauteur du bord droit de la sidebar */
+#sidebar-resize-handle {
+  position: fixed; top: 0; width: 7px; height: 100vh;
+  background: transparent; cursor: col-resize; z-index: 60;
+  transition: background 0.15s;
+}
+#sidebar-resize-handle:hover, #sidebar-resize-handle.dragging {
+  background: rgba(232,101,26,0.35);
 }
 
 #layer-panel {
@@ -464,7 +475,7 @@ input[type=number] { width: auto; }
 }
 #tutorial-overlay.hidden { display: none; }
 #tutorial-backdrop {
-  position: absolute; inset: 0; background: rgba(5,8,15,0.75); pointer-events: all;
+  position: absolute; inset: 0; background: transparent; pointer-events: none;
 }
 #tutorial-bubble {
   position: absolute; background: var(--navy); border: 1px solid var(--rust);
@@ -507,7 +518,6 @@ input[type=number] { width: auto; }
 /* Highlight zone cible */
 .tut-highlight {
   position: absolute; border: 2px solid var(--rust); border-radius: 6px;
-  box-shadow: 0 0 0 3000px rgba(5,8,15,0.75);
   pointer-events: none; z-index: 0; transition: all 0.3s;
 }
 
@@ -546,7 +556,7 @@ input[type=number] { width: auto; }
 <!-- ============================================================
      BOUTON SETTINGS ⚙️
      ============================================================ -->
-<button id="settings-btn" onclick="openSettings()" title="Paramètres">⚙️</button>
+<button id="settings-btn" title="Paramètres">⚙️</button>
 
 <!-- ============================================================
      FILIGRANE RACCOURCIS
@@ -824,6 +834,8 @@ input[type=number] { width: auto; }
     <div id="fromTemplate"></div>
   </div>
 </nav>
+<!-- Poignée redimensionnement sidebar gauche (toute la hauteur) -->
+<div id="sidebar-resize-handle"></div>
 
 <!-- ============================================================
      CONTENU PRINCIPAL
@@ -1083,17 +1095,17 @@ var I18N = {
     tut_skip: "Passer", tut_next: "Suivant →", tut_finish: "Terminer",
     tut_of: "/",
     tut_steps: [
-      { title: "La sidebar", text: "La sidebar à gauche contient tous les éléments disponibles. Cliquez sur un <strong>onglet</strong> pour le déplier ou replier." },
-      { title: "Ajouter un élément", text: "<strong>Cliquez</strong> sur un élément pour l'ajouter automatiquement sur la carte, ou <strong>faites-le glisser</strong> directement sur le canvas pour le positionner précisément.", auto: true },
-      { title: "Déplacer & Redimensionner", text: "Cliquez sur un élément du canvas et <strong>faites-le glisser</strong> pour le déplacer. Utilisez les <strong>carrés oranges aux coins</strong> pour le redimensionner.", auto: true },
+      { title: "La sidebar", text: "La sidebar à gauche contient tous les éléments disponibles. Vous pouvez <strong>agrandir ou rétrécir</strong> la sidebar en glissant son bord droit. Cliquez sur un <strong>onglet</strong> pour le déplier ou replier." },
+      { title: "Ajouter des éléments", text: "<strong>Cliquez</strong> sur un badge, une tuile et un paramètre global pour les ajouter à la carte. Essayez d'en ajouter un de chaque type !", auto: true },
+      { title: "Déplacer un élément", text: "Cliquez sur un élément du canvas et <strong>faites-le glisser</strong> pour le repositionner. Le tutoriel avancera automatiquement dès qu'un déplacement est détecté.", auto: true },
+      { title: "Redimensionner un élément", text: "Utilisez les <strong>carrés oranges aux coins</strong> pour redimensionner l'élément sélectionné. Le tutoriel avancera dès qu'un redimensionnement est détecté.", auto: true },
       { title: "Panneau calques", text: "<strong>Glissez-déposez</strong> les calques de haut en bas pour les mettre en avant ou en arrière. Le panneau permet aussi d'ajuster finement la position et les dimensions.", auto: true },
       { title: "Image locale", text: "Cliquez sur <strong>Image locale</strong> dans la sidebar pour importer une illustration depuis votre ordinateur.", auto: true },
       { title: "Prérequis", text: "Cliquez sur un prérequis (<strong>Min</strong> ou <strong>Max</strong>) pour l'ajouter à la carte.", auto: true },
-      { title: "Ajuster le prérequis", text: "Vous pouvez ajuster librement la <strong>largeur</strong> du prérequis dans le panneau de paramètres à droite." },
-      { title: "Fond autres", text: "Sélectionnez un élément, puis activez <strong>Fond autres</strong> dans le panneau de paramètres pour ajouter un contour coloré autour de lui.", auto: true },
-      { title: "Raccourcis clavier", text: "<strong>Ctrl+Z</strong> Annuler &nbsp;|&nbsp; <strong>Ctrl+Y</strong> Refaire<br><strong>Suppr</strong> Supprimer calque<br><strong>←↑→↓</strong> Déplacer 1px &nbsp;|&nbsp; <strong>Shift+flèches</strong> 25px<br><strong>Alt+flèches</strong> Redimensionner<br><strong>Ctrl+clic</strong> Mode groupe &nbsp;|&nbsp; <strong>Dbl-clic</strong> Éditer texte" }
+      { title: "Ajuster le prérequis", text: "Vous pouvez ajuster librement la <strong>largeur</strong> du prérequis en faisant glisser ses bords directement sur la carte." },
+      { title: "Fond autres", text: "Sélectionnez un calque qui le supporte, puis cliquez sur <strong>Fond autres</strong> dans le panneau de paramètres pour ajouter un contour coloré autour de lui.", auto: true },
+      { title: "Raccourcis clavier", text: "Voici les raccourcis disponibles pendant le travail :<br><em>(Le filigrane dans le coin vous rappelle les raccourcis à tout moment.)</em>" }
     ],
-    // Confirmations
     confirm_new: "Supprimer le travail actuel et recommencer ?",
     confirm_locked: "Ce calque est verrouillé. Supprimer quand même ?",
     confirm_done: "Cliquez quand c'est terminé.",
@@ -1236,15 +1248,16 @@ var I18N = {
     tut_skip: "Skip", tut_next: "Next →", tut_finish: "Finish",
     tut_of: "/",
     tut_steps: [
-      { title: "The sidebar", text: "The left sidebar contains all available elements. Click an <strong>tab</strong> to expand or collapse it." },
-      { title: "Add an element", text: "<strong>Click</strong> an element to add it automatically to the card, or <strong>drag it</strong> directly onto the canvas to position it precisely.", auto: true },
-      { title: "Move & Resize", text: "Click an element on the canvas and <strong>drag it</strong> to move it. Use the <strong>orange squares at the corners</strong> to resize it.", auto: true },
+      { title: "The sidebar", text: "The left sidebar contains all available elements. You can <strong>expand or shrink</strong> it by dragging its right edge. Click a <strong>tab</strong> to expand or collapse it." },
+      { title: "Add elements", text: "<strong>Click</strong> a badge, a tile, or a global parameter to add them to the card. Try adding one of each type!", auto: true },
+      { title: "Move an element", text: "Click an element on the canvas and <strong>drag it</strong> to reposition it. The tutorial will advance automatically once a move is detected.", auto: true },
+      { title: "Resize an element", text: "Use the <strong>orange squares at the corners</strong> to resize the selected element. The tutorial will advance when a resize is detected.", auto: true },
       { title: "Layer panel", text: "<strong>Drag and drop</strong> layers up and down to bring them forward or send them back. The panel also lets you fine-tune position and dimensions.", auto: true },
       { title: "Local image", text: "Click <strong>Local image</strong> in the sidebar to import an illustration from your computer.", auto: true },
       { title: "Requirements", text: "Click a requirement (<strong>Min</strong> or <strong>Max</strong>) to add it to the card.", auto: true },
-      { title: "Adjust requirement", text: "You can freely adjust the <strong>width</strong> of the requirement in the parameters panel on the right." },
-      { title: "Other background", text: "Select an element, then enable <strong>Other bg</strong> in the parameters panel to add a colored border around it.", auto: true },
-      { title: "Keyboard shortcuts", text: "<strong>Ctrl+Z</strong> Undo &nbsp;|&nbsp; <strong>Ctrl+Y</strong> Redo<br><strong>Del</strong> Delete layer<br><strong>←↑→↓</strong> Move 1px &nbsp;|&nbsp; <strong>Shift+arrows</strong> 25px<br><strong>Alt+arrows</strong> Resize<br><strong>Ctrl+click</strong> Group mode &nbsp;|&nbsp; <strong>Dbl-click</strong> Edit text" }
+      { title: "Adjust requirement", text: "You can freely adjust the <strong>width</strong> of the requirement by dragging its edges directly on the canvas." },
+      { title: "Other background", text: "Select a layer that supports it, then click <strong>Other bg</strong> in the parameters panel to add a colored border around it.", auto: true },
+      { title: "Keyboard shortcuts", text: "Here are the keyboard shortcuts available while working:<br><em>(See the watermark in the corner for a quick reference.)</em>" }
     ],
     // Confirmations
     confirm_new: "Delete current work and start over?",
@@ -1853,11 +1866,11 @@ var megaTemplates = {
   ]},
   corporation: { layers: [
     {type:"base",   color:"#ffffff", height:826, width:1126, params:"color"},
+    {type:"block",  iNum:95, x:937, y:90,  width:257,    height:89,  params:"allimages allpreset", locked:false, _appliedPreset:"Tag Holder 0"},
     {type:"block",  iNum:94, x:0,   y:0,   width:1126,   height:826, params:"allimages"},
-    {type:"block",  iNum:95, x:937, y:90,  width:257,    height:89,  params:"allimages allpreset", locked:true, _appliedPreset:"Tag Holder 0"},
     {type:"effect", x:600, y:300, width:400, height:300, params:"allimages allpreset"},
-    {type:"block",  iNum:96, x:631, y:307, width:346,    height:36,  params:"allimages allpreset", locked:true, _appliedPreset:"Effect (bg)"},
-    {type:"text",   data:"E F F E C T",             x:800, y:333, width:1126, height:22, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
+    {type:"block",  iNum:96, x:631, y:307, width:346,    height:36,  params:"allimages allpreset", locked:false, _appliedPreset:"Effect (bg)"},
+    {type:"text",   data:"E F F E C T",             x:800, y:333, width:1126, height:22, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset", locked:false},
     {type:"text",   data:"FAN MADE",                x:198, y:736, width:150,  height:24, color:"#c3c3c3", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
     {type:"text",   data:"C O R P O R A T I O N",  x:563, y:109, width:826,  height:24, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
     {type:"text",   data:t("default_description"), x:110, y:560, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
@@ -3833,7 +3846,7 @@ function drag(event) {
     var widthOnlyResize = false;
     if (layerToDrag.type === "block" && blockList[layerToDrag.iNum]) {
       var reqSrcR = blockList[layerToDrag.iNum].src;
-      if (reqSrcR === "min_medium" || reqSrcR === "max_big") widthOnlyResize = true;
+      if (reqSrcR === "min_medium" || reqSrcR === "max_big" || reqSrcR === "corp_tag_holder") widthOnlyResize = true;
     }
     if (resizeHandle === "se") {
       newW = Math.max(10, resizeStartW + dx);
@@ -4506,15 +4519,21 @@ function updateTemplateList() {
   if (!stpl) return;
   var baseLayer = aLayers["dragdropdiv0"];
   var isHoriz = baseLayer && (baseLayer.width > baseLayer.height);
+
+  // Point 21 : masquer la section entière pour les cartes horizontales
+  var stplSection = stpl.closest ? stpl.closest('.sb-sec') : stpl.parentNode;
+  if (stplSection) stplSection.style.display = isHoriz ? 'none' : '';
+
   stpl.innerHTML = "";
+  if (isHoriz) return; // pas de liste à construire pour horiz
   for (var i = 0; i < ALL_TEMPLATES.length; i++) {
-    var t = ALL_TEMPLATES[i];
-    if (t.horiz !== isHoriz) continue;
+    var tpl = ALL_TEMPLATES[i];
+    if (tpl.horiz !== isHoriz) continue;
     var a = document.createElement("a");
     a.href = "#";
     a.className = "sb-item";
-    a.textContent = t.label;
-    (function(tname){ a.onclick = function(){ swapTemplate(tname); return false; }; })(t.name);
+    a.textContent = tpl.label;
+    (function(tname){ a.onclick = function(){ swapTemplate(tname); return false; }; })(tpl.name);
     stpl.appendChild(a);
   }
 }
@@ -4570,6 +4589,41 @@ function getCardFileName() {
 }
 
 // ============================================================
+// AJUSTEMENT POSITION FILIGRANE RACCOURCIS (Point 17)
+// ============================================================
+function _adjustShortcutsWatermark() {
+  var wm = document.getElementById('shortcuts-watermark');
+  if (!wm || wm.classList.contains('hidden')) return;
+  var layerPanel = document.getElementById('layer-panel');
+  if (!layerPanel) return;
+  var lpRect = layerPanel.getBoundingClientRect();
+  var wmRect = wm.getBoundingClientRect();
+  var isHoriz = aLayers['dragdropdiv0'] && (aLayers['dragdropdiv0'].width > aLayers['dragdropdiv0'].height);
+  // Si espace insuffisant à droite ou carte horizontale → passer en bas
+  if (lpRect.right + wmRect.width + 20 > window.innerWidth || isHoriz) {
+    wm.style.right = '';
+    wm.style.top = '';
+    wm.style.transform = '';
+    wm.style.bottom = '12px';
+    wm.style.left = '50%';
+    wm.style.position = 'fixed';
+    wm.style.transform = 'translateX(-50%)';
+    wm.style.flexDirection = 'row';
+    wm.style.flexWrap = 'wrap';
+    wm.style.justifyContent = 'center';
+  } else {
+    wm.style.right = '56px';
+    wm.style.top = '50%';
+    wm.style.bottom = '';
+    wm.style.left = '';
+    wm.style.transform = 'translateY(-50%)';
+    wm.style.flexDirection = 'column';
+    wm.style.flexWrap = '';
+    wm.style.justifyContent = '';
+  }
+}
+
+// ============================================================
 // RESIZE SIDEBARS (séparateurs glissables)
 // ============================================================
 function initResizeHandles() {
@@ -4586,15 +4640,37 @@ function initResizeHandles() {
       el.classList.remove("dragging");
     });
   }
-  // Dragger gauche : redimensionne la sidebar gauche
-  // Fonctionne en absolu depuis le bord gauche de la fenêtre
-  makeDragger(document.getElementById("resize-left"), function(x) {
-    var sidebarW = document.getElementById("mySidebar").getBoundingClientRect().left;
+
+  // Poignée sur toute la hauteur du bord droit de la sidebar gauche
+  // Positionner dynamiquement après le chargement
+  function updateSidebarHandle() {
+    var handle = document.getElementById("sidebar-resize-handle");
+    if (!handle) return;
+    var sidebarW = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--sidebar')) || 500;
+    handle.style.left = (sidebarW - 3) + "px";
+  }
+  updateSidebarHandle();
+
+  var sidebarHandle = document.getElementById("sidebar-resize-handle");
+  makeDragger(sidebarHandle, function(x) {
     var newW = Math.max(200, Math.min(700, x));
     document.documentElement.style.setProperty("--sidebar", newW + "px");
+    // Repositionner la poignée
+    var h = document.getElementById("sidebar-resize-handle");
+    if (h) h.style.left = (newW - 3) + "px";
   });
-  // Dragger droit (entre canvas et panneau calques) :
-  // Agrandit le panneau calques par la gauche
+
+  // Dragger gauche (entre bord gauche de main-content et canvas) : redimensionne le canvas en modifiant la marge
+  makeDragger(document.getElementById("resize-left"), function(x) {
+    // x = position souris depuis bord gauche fenêtre
+    // on ajuste le padding-left de main-content pour simuler agrandissement canvas
+    var sidebarW = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--sidebar')) || 500;
+    var newPad = Math.max(0, Math.min(200, x - sidebarW));
+    var mainContent = document.getElementById("main-content");
+    if (mainContent) mainContent.style.paddingLeft = newPad + "px";
+  });
+
+  // Dragger droit (entre canvas et panneau calques) : agrandit le panneau calques par la gauche
   makeDragger(document.getElementById("resize-right"), function(x) {
     var layerPanel = document.getElementById("layer-panel");
     if (!layerPanel) return;
@@ -4604,8 +4680,7 @@ function initResizeHandles() {
     layerPanel.style.maxWidth = newW + "px";
     layerPanel.style.width    = newW + "px";
   });
-  // Dragger far-right (à droite du panneau calques) :
-  // Réduit le panneau calques par la droite
+  // Dragger far-right (à droite du panneau calques) : réduit le panneau calques par la droite
   makeDragger(document.getElementById("resize-far-right"), function(x) {
     var layerPanel = document.getElementById("layer-panel");
     if (!layerPanel) return;
@@ -4614,6 +4689,8 @@ function initResizeHandles() {
     layerPanel.style.minWidth = newW + "px";
     layerPanel.style.maxWidth = newW + "px";
     layerPanel.style.width    = newW + "px";
+    // Point 17 : repositionner le filigrane raccourcis si plus de place à droite
+    _adjustShortcutsWatermark();
   });
 }
 
@@ -4637,9 +4714,6 @@ function initResizeHandles() {
   setTimeout(function() {
     applyLang();
     injectTutoInvite();
-    // Sync watermark checkbox
-    var cbWm = document.getElementById('cb-watermark');
-    if (cbWm) cbWm.checked = WATERMARK_ON;
   }, 50);
 })();
 </script>
@@ -5202,14 +5276,15 @@ var _tutAutoListeners = []; // listeners de détection auto, nettoyés entre ét
 // Cibles des étapes : sélecteur CSS ou null
 var TUT_TARGETS = [
   '#mySidebar',               // 0 — Sidebar
-  '.sb-icon-grid',            // 1 — Ajouter élément
-  '#cmcanvas',                // 2 — Déplacer/Redimensionner
-  '#layer-panel',             // 3 — Panneau calques
-  '#so',                      // 4 — Image locale
-  '#sq',                      // 5 — Prérequis
-  null,                       // 6 — Ajuster prérequis
-  null,                       // 7 — Fond autres
-  null                        // 8 — Raccourcis
+  '.sb-two-cols',             // 1 — Ajouter éléments (grille icônes)
+  '#cmcanvas',                // 2 — Déplacer
+  '#cmcanvas',                // 3 — Redimensionner
+  '#layer-panel',             // 4 — Panneau calques
+  '#so',                      // 5 — Image locale
+  '#sq',                      // 6 — Prérequis
+  null,                       // 7 — Ajuster prérequis
+  null,                       // 8 — Fond autres
+  '#shortcuts-watermark'      // 9 — Raccourcis (pointer la zone filigrane)
 ];
 
 function startTutorial() {
@@ -5219,7 +5294,13 @@ function startTutorial() {
   document.getElementById('tutorial-overlay').classList.remove('hidden');
   // Rendre le backdrop non-bloquant (clics passent au travers)
   document.getElementById('tutorial-backdrop').style.pointerEvents = 'none';
+  // Activer le filigrane raccourcis pour l'étape 9
+  if (!WATERMARK_ON) {
+    var wm = document.getElementById('shortcuts-watermark');
+    if (wm) wm.classList.remove('hidden');
+  }
   showTutStep(0);
+  _tutStartPositionLoop();
 }
 
 function showTutStep(step) {
@@ -5258,68 +5339,80 @@ function _tutAddAutoListener(el, evt, fn) {
 }
 
 function _tutInstallAutoDetect(step) {
-  // Étape 1 — ajout d'un élément : détecter drawProject après addBlock/addTextBox
+  // Étape 1 — ajout d'éléments : détecter clic sur icônes ou items sidebar
   if (step === 1) {
-    var orig = window._tutOrigDrawProject || drawProject;
-    window._tutOrigDrawProject = orig;
     var fired = false;
-    // Écouter les clics sur les icônes de la sidebar
     var icons = document.querySelectorAll('.sb-icon');
     icons.forEach(function(icon) {
       _tutAddAutoListener(icon, 'click', function() {
         if (!fired && tutStep === 1) { fired = true; setTimeout(tutorialAutoAdvance, 600); }
       });
     });
-    // Aussi écouter les items texte/outils
     var sbItems = document.querySelectorAll('.sb-item');
     sbItems.forEach(function(item) {
       _tutAddAutoListener(item, 'click', function() {
         if (!fired && tutStep === 1) { fired = true; setTimeout(tutorialAutoAdvance, 600); }
       });
     });
+    // Détecter aussi les clics sur les sb-sec-btn (onglets) — point 5
+    var secBtns = document.querySelectorAll('.sb-sec-btn');
+    secBtns.forEach(function(btn) {
+      _tutAddAutoListener(btn, 'click', function() {
+        // On NE fait PAS avancer le tuto au clic sur un onglet
+      });
+    });
   }
-  // Étape 2 — déplacer : détecter mouseup sur canvas après drag
+  // Étape 2 — déplacer : détecter mouseup sur canvas après drag (pas resize)
   if (step === 2) {
     var fired2 = false;
     _tutAddAutoListener(document, 'mouseup', function() {
-      if (!fired2 && tutStep === 2 && layerToDrag !== null) {
+      if (!fired2 && tutStep === 2 && layerToDrag !== null && !resizeHandle) {
         fired2 = true; setTimeout(tutorialAutoAdvance, 400);
       }
     });
   }
-  // Étape 3 — ordre calques : détecter dragend dans layerlist
+  // Étape 3 — redimensionner : détecter mouseup sur canvas après resize
   if (step === 3) {
     var fired3 = false;
-    var ll = document.getElementById('layerlist');
-    _tutAddAutoListener(ll, 'dragend', function() {
-      if (!fired3 && tutStep === 3) { fired3 = true; setTimeout(tutorialAutoAdvance, 400); }
+    _tutAddAutoListener(document, 'mouseup', function() {
+      if (!fired3 && tutStep === 3 && layerToDrag !== null && resizeHandle) {
+        fired3 = true; setTimeout(tutorialAutoAdvance, 400);
+      }
     });
   }
-  // Étape 4 — image locale : détecter clic sur le sb-item image locale
+  // Étape 4 — ordre calques : détecter dragend dans layerlist
   if (step === 4) {
     var fired4 = false;
-    var localBtn = document.querySelector('#so .sb-item:nth-child(6)');
-    if (!localBtn) localBtn = document.querySelector('[onclick*="fileselection"]');
-    _tutAddAutoListener(localBtn, 'click', function() {
+    var ll = document.getElementById('layerlist');
+    _tutAddAutoListener(ll, 'dragend', function() {
       if (!fired4 && tutStep === 4) { fired4 = true; setTimeout(tutorialAutoAdvance, 400); }
     });
   }
-  // Étape 5 — prérequis : détecter clic sur icône dans #sq
+  // Étape 5 — image locale : détecter clic sur le sb-item image locale
   if (step === 5) {
     var fired5 = false;
+    var localBtn = document.querySelector('#so .sb-item:nth-child(6)');
+    if (!localBtn) localBtn = document.querySelector('[onclick*="fileselection"]');
+    _tutAddAutoListener(localBtn, 'click', function() {
+      if (!fired5 && tutStep === 5) { fired5 = true; setTimeout(tutorialAutoAdvance, 400); }
+    });
+  }
+  // Étape 6 — prérequis : détecter clic sur icône dans #sq
+  if (step === 6) {
+    var fired6 = false;
     var reqIcons = document.querySelectorAll('#sq .sb-icon');
     reqIcons.forEach(function(icon) {
       _tutAddAutoListener(icon, 'click', function() {
-        if (!fired5 && tutStep === 5) { fired5 = true; setTimeout(tutorialAutoAdvance, 600); }
+        if (!fired6 && tutStep === 6) { fired6 = true; setTimeout(tutorialAutoAdvance, 600); }
       });
     });
   }
-  // Étape 7 — fond autres : détecter changement de la checkbox inputobg
-  if (step === 7) {
-    var fired7 = false;
+  // Étape 8 — fond autres : détecter changement de la checkbox inputobg
+  if (step === 8) {
+    var fired8 = false;
     var obgCb = document.getElementById('inputobg');
     _tutAddAutoListener(obgCb, 'change', function() {
-      if (!fired7 && tutStep === 7 && this.checked) { fired7 = true; setTimeout(tutorialAutoAdvance, 400); }
+      if (!fired8 && tutStep === 8 && this.checked) { fired8 = true; setTimeout(tutorialAutoAdvance, 400); }
     });
   }
 }
@@ -5329,6 +5422,19 @@ function tutorialAutoAdvance() {
   var steps = t('tut_steps');
   if (tutStep >= steps.length) { endTutorial(); return; }
   showTutStep(tutStep);
+}
+
+var _tutPositionRAF = null;
+function _tutStartPositionLoop() {
+  if (_tutPositionRAF) return;
+  function loop() {
+    if (document.getElementById('tutorial-overlay').classList.contains('hidden')) {
+      _tutPositionRAF = null; return;
+    }
+    positionTutBubble(tutStep);
+    _tutPositionRAF = requestAnimationFrame(loop);
+  }
+  _tutPositionRAF = requestAnimationFrame(loop);
 }
 
 function positionTutBubble(step) {
@@ -5343,39 +5449,35 @@ function positionTutBubble(step) {
 
   if (target) {
     var rect = target.getBoundingClientRect();
-    var bW = 280, bH = 200;
+    var bW = 280, bH = 220;
     var left, top, arrowClass;
 
     if (rect.right + bW + 20 < window.innerWidth) {
-      // Bulle à droite de la cible
       left = rect.right + 12;
       top = Math.max(10, rect.top + rect.height/2 - bH/2);
       arrowClass = 'arrow-left';
     } else if (rect.left - bW - 20 > 0) {
-      // Bulle à gauche
       left = rect.left - bW - 12;
       top = Math.max(10, rect.top + rect.height/2 - bH/2);
       arrowClass = 'arrow-right';
     } else if (rect.top - bH - 20 > 0) {
-      // Bulle au-dessus
       left = Math.max(10, rect.left + rect.width/2 - bW/2);
       top = rect.top - bH - 12;
       arrowClass = 'arrow-bottom';
     } else {
-      // Bulle en dessous
       left = Math.max(10, rect.left + rect.width/2 - bW/2);
       top = rect.bottom + 12;
       arrowClass = 'arrow-top';
     }
 
-    // Clamp
     left = Math.min(left, window.innerWidth - bW - 10);
     top  = Math.min(top,  window.innerHeight - bH - 10);
     bubble.style.left = left + 'px';
     bubble.style.top  = top + 'px';
+    bubble.style.transform = '';
     bubble.className = arrowClass;
 
-    // Highlight
+    // Highlight dynamique
     var hl = document.createElement('div');
     hl.className = 'tut-highlight';
     hl.style.left   = (rect.left - 4) + 'px';
@@ -5384,7 +5486,6 @@ function positionTutBubble(step) {
     hl.style.height = (rect.height + 8) + 'px';
     overlay.appendChild(hl);
   } else {
-    // Centré
     bubble.style.left = '50%';
     bubble.style.top  = '50%';
     bubble.style.transform = 'translate(-50%,-50%)';
@@ -5404,21 +5505,37 @@ function tutorialSkip() { endTutorial(); }
 
 function endTutorial() {
   _tutCleanAutoListeners();
+  _tutPositionRAF = null; // stoppe la boucle RAF
   document.getElementById('tutorial-overlay').classList.add('hidden');
   document.querySelectorAll('.tut-highlight').forEach(function(el){ el.remove(); });
   TUTORIAL_DONE = true;
   localStorage.setItem('tm_tutorial_done', '1');
+  // Remettre le filigrane dans son état initial si on l'avait forcé
+  if (!WATERMARK_ON) {
+    var wm = document.getElementById('shortcuts-watermark');
+    if (wm) wm.classList.add('hidden');
+  }
 }
 
 // ============================================================
 // INIT SETTINGS AU DÉMARRAGE
 // ============================================================
 (function initSettings() {
-  // Appliquer watermark
-  if (!WATERMARK_ON) {
-    var wm = document.getElementById('shortcuts-watermark');
-    if (wm) wm.classList.add('hidden');
+  // Appliquer watermark selon préférence sauvegardée
+  var wm = document.getElementById('shortcuts-watermark');
+  if (wm) {
+    if (WATERMARK_ON) {
+      wm.classList.remove('hidden');
+    } else {
+      wm.classList.add('hidden');
+    }
   }
+  // Sync checkbox watermark
+  var cbWm = document.getElementById('cb-watermark');
+  if (cbWm) cbWm.checked = WATERMARK_ON;
+  // Point 23 : brancher le bouton settings ici (openSettings est défini dans ce bloc)
+  var settingsBtn = document.getElementById('settings-btn');
+  if (settingsBtn) settingsBtn.addEventListener('click', function() { openSettings(); });
   // Appliquer langue après que tout le DOM/JS soit chargé
   // (appelé depuis init() après resetProject)
 })();
