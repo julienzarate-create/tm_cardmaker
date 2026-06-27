@@ -466,12 +466,12 @@ input[type=number] { width: auto; }
         <div class="sb-content open" id="st"><div class="sb-icon-grid" id="tags"></div></div>
       </div>
       <div class="sb-sec">
-        <button class="sb-sec-btn" onclick="toggleSec(this,'sp')">Partis <span class="arr">▼</span></button>
-        <div class="sb-content" id="sp"><div class="sb-icon-grid" id="parties"></div></div>
-      </div>
-      <div class="sb-sec">
         <button class="sb-sec-btn" onclick="toggleSec(this,'sv')">Points de victoire <span class="arr">▼</span></button>
         <div class="sb-content" id="sv"><div class="sb-icon-grid" id="VPs"></div></div>
+      </div>
+      <div class="sb-sec">
+        <button class="sb-sec-btn" onclick="toggleSec(this,'sp')">Partis <span class="arr">▼</span></button>
+        <div class="sb-content" id="sp"><div class="sb-icon-grid" id="parties"></div></div>
       </div>
     </div>
     <div class="sb-col">
@@ -795,6 +795,9 @@ function restoreHistory(idx) {
     childAdd.classList.add("inside");
     childAdd.onclick = selectLayer;
 
+    // Miniature
+    childAdd.appendChild(createLayerThumb(savedData));
+
     var nameInput = document.createElement("input");
     nameInput.type = "text";
     nameInput.id = "layername" + savedId.replace("dragdropdiv","");
@@ -1050,13 +1053,13 @@ var blockDefaults = {
     {label:"MC",          x:413, y:643, width:92,  height:92},
     {label:"Arrow",       x:413, y:429, width:116, height:55},
     {label:"Asterisk",    x:413, y:643, width:55,  height:55},
-    {label:"Slash",       x:413, y:643, width:55,  height:146},
-    {label:"Chairman",    x:413, y:643, width:82,  height:82},
+    {label:"Slash",       x:413, y:643, width:35,  height:93},
+    {label:"Chairman",    x:413, y:643, width:77,  height:99},
     {label:"Colon",       x:413, y:643, width:11,  height:55},
     {label:"Delegate",    x:413, y:643, width:77,  height:99},
     {label:"Effect (bg)", x:631, y:307, width:346, height:36},
-    {label:"Influence",   x:413, y:643, width:117, height:122},
-    {label:"Party Leader",x:413, y:643, width:82,  height:122},
+    {label:"Influence",   x:413, y:643, width:68,  height:71},
+    {label:"Party Leader",x:413, y:643, width:77,  height:99},
     {label:"Tag Holder 0",x:969, y:103, width:257, height:89},
     {label:"Tag Holder 1",x:898, y:103, width:257, height:89},
     {label:"Tag Holder 2",x:794, y:103, width:257, height:89}
@@ -1072,8 +1075,8 @@ var blockDefaults = {
     {label:"3x width",    width:325}
   ],
   line: [
-    {label:"Flavor 1 ligne",  x:60,  y:1012, width:2, angle:0, len:706},
-    {label:"Flavor 2 lignes", x:60,  y:986,  width:2, angle:0, len:706}
+    {label:"Flavor 1 ligne",  x:254, y:1012, width:2, angle:0, len:333},
+    {label:"Flavor 2 lignes", x:254, y:986,  width:2, angle:0, len:333}
   ]
 };
 
@@ -1086,7 +1089,7 @@ var megaTemplates = {
     {type:"text",  data:"CARD NAME",   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",    x:413, y:612,  width:826, height:24, color:"#24770d", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:110, y:770, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
-    {type:"line",  x:60, y:1012, width:2, angle:0, len:706, color:"#000000", params:"allangle alllen allpreset color", locked:true},
+    {type:"line",  x:254, y:1012, width:2, angle:0, len:333, color:"#000000", params:"allangle alllen allpreset color", locked:true},
     {type:"text",  data:"Flavor text!", x:413, y:1037, width:826, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
   ]},
   green_big_bottom: { layers: [
@@ -1097,7 +1100,7 @@ var megaTemplates = {
     {type:"text",  data:"CARD NAME",   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",    x:413, y:562,  width:826, height:24, color:"#24770d", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:110, y:770, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
-    {type:"line",  x:60, y:1012, width:2, angle:0, len:706, color:"#000000", params:"allangle alllen allpreset color", locked:true},
+    {type:"line",  x:254, y:1012, width:2, angle:0, len:333, color:"#000000", params:"allangle alllen allpreset color", locked:true},
     {type:"text",  data:"Flavor text!", x:413, y:1037, width:826, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
   ]},
   green_small_bottom: { layers: [
@@ -1108,7 +1111,7 @@ var megaTemplates = {
     {type:"text",  data:"CARD NAME",   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",    x:413, y:664,  width:826, height:24, color:"#24770d", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:110, y:770, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
-    {type:"line",  x:60, y:1012, width:2, angle:0, len:706, color:"#000000", params:"allangle alllen allpreset color", locked:true},
+    {type:"line",  x:254, y:1012, width:2, angle:0, len:333, color:"#000000", params:"allangle alllen allpreset color", locked:true},
     {type:"text",  data:"Flavor text!", x:413, y:1037, width:826, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
   ]},
   blue_normal: { layers: [
@@ -1121,7 +1124,7 @@ var megaTemplates = {
     {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:100, y:860, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
     {type:"block", iNum:13, x:355, y:265, width:116, height:55, params:"allimages allpreset"},
     {type:"text",  data:"Effect or Action text!", x:413, y:360, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
-    {type:"line",  x:60, y:1012, width:2, angle:0, len:706, color:"#000000", params:"allangle alllen allpreset color", locked:true},
+    {type:"line",  x:254, y:1012, width:2, angle:0, len:333, color:"#000000", params:"allangle alllen allpreset color", locked:true},
     {type:"text",  data:"Flavor text!",      x:413, y:1037, width:826, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
   ]},
   blue_big_bottom: { layers: [
@@ -1134,7 +1137,7 @@ var megaTemplates = {
     {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:100, y:860, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
     {type:"block", iNum:13, x:355, y:265, width:116, height:55, params:"allimages allpreset"},
     {type:"text",  data:"Effect or Action text!", x:413, y:360, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
-    {type:"line",  x:60, y:1012, width:2, angle:0, len:706, color:"#000000", params:"allangle alllen allpreset color", locked:true},
+    {type:"line",  x:254, y:1012, width:2, angle:0, len:333, color:"#000000", params:"allangle alllen allpreset color", locked:true},
     {type:"text",  data:"Flavor text!",      x:413, y:1037, width:826, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
   ]},
   blue_big_top: { layers: [
@@ -1147,7 +1150,7 @@ var megaTemplates = {
     {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:100, y:891, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
     {type:"block", iNum:13, x:355, y:265, width:116, height:55, params:"allimages allpreset"},
     {type:"text",  data:"Effect or Action text!", x:413, y:360, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
-    {type:"line",  x:60, y:1012, width:2, angle:0, len:706, color:"#000000", params:"allangle alllen allpreset color", locked:true},
+    {type:"line",  x:254, y:1012, width:2, angle:0, len:333, color:"#000000", params:"allangle alllen allpreset color", locked:true},
     {type:"text",  data:"Flavor text!",      x:413, y:1037, width:826, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
   ]},
   red_normal: { layers: [
@@ -1158,7 +1161,7 @@ var megaTemplates = {
     {type:"text",  data:"CARD NAME",   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",    x:413, y:685,  width:826, height:24, color:"#c36a17", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:100, y:810, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
-    {type:"line",  x:60, y:1012, width:2, angle:0, len:706, color:"#000000", params:"allangle alllen allpreset color", locked:true},
+    {type:"line",  x:254, y:1012, width:2, angle:0, len:333, color:"#000000", params:"allangle alllen allpreset color", locked:true},
     {type:"text",  data:"Flavor text!", x:413, y:1037, width:826, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
   ]},
   red_small_bottom: { layers: [
@@ -1169,7 +1172,7 @@ var megaTemplates = {
     {type:"text",  data:"CARD NAME",   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
     {type:"text",  data:"FAN MADE",    x:413, y:718,  width:826, height:24, color:"#c36a17", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:100, y:810, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
-    {type:"line",  x:60, y:1012, width:2, angle:0, len:706, color:"#000000", params:"allangle alllen allpreset color", locked:true},
+    {type:"line",  x:254, y:1012, width:2, angle:0, len:333, color:"#000000", params:"allangle alllen allpreset color", locked:true},
     {type:"text",  data:"Flavor text!", x:413, y:1037, width:826, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
   ]},
   prelude: { layers: [
@@ -1405,6 +1408,7 @@ function addLayer(title, layer) {
 
   var childAdd = document.createElement("div");
   childAdd.classList.add("inside");
+  childAdd.appendChild(createLayerThumb(layer));
   childAdd.appendChild(createTextbox(title));
   childAdd.onclick = selectLayer;
   if (ddcount) {
@@ -1419,6 +1423,39 @@ function addLayer(title, layer) {
 
   sortable(document.getElementById("layerlist"), function() {});
   return layer;
+}
+
+function createLayerThumb(layer) {
+  var span = document.createElement("span");
+  span.className = "layer-thumb";
+  span.style.cssText = "display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;flex-shrink:0;margin-right:3px;font-size:13px;";
+  if (layer.type === "block" && layer.iNum !== undefined) {
+    var bl = blockList[layer.iNum];
+    if (bl && !bl.hidden) {
+      var tImg = document.createElement("img");
+      tImg.src = bl.putUnder + "/" + bl.src + ".png";
+      tImg.style.cssText = "width:22px;height:22px;object-fit:contain;border-radius:2px;";
+      tImg.onerror = function() { this.parentNode.innerText = "🖼"; };
+      span.appendChild(tImg);
+    } else {
+      span.innerText = "🖼";
+    }
+  } else if (layer.type === "text") {
+    span.innerText = "🔤";
+  } else if (layer.type === "line") {
+    span.innerText = "—";
+  } else if (layer.type === "production") {
+    span.innerText = "⬛";
+  } else if (layer.type === "effect") {
+    span.innerText = "✦";
+  } else if (layer.type === "userFile" || layer.type === "embedded" || layer.type === "webFile") {
+    span.innerText = "🖼";
+  } else if (layer.type === "base") {
+    span.innerText = "🃏";
+  } else {
+    span.innerText = "•";
+  }
+  return span;
 }
 
 function createGroupCheckbox() {
@@ -1622,6 +1659,26 @@ function selectLayer() {
     gpDiv.appendChild(btnNorm);
     gpDiv.appendChild(btnReq);
     domParams.insertBefore(gpDiv, domParams.firstChild);
+  }
+
+  // Boutons Positif / Négatif pour les VPs
+  var vpBtnDiv = document.getElementById("vp-mode-btns");
+  if (vpBtnDiv) vpBtnDiv.remove();
+  if (thisLayer.type === "block" && thisLayer._vpSrc !== undefined) {
+    var vpDiv = document.createElement("div");
+    vpDiv.id = "vp-mode-btns";
+    vpDiv.style.cssText = "display:flex;gap:8px;margin-bottom:10px;padding-bottom:9px;border-bottom:1px solid var(--border);";
+    var btnPos = document.createElement("button");
+    btnPos.className = "btn btn-g"; btnPos.innerText = "Positif";
+    btnPos.style.flex = "1";
+    btnPos.onclick = function() { applyVPMode(clickedNode.id, false); };
+    var btnNeg = document.createElement("button");
+    btnNeg.className = "btn btn-g"; btnNeg.innerText = "Négatif";
+    btnNeg.style.flex = "1";
+    btnNeg.onclick = function() { applyVPMode(clickedNode.id, true); };
+    vpDiv.appendChild(btnPos);
+    vpDiv.appendChild(btnNeg);
+    domParams.insertBefore(vpDiv, domParams.firstChild);
   }
 
   focusKeyInput(thisLayer);
@@ -1897,6 +1954,14 @@ function _registerBlockInMenu(idx) {
   icon.id      = "image" + idx;
   icon.className = "sb-icon";
   icon.onclick = addBlock;
+
+  // Drag depuis sidebar vers canvas
+  icon.draggable = true;
+  icon.addEventListener("dragstart", function(e) {
+    e.dataTransfer.setData("text/plain", String(idx));
+    e.dataTransfer.effectAllowed = "copy";
+    _sbDragIdx = Number(idx);
+  });
 
   var imgSrc = bl.putUnder + "/" + bl.src + ".png";
   var img = document.createElement("img");
@@ -2253,8 +2318,8 @@ function applyGPMode(layerId, isRequisite) {
     preset = isRequisite ? blockDefaults.tiles[1] : null;
     if (!isRequisite) {
       // Standard tile : utiliser les dims de l'image ou 142
-      layer.x = 300; layer.y = 500;
-      layer.width = 142; layer.height = 142;
+      layer.x = 393; layer.y = 448;
+      layer.width = 168; layer.height = 142;
       layer._appliedPreset = "Standard tile";
       var ixEl = document.getElementById("inputx"); if (ixEl) ixEl.value = layer.x;
       var iyEl = document.getElementById("inputy"); if (iyEl) iyEl.value = layer.y;
@@ -2275,6 +2340,29 @@ function applyGPMode(layerId, isRequisite) {
   saveToHistory();
 }
 
+
+function applyVPMode(layerId, isNegative) {
+  var layer = aLayers[layerId];
+  if (!layer || layer._vpSrc === undefined) return;
+  var is4vp = (layer._vpSrc === "4");
+  var newX, newY;
+  if (is4vp) {
+    newX = isNegative ? 566 : 533;
+    newY = 833;
+  } else {
+    newX = isNegative ? 562 : 542;
+    newY = 836;
+  }
+  layer.x = newX; layer.y = newY;
+  layer.width = 223; layer.height = 223;
+  layer._appliedPreset = isNegative ? "Négatif" : "Positif";
+  var ixEl = document.getElementById("inputx");      if (ixEl) ixEl.value = newX;
+  var iyEl = document.getElementById("inputy");      if (iyEl) iyEl.value = newY;
+  var iwEl = document.getElementById("inputwidth");  if (iwEl) iwEl.value = 223;
+  var ihEl = document.getElementById("inputheight"); if (ihEl) ihEl.value = 223;
+  drawProject();
+  saveToHistory();
+}
 
 function addBlock(th) {
   var layer = {type:"block", name:"", iNum:0, x:0, y:0, width:0, height:0, params:"allimages"};
@@ -2346,11 +2434,19 @@ function addBlock(th) {
     layer.locked = true;
   }
 
-  // Point 6 & 8 & 10 & 14 : masquer le menu preset pour ressources, tuiles, globalparameters
+  // Point 6 & 8 & 10 & 14 : masquer le menu preset pour ressources, tuiles, globalparameters, VPs
   // (on laisse allpreset dans params mais on le masque via un flag)
-  var noPresetMenu = ["resources","tiles","globalparameters","requisites"].indexOf(thisBlock.putUnder) !== -1;
+  var noPresetMenu = ["resources","tiles","globalparameters","requisites","VPs"].indexOf(thisBlock.putUnder) !== -1;
   if (noPresetMenu) {
     layer._hidePresetMenu = true;
+  }
+
+  // Flag VP pour boutons Positif/Négatif
+  if (thisBlock.putUnder === "VPs") {
+    var isVPValueBlock = ["1_for","1","2_for","2","3","4","5"].indexOf(thisBlock.src) !== -1;
+    if (isVPValueBlock) {
+      layer._vpSrc = thisBlock.src;
+    }
   }
 
   applyDefaultPreset(layer, thisBlock.putUnder, thisBlock.src);
@@ -2400,6 +2496,15 @@ function addBlock(th) {
     layer._appliedPreset = gp.label;
     // Ajouter boutons Normal/Prérequis via flag
     layer._gpSrc = thisBlock.src;
+  }
+
+  // Preset auto Positif pour VPs valeur
+  if (thisBlock.putUnder === "VPs" && layer._vpSrc !== undefined) {
+    var is4vpDef = (layer._vpSrc === "4");
+    layer.x = is4vpDef ? 533 : 542;
+    layer.y = is4vpDef ? 833 : 836;
+    layer.width = 223; layer.height = 223;
+    layer._appliedPreset = "Positif";
   }
 
   // Preset auto pour misc selon la src
@@ -2532,7 +2637,7 @@ function addLine() {
     }
   }
   // Point 12 : valeurs par défaut corrigées + preset allpreset pour ligne
-  var layer = {type:"line", x:60,  y:1012, width:2, angle:0, len:706, color:"#000000", opacity:1, locked:true, params:"allangle alllen allpreset color"};
+  var layer = {type:"line", x:254, y:1012, width:2, angle:0, len:333, color:"#000000", opacity:1, locked:true, params:"allangle alllen allpreset color"};
   layer._appliedPreset = "Flavor 1 ligne";
   var newLayer = addLayer("Ligne", layer);
   drawProject();
@@ -2761,6 +2866,41 @@ var resizeStartH = 0;
 var resizeStartLayerX = 0;
 var resizeStartLayerY = 0;
 var HANDLE_SIZE = 10; // taille des poignées en pixels canvas
+var _sbDragIdx = null; // index du bloc en cours de drag depuis la sidebar
+
+// Drop depuis sidebar sur le canvas
+(function() {
+  var canvas = document.getElementById("cmcanvas");
+  canvas.addEventListener("dragover", function(e) {
+    if (_sbDragIdx === null) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "copy";
+  }, false);
+  canvas.addEventListener("drop", function(e) {
+    if (_sbDragIdx === null) return;
+    e.preventDefault();
+    var rect = canvas.getBoundingClientRect();
+    var scaleX = canvas.width  / rect.width;
+    var scaleY = canvas.height / rect.height;
+    var dropX = Math.round((e.clientX - rect.left) * scaleX);
+    var dropY = Math.round((e.clientY - rect.top)  * scaleY);
+    // Ajouter le bloc à la position du drop
+    var newLayer = addBlock(_sbDragIdx);
+    if (newLayer) {
+      newLayer.x = dropX;
+      newLayer.y = dropY;
+      // Mettre à jour les champs si le panneau est ouvert
+      var ixEl = document.getElementById("inputx"); if (ixEl) ixEl.value = dropX;
+      var iyEl = document.getElementById("inputy"); if (iyEl) iyEl.value = dropY;
+      drawProject();
+      saveToHistory();
+    }
+    _sbDragIdx = null;
+  }, false);
+  canvas.addEventListener("dragleave", function() {
+    _sbDragIdx = null;
+  }, false);
+})();
 
 function getMousePos(event) {
   var c    = document.getElementById("cmcanvas");
