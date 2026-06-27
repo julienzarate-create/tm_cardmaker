@@ -466,12 +466,40 @@ input[type=number] { width: auto; }
         <div class="sb-content open" id="st"><div class="sb-icon-grid" id="tags"></div></div>
       </div>
       <div class="sb-sec">
-        <button class="sb-sec-btn" onclick="toggleSec(this,'sv')">Points de victoire <span class="arr">▼</span></button>
-        <div class="sb-content" id="sv"><div class="sb-icon-grid" id="VPs"></div></div>
+        <button class="sb-sec-btn open" onclick="toggleSec(this,'sv')">Points de victoire <span class="arr">▼</span></button>
+        <div class="sb-content open" id="sv"><div class="sb-icon-grid" id="VPs"></div></div>
       </div>
       <div class="sb-sec">
-        <button class="sb-sec-btn" onclick="toggleSec(this,'sp')">Partis <span class="arr">▼</span></button>
-        <div class="sb-content" id="sp"><div class="sb-icon-grid" id="parties"></div></div>
+        <button class="sb-sec-btn open" onclick="toggleSec(this,'sp')">Partis <span class="arr">▼</span></button>
+        <div class="sb-content open" id="sp"><div class="sb-icon-grid" id="parties"></div></div>
+      </div>
+      <div class="sb-sec">
+        <button class="sb-sec-btn open" onclick="toggleSec(this,'so')">Texte &amp; outils <span class="arr">▼</span></button>
+        <div class="sb-content open" id="so">
+          <a onclick="addTextBox()" href="#" class="sb-item" draggable="false">🔤 Zone de texte</a>
+          <a id="sb-prod-btn" href="#" class="sb-item" draggable="true">⬛ Boîte production</a>
+          <a id="sb-effect-btn" href="#" class="sb-item" draggable="true">✦ Boîte effet</a>
+          <a onclick="addLine()" href="#" class="sb-item" draggable="false">— Ligne</a>
+          <a onclick="openOverlay('overlay')" href="#" class="sb-item" draggable="false">🌐 Image web</a>
+          <a onclick="document.getElementById('fileselection').click()" href="#" class="sb-item" draggable="false">📁 Image locale</a>
+          <a onclick="openOverlay('fontoverlay')" href="#" class="sb-item" draggable="false">🔡 Police web</a>
+          <input type="file" id="fileselection" class="hidden" onchange="addUserFile(this)">
+        </div>
+      </div>
+      <div class="sb-sec">
+        <button class="sb-sec-btn open" onclick="toggleSec(this,'stpl')">Templates <span class="arr">▼</span></button>
+        <div class="sb-content open" id="stpl">
+          <a onclick="swapTemplate('green_normal')" href="#" class="sb-item">🟢 Verte Standard</a>
+          <a onclick="swapTemplate('green_small_bottom')" href="#" class="sb-item">🟢 Verte Petit bas</a>
+          <a onclick="swapTemplate('green_big_bottom')" href="#" class="sb-item">🟢 Verte Grand bas</a>
+          <a onclick="swapTemplate('blue_normal')" href="#" class="sb-item">🔵 Bleue Standard</a>
+          <a onclick="swapTemplate('blue_big_bottom')" href="#" class="sb-item">🔵 Bleue Grand bas</a>
+          <a onclick="swapTemplate('blue_big_top')" href="#" class="sb-item">🔵 Bleue Grand haut</a>
+          <a onclick="swapTemplate('red_normal')" href="#" class="sb-item">🔴 Rouge Standard</a>
+          <a onclick="swapTemplate('red_small_bottom')" href="#" class="sb-item">🔴 Rouge Petit bas</a>
+          <a onclick="swapTemplate('prelude')" href="#" class="sb-item">💜 Prélude</a>
+          <a onclick="swapTemplate('corporation')" href="#" class="sb-item">🏢 Corporation</a>
+        </div>
       </div>
     </div>
     <div class="sb-col">
@@ -480,33 +508,20 @@ input[type=number] { width: auto; }
         <div class="sb-content open" id="sr"><div class="sb-icon-grid" id="resources"></div></div>
       </div>
       <div class="sb-sec">
-        <button class="sb-sec-btn" onclick="toggleSec(this,'sti')">Tuiles <span class="arr">▼</span></button>
-        <div class="sb-content" id="sti"><div class="sb-icon-grid" id="tiles"></div></div>
+        <button class="sb-sec-btn open" onclick="toggleSec(this,'sti')">Tuiles <span class="arr">▼</span></button>
+        <div class="sb-content open" id="sti"><div class="sb-icon-grid" id="tiles"></div></div>
       </div>
       <div class="sb-sec">
-        <button class="sb-sec-btn" onclick="toggleSec(this,'sq')">Prérequis <span class="arr">▼</span></button>
-        <div class="sb-content" id="sq"><div class="sb-icon-grid" id="requisites"></div></div>
+        <button class="sb-sec-btn open" onclick="toggleSec(this,'sq')">Prérequis <span class="arr">▼</span></button>
+        <div class="sb-content open" id="sq"><div class="sb-icon-grid" id="requisites"></div></div>
       </div>
       <div class="sb-sec">
-        <button class="sb-sec-btn" onclick="toggleSec(this,'sg')">Params globaux <span class="arr">▼</span></button>
-        <div class="sb-content" id="sg"><div class="sb-icon-grid" id="globalparameters"></div></div>
+        <button class="sb-sec-btn open" onclick="toggleSec(this,'sg')">Params globaux <span class="arr">▼</span></button>
+        <div class="sb-content open" id="sg"><div class="sb-icon-grid" id="globalparameters"></div></div>
       </div>
       <div class="sb-sec">
-        <button class="sb-sec-btn" onclick="toggleSec(this,'sm')">Divers <span class="arr">▼</span></button>
-        <div class="sb-content" id="sm"><div class="sb-icon-grid" id="misc"></div></div>
-      </div>
-      <div class="sb-sec">
-        <button class="sb-sec-btn" onclick="toggleSec(this,'so')">Texte &amp; outils <span class="arr">▼</span></button>
-        <div class="sb-content" id="so">
-          <a onclick="addTextBox()" href="#" class="sb-item">🔤 Zone de texte</a>
-          <a onclick="addProduction()" href="#" class="sb-item">⬛ Boîte production</a>
-          <a onclick="addEffectBox()" href="#" class="sb-item">✦ Boîte effet</a>
-          <a onclick="addLine()" href="#" class="sb-item">— Ligne</a>
-          <a onclick="openOverlay('overlay')" href="#" class="sb-item">🌐 Image web</a>
-          <a onclick="document.getElementById('fileselection').click()" href="#" class="sb-item">📁 Image locale</a>
-          <a onclick="openOverlay('fontoverlay')" href="#" class="sb-item">🔡 Police web</a>
-          <input type="file" id="fileselection" class="hidden" onchange="addUserFile(this)">
-        </div>
+        <button class="sb-sec-btn open" onclick="toggleSec(this,'sm')">Divers <span class="arr">▼</span></button>
+        <div class="sb-content open" id="sm"><div class="sb-icon-grid" id="misc"></div></div>
       </div>
     </div>
   </div>
@@ -1084,105 +1099,105 @@ var megaTemplates = {
   green_normal: { layers: [
     {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
     {type:"block", iNum:0,  x:0,   y:0,   width:826, height:1126, params:"allimages"},
-    {type:"text",  data:"10",        x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
+    {type:"text",  data:"10",        x:118, y:147,  width:100, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
     {type:"text",  data:"CARD NAME",   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
-    {type:"text",  data:"FAN MADE",    x:413, y:612,  width:826, height:24, color:"#24770d", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
-    {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:110, y:770, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",  data:"FAN MADE",    x:413, y:612,  width:150, height:24, color:"#24770d", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
+    {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:110, y:770, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
     {type:"line",  x:254, y:1012, width:2, angle:0, len:333, color:"#000000", params:"allangle alllen allpreset color", locked:true},
-    {type:"text",  data:"Flavor text!", x:413, y:1037, width:826, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
+    {type:"text",  data:"Flavor text!", x:413, y:1037, width:600, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
   ]},
   green_big_bottom: { layers: [
     {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
     {type:"block", iNum:2,  x:0,   y:0,   width:826, height:1126, params:"allimages"},
-    {type:"text",  data:"10",        x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
+    {type:"text",  data:"10",        x:118, y:147,  width:100, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
     {type:"text",  data:"CARD NAME",   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
-    {type:"text",  data:"FAN MADE",    x:413, y:562,  width:826, height:24, color:"#24770d", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
-    {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:110, y:770, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",  data:"FAN MADE",    x:413, y:562,  width:150, height:24, color:"#24770d", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
+    {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:110, y:770, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
     {type:"line",  x:254, y:1012, width:2, angle:0, len:333, color:"#000000", params:"allangle alllen allpreset color", locked:true},
-    {type:"text",  data:"Flavor text!", x:413, y:1037, width:826, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
+    {type:"text",  data:"Flavor text!", x:413, y:1037, width:600, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
   ]},
   green_small_bottom: { layers: [
     {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
     {type:"block", iNum:1,  x:0,   y:0,   width:826, height:1126, params:"allimages"},
-    {type:"text",  data:"10",        x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
+    {type:"text",  data:"10",        x:118, y:147,  width:100, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
     {type:"text",  data:"CARD NAME",   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
-    {type:"text",  data:"FAN MADE",    x:413, y:664,  width:826, height:24, color:"#24770d", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
-    {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:110, y:770, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",  data:"FAN MADE",    x:413, y:664,  width:150, height:24, color:"#24770d", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
+    {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:110, y:770, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
     {type:"line",  x:254, y:1012, width:2, angle:0, len:333, color:"#000000", params:"allangle alllen allpreset color", locked:true},
-    {type:"text",  data:"Flavor text!", x:413, y:1037, width:826, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
+    {type:"text",  data:"Flavor text!", x:413, y:1037, width:600, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
   ]},
   blue_normal: { layers: [
     {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
     {type:"block", iNum:3,  x:0,   y:0,   width:826, height:1126, params:"allimages"},
-    {type:"text",  data:"10",              x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
+    {type:"text",  data:"10",              x:118, y:147,  width:100, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
     {type:"text",  data:"CARD NAME",         x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
-    {type:"text",  data:"FAN MADE",          x:413, y:798,  width:826, height:24, color:"#0c5e84", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
-    {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:100, y:860, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",  data:"FAN MADE",          x:413, y:798,  width:150, height:24, color:"#0c5e84", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
+    {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:100, y:860, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
     {type:"block", iNum:13, x:355, y:265, width:116, height:55, params:"allimages allpreset"},
     {type:"text",  data:"Effect or Action text!", x:413, y:360, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
     {type:"line",  x:254, y:1012, width:2, angle:0, len:333, color:"#000000", params:"allangle alllen allpreset color", locked:true},
-    {type:"text",  data:"Flavor text!",      x:413, y:1037, width:826, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
+    {type:"text",  data:"Flavor text!",      x:413, y:1037, width:600, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
   ]},
   blue_big_bottom: { layers: [
     {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
     {type:"block", iNum:4,  x:0,   y:0,   width:826, height:1126, params:"allimages"},
-    {type:"text",  data:"10",              x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
+    {type:"text",  data:"10",              x:118, y:147,  width:100, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
     {type:"text",  data:"CARD NAME",         x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
-    {type:"text",  data:"FAN MADE",          x:413, y:753,  width:702, height:24, color:"#0c5e84", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
-    {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:100, y:860, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",  data:"FAN MADE",          x:413, y:753,  width:150, height:24, color:"#0c5e84", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
+    {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:100, y:860, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
     {type:"block", iNum:13, x:355, y:265, width:116, height:55, params:"allimages allpreset"},
     {type:"text",  data:"Effect or Action text!", x:413, y:360, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
     {type:"line",  x:254, y:1012, width:2, angle:0, len:333, color:"#000000", params:"allangle alllen allpreset color", locked:true},
-    {type:"text",  data:"Flavor text!",      x:413, y:1037, width:826, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
+    {type:"text",  data:"Flavor text!",      x:413, y:1037, width:600, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
   ]},
   blue_big_top: { layers: [
     {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
     {type:"block", iNum:5,  x:0,   y:0,   width:826, height:1126, params:"allimages"},
-    {type:"text",  data:"10",              x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
+    {type:"text",  data:"10",              x:118, y:147,  width:100, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
     {type:"text",  data:"CARD NAME",         x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
-    {type:"text",  data:"FAN MADE",          x:413, y:849,  width:702, height:24, color:"#0c5e84", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
-    {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:100, y:891, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",  data:"FAN MADE",          x:413, y:849,  width:150, height:24, color:"#0c5e84", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
+    {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:100, y:891, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
     {type:"block", iNum:13, x:355, y:265, width:116, height:55, params:"allimages allpreset"},
     {type:"text",  data:"Effect or Action text!", x:413, y:360, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
     {type:"line",  x:254, y:1012, width:2, angle:0, len:333, color:"#000000", params:"allangle alllen allpreset color", locked:true},
-    {type:"text",  data:"Flavor text!",      x:413, y:1037, width:826, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
+    {type:"text",  data:"Flavor text!",      x:413, y:1037, width:600, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
   ]},
   red_normal: { layers: [
     {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
     {type:"block", iNum:6,  x:0,   y:0,   width:826, height:1126, params:"allimages"},
-    {type:"text",  data:"10",        x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
+    {type:"text",  data:"10",        x:118, y:147,  width:100, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
     {type:"text",  data:"CARD NAME",   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
-    {type:"text",  data:"FAN MADE",    x:413, y:685,  width:826, height:24, color:"#c36a17", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
-    {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:100, y:810, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",  data:"FAN MADE",    x:413, y:685,  width:150, height:24, color:"#c36a17", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
+    {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:100, y:810, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
     {type:"line",  x:254, y:1012, width:2, angle:0, len:333, color:"#000000", params:"allangle alllen allpreset color", locked:true},
-    {type:"text",  data:"Flavor text!", x:413, y:1037, width:826, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
+    {type:"text",  data:"Flavor text!", x:413, y:1037, width:600, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
   ]},
   red_small_bottom: { layers: [
     {type:"base",  color:"#ffffff", height:1126, width:826, params:"color"},
     {type:"block", iNum:7,  x:0,   y:0,   width:826, height:1126, params:"allimages"},
-    {type:"text",  data:"10",        x:118, y:147,  width:826, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
+    {type:"text",  data:"10",        x:118, y:147,  width:100, height:66, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"block", iNum:35, x:180, y:92,  width:21,  height:60,  params:"allimages allpreset", locked:true},
     {type:"text",  data:"CARD NAME",   x:413, y:214,  width:665, height:46, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true},
-    {type:"text",  data:"FAN MADE",    x:413, y:718,  width:826, height:24, color:"#c36a17", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
-    {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:100, y:810, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",  data:"FAN MADE",    x:413, y:718,  width:150, height:24, color:"#c36a17", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
+    {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:100, y:810, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
     {type:"line",  x:254, y:1012, width:2, angle:0, len:333, color:"#000000", params:"allangle alllen allpreset color", locked:true},
-    {type:"text",  data:"Flavor text!", x:413, y:1037, width:826, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
+    {type:"text",  data:"Flavor text!", x:413, y:1037, width:600, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset", locked:true}
   ]},
   prelude: { layers: [
     {type:"base",  color:"#ffffff", height:826, width:1126, params:"color"},
     {type:"block", iNum:92, x:0,   y:0,   width:1126, height:826, params:"allimages"},
     {type:"text",  data:"CARD NAME",   x:563, y:218, width:826, height:48, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
-    {type:"text",  data:"FAN MADE",    x:563, y:500, width:826, height:24, color:"#ce809f", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
+    {type:"text",  data:"FAN MADE",    x:563, y:500, width:150, height:24, color:"#ce809f", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"text",  data:"P R E L U D E", x:563, y:99, width:826, height:24, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
-    {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:110, y:560, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
-    {type:"text",  data:"Flavor text!", x:563, y:723, width:826, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"}
+    {type:"text",  data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:110, y:560, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",  data:"Flavor text!", x:563, y:723, width:600, height:22, color:"#000000", font:"Pagella", style:"italic",  weight:"bold",   lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"}
   ]},
   corporation: { layers: [
     {type:"base",   color:"#ffffff", height:826, width:1126, params:"color"},
@@ -1191,10 +1206,10 @@ var megaTemplates = {
     {type:"effect", x:600, y:300, width:400, height:300, params:"allimages allpreset"},
     {type:"block",  iNum:95, x:631, y:307, width:346,    height:36,  params:"allimages allpreset", locked:true, _appliedPreset:"Effect (bg)"},
     {type:"text",   data:"E F F E C T",             x:800, y:333, width:1126, height:22, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
-    {type:"text",   data:"FAN MADE",                x:198, y:736, width:826,  height:24, color:"#c3c3c3", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
+    {type:"text",   data:"FAN MADE",                x:198, y:736, width:150,  height:24, color:"#c3c3c3", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
     {type:"text",   data:"C O R P O R A T I O N",  x:563, y:109, width:826,  height:24, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
-    {type:"text",   data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:110, y:560, width:826, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
-    {type:"text",   data:"Flavor text!", x:563, y:723, width:826, height:22, color:"#000000", font:"Pagella", style:"italic", weight:"bold", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"}
+    {type:"text",   data:"Card description\nMultiple lines\nand they can be much, much, much longer\n'V space' controls the spacing between lines", x:110, y:560, width:550, height:22, color:"#000000", font:"Pagella", style:"normal", weight:"normal", lineSpace:4, justify:"left", params:"allimages color alltext allpreset"},
+    {type:"text",   data:"Flavor text!", x:563, y:723, width:600, height:22, color:"#000000", font:"Pagella", style:"italic", weight:"bold", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"}
   ]}
 };
 
@@ -1266,7 +1281,8 @@ function applyDefaultPreset(layer, putUnder, srcName) {
     }
     preset = resPreset;
   } else if (putUnder === "tiles") {
-    var tileW = 142, tileH = (srcName === "colony" || srcName === "trade") ? 120 : 142;
+    var tileW = (srcName === "greenery") ? 169 : 142;
+    var tileH = (srcName === "colony" || srcName === "trade") ? 120 : 142;
     var tilePos = getWrapPosition("tiles", tileW, tileH);
     preset = { x: tilePos.x, y: tilePos.y, width: tileW, height: tileH };
   } else if (putUnder === "globalparameters") {
@@ -1722,6 +1738,8 @@ function drawProject() {
             }
           } else if (bgImg.complete) {
             var brdr = layer.obgSize !== undefined ? Number(layer.obgSize) : 6;
+            // Correction offset intrinsèque pour vp_bg (blank) : l'image a une marge intégrée trop large
+            if (blockList[layer.iNum] && blockList[layer.iNum].src === "blank") brdr = brdr - 8;
             // Offset spécifique pour colony/trade (forme triangulaire) : décaler 3px vers le haut
             var bgOffsetY = 0;
             if (tileSrc === "colony" || tileSrc === "trade") bgOffsetY = -3;
@@ -1806,7 +1824,6 @@ function drawProject() {
       var sw = Number(selLayer.width) || 0;
       var sh = Number(selLayer.height) || 0;
       if (selLayer.type === "text") {
-        // Pour les textes, ajuster selon l'alignement
         var txtX = sx;
         if (selLayer.justify === "center") txtX = sx - sw / 2;
         else if (selLayer.justify === "right") txtX = sx - sw;
@@ -1837,6 +1854,33 @@ function drawProject() {
         }
         ctx.restore();
       }
+    }
+  }
+
+  // Dessiner les contours des éléments du groupe (mode groupe actif)
+  if (document.getElementById("groupmode").checked && groupSelection.length > 0) {
+    var layerDivsG = document.getElementsByClassName("divRec");
+    for (var gi = 0; gi < layerDivsG.length; gi++) {
+      var gid = layerDivsG[gi].id;
+      if (groupSelection.indexOf(gid) === -1) continue;
+      var gl = aLayers[gid];
+      if (!gl || gl.type === "base" || gl.type === "line") continue;
+      var gsx = Number(gl.x) || 0;
+      var gsy = Number(gl.y) || 0;
+      var gsw = Number(gl.width) || 0;
+      var gsh = Number(gl.height) || 0;
+      if (gl.type === "text") {
+        if (gl.justify === "center") gsx = gsx - gsw / 2;
+        else if (gl.justify === "right") gsx = gsx - gsw;
+        gsy = gsy - gsh;
+      }
+      ctx.save();
+      ctx.strokeStyle = "#44aaff";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([6, 4]);
+      ctx.strokeRect(gsx - 4, gsy - 4, gsw + 8, gsh + 8);
+      ctx.setLineDash([]);
+      ctx.restore();
     }
   }
 }
@@ -2507,7 +2551,7 @@ function addBlock(th) {
     layer._appliedPreset = "Positif";
   }
 
-  // Preset auto pour misc selon la src
+  // Preset auto pour misc selon la src — position gérée par le wrap dans applyDefaultPreset
   if (thisBlock.putUnder === "misc") {
     var srcToLabel = {
       "megacredit":"MC", "arrow":"Arrow", "asterisc":"Asterisk", "bar":"Slash",
@@ -2519,9 +2563,14 @@ function addBlock(th) {
     if (mLabel) {
       for (var mdi = 0; mdi < blockDefaults.misc.length; mdi++) {
         if (blockDefaults.misc[mdi].label === mLabel) {
-          var md = blockDefaults.misc[mdi];
-          layer.x = md.x; layer.y = md.y; layer.width = md.width; layer.height = md.height;
           layer._appliedPreset = mLabel;
+          // Point 18 : Tag Holder et Effect BG centrés sur cartes verticales
+          var cMisc = document.getElementById("cmcanvas");
+          var isVertical = (cMisc.width === 826 && cMisc.height === 1126) || (cMisc.width < cMisc.height);
+          if (isVertical && (mLabel === "Tag Holder 0" || mLabel === "Effect (bg)")) {
+            layer.x = Math.round(cMisc.width / 2 - layer.width / 2);
+            layer.y = Math.round(cMisc.height / 2 - layer.height / 2);
+          }
           break;
         }
       }
@@ -2532,8 +2581,9 @@ function addBlock(th) {
   if (thisBlock.putUnder === "tiles") {
     if (thisBlock.src === "colony" || thisBlock.src === "trade") {
       layer.width = 142; layer.height = 120;
+    } else if (thisBlock.src === "greenery") {
+      layer.width = 169; layer.height = 142;
     } else {
-      // greenery, greenery_no_O2, off-world_city, city, ocean, etc. : 142x142
       if (!layer.width)  layer.width  = 142;
       if (!layer.height) layer.height = 142;
     }
@@ -2586,7 +2636,7 @@ function addTextBox(th) {
   var c = document.getElementById("cmcanvas");
   layer.x = Math.round(c.width / 2);
   layer.y = Math.round(c.height / 2);
-  layer.width = c.width;
+  layer.width = 600;
   var newLayer = addLayer("Text:" + layer.data.substr(0, 10), layer);
   drawProject();
   // Point 2 : sélection auto (sauf si appelé depuis loadFrom)
@@ -2615,7 +2665,9 @@ function addProduction() {
 
 type2FuncList.effect = addEffectBox;
 function addEffectBox() {
-  var layer = {type:"effect", x:600, y:300, width:400, height:300, params:"allimages allpreset"};
+  var c = document.getElementById("cmcanvas");
+  var eW = 400, eH = 300;
+  var layer = {type:"effect", x:Math.round(c.width/2 - eW/2), y:Math.round(c.height/2 - eH/2), width:eW, height:eH, params:"allimages allpreset"};
   var newLayer = addLayer("Effect Box", layer);
   drawProject();
   // Point 2 : sélection auto
@@ -2773,7 +2825,38 @@ function userImageLoaded() {
     };
     layer.filename = mostRecentFile.name;
     userImageList.push(this);
-    addLayer("Local:" + layer.filename, layer);
+
+    // Insérer le calque juste après Base (dragdropdiv0), avant le template
+    var layerlist = document.getElementById("layerlist");
+    var baseDiv = document.getElementById("dragdropdiv0");
+
+    var toAddU = document.createElement("div");
+    toAddU.id = "dragdropdiv" + ddcount;
+    toAddU.classList.add("divRec");
+    toAddU.draggable = true;
+
+    var cbU = document.createElement("input");
+    cbU.type = "checkbox"; cbU.classList.add("groupcheck"); cbU.classList.add("vis-hidden"); cbU.checked = false;
+    toAddU.appendChild(cbU);
+
+    var childAddU = document.createElement("div");
+    childAddU.classList.add("inside");
+    childAddU.appendChild(createLayerThumb(layer));
+    childAddU.appendChild(createTextbox("Local:" + layer.filename));
+    childAddU.onclick = selectLayer;
+    childAddU.appendChild(createLockIcon(layer));
+    childAddU.appendChild(deleteButton());
+    toAddU.appendChild(childAddU);
+
+    aLayers[toAddU.id] = layer;
+    ddcount++;
+
+    if (baseDiv && baseDiv.nextSibling) {
+      layerlist.insertBefore(toAddU, baseDiv.nextSibling);
+    } else {
+      layerlist.appendChild(toAddU);
+    }
+    sortable(layerlist, function() {});
     drawProject();
   }
 }
@@ -2867,39 +2950,75 @@ var resizeStartLayerX = 0;
 var resizeStartLayerY = 0;
 var HANDLE_SIZE = 10; // taille des poignées en pixels canvas
 var _sbDragIdx = null; // index du bloc en cours de drag depuis la sidebar
+var _sbDragType = null; // type de drag depuis sidebar ('production','effect')
 
 // Drop depuis sidebar sur le canvas
 (function() {
   var canvas = document.getElementById("cmcanvas");
   canvas.addEventListener("dragover", function(e) {
-    if (_sbDragIdx === null) return;
+    if (_sbDragIdx === null && _sbDragType === null) return;
     e.preventDefault();
     e.dataTransfer.dropEffect = "copy";
   }, false);
   canvas.addEventListener("drop", function(e) {
-    if (_sbDragIdx === null) return;
     e.preventDefault();
     var rect = canvas.getBoundingClientRect();
     var scaleX = canvas.width  / rect.width;
     var scaleY = canvas.height / rect.height;
     var dropX = Math.round((e.clientX - rect.left) * scaleX);
     var dropY = Math.round((e.clientY - rect.top)  * scaleY);
-    // Ajouter le bloc à la position du drop
-    var newLayer = addBlock(_sbDragIdx);
-    if (newLayer) {
-      newLayer.x = dropX;
-      newLayer.y = dropY;
-      // Mettre à jour les champs si le panneau est ouvert
-      var ixEl = document.getElementById("inputx"); if (ixEl) ixEl.value = dropX;
-      var iyEl = document.getElementById("inputy"); if (iyEl) iyEl.value = dropY;
-      drawProject();
-      saveToHistory();
+
+    if (_sbDragIdx !== null) {
+      // Ajouter le bloc à la position du drop (centré sur le curseur)
+      var newLayer = addBlock(_sbDragIdx);
+      if (newLayer) {
+        // Centrer l'élément sur le point de drop
+        var halfW = Math.round((newLayer.width  || 0) / 2);
+        var halfH = Math.round((newLayer.height || 0) / 2);
+        newLayer.x = dropX - halfW;
+        newLayer.y = dropY - halfH;
+        // Mettre à jour les champs si le panneau est ouvert
+        var ixEl = document.getElementById("inputx"); if (ixEl) ixEl.value = newLayer.x;
+        var iyEl = document.getElementById("inputy"); if (iyEl) iyEl.value = newLayer.y;
+        drawProject();
+        saveToHistory();
+      }
+      _sbDragIdx = null;
+    } else if (_sbDragType !== null) {
+      var newLayer2 = null;
+      if (_sbDragType === "production") newLayer2 = addProduction();
+      else if (_sbDragType === "effect") newLayer2 = addEffectBox();
+      if (newLayer2) {
+        var halfW2 = Math.round((newLayer2.width  || 0) / 2);
+        var halfH2 = Math.round((newLayer2.height || 0) / 2);
+        newLayer2.x = dropX - halfW2;
+        newLayer2.y = dropY - halfH2;
+        var ixEl2 = document.getElementById("inputx"); if (ixEl2) ixEl2.value = newLayer2.x;
+        var iyEl2 = document.getElementById("inputy"); if (iyEl2) iyEl2.value = newLayer2.y;
+        drawProject();
+        saveToHistory();
+      }
+      _sbDragType = null;
     }
-    _sbDragIdx = null;
   }, false);
   canvas.addEventListener("dragleave", function() {
     _sbDragIdx = null;
+    _sbDragType = null;
   }, false);
+
+  // Drag depuis les boutons production et effect
+  document.getElementById("sb-prod-btn").addEventListener("click", function(e) { e.preventDefault(); addProduction(); });
+  document.getElementById("sb-prod-btn").addEventListener("dragstart", function(e) {
+    e.dataTransfer.setData("text/plain", "production");
+    e.dataTransfer.effectAllowed = "copy";
+    _sbDragType = "production";
+  });
+  document.getElementById("sb-effect-btn").addEventListener("click", function(e) { e.preventDefault(); addEffectBox(); });
+  document.getElementById("sb-effect-btn").addEventListener("dragstart", function(e) {
+    e.dataTransfer.setData("text/plain", "effect");
+    e.dataTransfer.effectAllowed = "copy";
+    _sbDragType = "effect";
+  });
 })();
 
 function getMousePos(event) {
@@ -2930,6 +3049,8 @@ function getLayerDisplayRect(layer) {
 
 function getResizeHandle(layer, mx, my) {
   if (layer.type === "text" || layer.type === "line" || layer.type === "base") return null;
+  // No Requirement : pas de redimensionnement
+  if (layer.type === "block" && blockList[layer.iNum] && blockList[layer.iNum].src === "normal") return null;
   var r = getLayerDisplayRect(layer);
   var hs = HANDLE_SIZE;
   var corners = {
@@ -2983,6 +3104,9 @@ function dragStart(event) {
       return;
     }
   }
+  // Si on clique hors de tout calque du groupe, on ne déclenche pas le déplacement groupé
+  layerToDrag = null;
+  layerToDragId = null;
 }
 
 function dragEnd(event) {
@@ -3008,24 +3132,30 @@ function drag(event) {
     var newX = resizeStartLayerX, newY = resizeStartLayerY;
     var ratio = resizeStartH / resizeStartW;
 
-    // Redimensionnement libre pour production et effect, sinon ratio fixe
+    // Redimensionnement libre pour production et effect
+    // Largeur seule (hauteur figée) pour min_medium et max_big
     var freeResize = (layerToDrag.type === "production" || layerToDrag.type === "effect");
+    var widthOnlyResize = false;
+    if (layerToDrag.type === "block" && blockList[layerToDrag.iNum]) {
+      var reqSrcR = blockList[layerToDrag.iNum].src;
+      if (reqSrcR === "min_medium" || reqSrcR === "max_big") widthOnlyResize = true;
+    }
     if (resizeHandle === "se") {
       newW = Math.max(10, resizeStartW + dx);
-      newH = freeResize ? Math.max(10, resizeStartH + dy) : Math.round(newW * ratio);
+      newH = widthOnlyResize ? resizeStartH : (freeResize ? Math.max(10, resizeStartH + dy) : Math.round(newW * ratio));
     } else if (resizeHandle === "sw") {
       newW = Math.max(10, resizeStartW - dx);
-      newH = freeResize ? Math.max(10, resizeStartH + dy) : Math.round(newW * ratio);
+      newH = widthOnlyResize ? resizeStartH : (freeResize ? Math.max(10, resizeStartH + dy) : Math.round(newW * ratio));
       newX = resizeStartLayerX + resizeStartW - newW;
     } else if (resizeHandle === "ne") {
       newW = Math.max(10, resizeStartW + dx);
-      newH = freeResize ? Math.max(10, resizeStartH - dy) : Math.round(newW * ratio);
-      newY = freeResize ? resizeStartLayerY + resizeStartH - newH : resizeStartLayerY + resizeStartH - newH;
+      newH = widthOnlyResize ? resizeStartH : (freeResize ? Math.max(10, resizeStartH - dy) : Math.round(newW * ratio));
+      newY = widthOnlyResize ? resizeStartLayerY : (resizeStartLayerY + resizeStartH - newH);
     } else if (resizeHandle === "nw") {
       newW = Math.max(10, resizeStartW - dx);
-      newH = freeResize ? Math.max(10, resizeStartH - dy) : Math.round(newW * ratio);
+      newH = widthOnlyResize ? resizeStartH : (freeResize ? Math.max(10, resizeStartH - dy) : Math.round(newW * ratio));
       newX = resizeStartLayerX + resizeStartW - newW;
-      newY = resizeStartLayerY + resizeStartH - newH;
+      newY = widthOnlyResize ? resizeStartLayerY : (resizeStartLayerY + resizeStartH - newH);
     }
     layerToDrag.width  = Math.round(newW);
     layerToDrag.height = Math.round(newH);
@@ -3366,8 +3496,84 @@ elem.addEventListener("click", function(event) {
 }, false);
 
 // ============================================================
-// NOUVEAU PROJET
+// SWAP TEMPLATE — remplace le calque template sans toucher aux autres calques
 // ============================================================
+function swapTemplate(name) {
+  if (!megaTemplates || !megaTemplates[name]) return;
+  var tplLayers = megaTemplates[name].layers;
+  // Trouver le calque template dans tplLayers (type block, iNum dans templates)
+  var newTplLayer = null;
+  for (var ti = 0; ti < tplLayers.length; ti++) {
+    if (tplLayers[ti].type === "block" && blockList[tplLayers[ti].iNum] && blockList[tplLayers[ti].iNum].putUnder === "templates") {
+      newTplLayer = tplLayers[ti];
+      break;
+    }
+  }
+  if (!newTplLayer) return;
+
+  // Supprimer l'ancien calque template existant
+  var layerDivs = document.getElementsByClassName("divRec");
+  for (var i = layerDivs.length - 1; i >= 0; i--) {
+    var lyr = aLayers[layerDivs[i].id];
+    if (lyr && lyr.type === "block" && blockList[lyr.iNum] && blockList[lyr.iNum].putUnder === "templates") {
+      if (domParams.parentNode === layerDivs[i]) layerDivs[i].removeChild(domParams);
+      delete aLayers[layerDivs[i].id];
+      layerDivs[i].parentNode.removeChild(layerDivs[i]);
+      break;
+    }
+  }
+
+  // Créer le nouveau calque template
+  var layer = {
+    type: "block", iNum: newTplLayer.iNum,
+    x: newTplLayer.x, y: newTplLayer.y,
+    width: newTplLayer.width, height: newTplLayer.height,
+    params: "allimages", locked: true
+  };
+
+  // L'insérer juste après Base (dragdropdiv0), en deuxième position
+  var layerlist = document.getElementById("layerlist");
+  var baseDiv = document.getElementById("dragdropdiv0");
+
+  // Créer le div manuellement et l'insérer après Base
+  var toAdd = document.createElement("div");
+  toAdd.id = "dragdropdiv" + ddcount;
+  toAdd.classList.add("divRec");
+  toAdd.draggable = true;
+
+  var cb = document.createElement("input");
+  cb.type = "checkbox"; cb.classList.add("groupcheck"); cb.classList.add("vis-hidden"); cb.checked = false;
+  toAdd.appendChild(cb);
+
+  var childAdd = document.createElement("div");
+  childAdd.classList.add("inside");
+  childAdd.appendChild(createLayerThumb(layer));
+  childAdd.appendChild(createTextbox(blockList[layer.iNum].text || name));
+  childAdd.onclick = selectLayer;
+  childAdd.appendChild(createLockIcon(layer));
+  childAdd.appendChild(deleteButton());
+  toAdd.appendChild(childAdd);
+
+  aLayers[toAdd.id] = layer;
+  ddcount++;
+
+  // Insérer après Base
+  if (baseDiv && baseDiv.nextSibling) {
+    layerlist.insertBefore(toAdd, baseDiv.nextSibling);
+  } else {
+    layerlist.appendChild(toAdd);
+  }
+
+  sortable(layerlist, function() {});
+  if (blockList[layer.iNum].obj) {
+    drawProject();
+  } else {
+    fetchBlock(layer.iNum);
+  }
+  saveToHistory();
+}
+
+
 function clickNew() {
   if (confirm("Supprimer le travail actuel et recommencer ?")) resetProject(false);
 }
