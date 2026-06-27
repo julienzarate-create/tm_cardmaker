@@ -552,6 +552,56 @@ input[type=number] { width: auto; }
 .wm-desc { font-size: 9px; color: rgba(240,230,211,0.12); white-space: nowrap; }
 
 /* ============================================================
+   MODE COMPARAISON
+   ============================================================ */
+#compare-panel {
+  display: none; flex-direction: column; align-items: center;
+  gap: 8px; padding: 0 8px;
+}
+#compare-panel.active { display: flex; }
+#compare-canvas-wrap {
+  position: relative;
+}
+#compare-canvas {
+  border: 2px solid var(--border); border-radius: 4px;
+  box-shadow: 0 0 36px rgba(193,68,14,0.1), 0 4px 20px rgba(0,0,0,0.6);
+  background: #111;
+  max-height: calc(100vh - 40px);
+  max-width: calc(50vw - var(--sidebar) - 60px);
+  width: auto !important; height: auto !important;
+  object-fit: contain;
+}
+#compare-label {
+  font-size: 9px; color: var(--muted); text-transform: uppercase;
+  letter-spacing: 0.1em; font-family: "Montserrat", sans-serif; font-weight: 700;
+}
+#compare-close-btn {
+  padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border);
+  background: transparent; color: var(--muted); font-size: 10px;
+  font-family: "Montserrat", sans-serif; font-weight: 700;
+  cursor: pointer; transition: all 0.15s; letter-spacing: 0.04em;
+}
+#compare-close-btn:hover { background: var(--mars); color: #fff; border-color: var(--rust); }
+#compare-divider {
+  width: 2px; background: var(--border); align-self: stretch; flex-shrink: 0;
+  margin: 0 4px;
+}
+
+/* ============================================================
+   ZOOM SLIDER
+   ============================================================ */
+.zoom-bar {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 10px; border-bottom: 1px solid var(--border);
+  background: rgba(0,0,0,0.2);
+}
+.zoom-bar label { font-size: 10px; color: var(--muted); white-space: nowrap; }
+.zoom-bar input[type=range] {
+  flex: 1; accent-color: var(--rust); cursor: pointer;
+}
+.zoom-bar span { font-size: 10px; color: var(--gold); min-width: 34px; text-align: right; }
+
+/* ============================================================
    INVITATION TUTORIEL (écran de démarrage)
    ============================================================ */
 #tuto-invite {
@@ -808,6 +858,11 @@ input[type=number] { width: auto; }
     <button id="btn-undo" class="undo-btn" onclick="undo()" disabled title="Ctrl+Z">↩ Annuler</button>
     <button id="btn-redo" class="undo-btn" onclick="redo()" disabled title="Ctrl+Y">Refaire ↪</button>
   </div>
+  <div class="zoom-bar">
+    <label>🔍</label>
+    <input type="range" id="zoom-slider" min="30" max="200" value="100" step="5" oninput="applyZoomSlider(this.value)">
+    <span id="zoom-label">100%</span>
+  </div>
   <button class="new-btn" onclick="showStart()">＋ Nouvelle carte</button>
 
   <div class="sb-sec">
@@ -816,6 +871,7 @@ input[type=number] { width: auto; }
       <a onclick="saveProjectCont(false)" href="#" class="sb-item">💾 Sauvegarder</a>
       <a onclick="clickLoadNewProject()" href="#" class="sb-item">📂 Ouvrir projet</a>
       <a onclick="clickSaveProject()" href="#" class="sb-item">📦 Exporter projet</a>
+      <a onclick="openCompareMode()" href="#" class="sb-item" id="compare-btn">🔀 Comparer avec…</a>
     </div>
   </div>
   <!-- Layout 2 colonnes pour les blocs -->
@@ -861,6 +917,7 @@ input[type=number] { width: auto; }
           <a onclick="document.getElementById('fileselection').click()" href="#" class="sb-item" draggable="false">📁 Image locale</a>
           <a onclick="openOverlay('fontoverlay')" href="#" class="sb-item" draggable="false">🔡 Police web</a>
           <input type="file" id="fileselection" class="hidden" onchange="addUserFile(this)">
+      <input type="file" id="compare-fileselection" class="hidden" accept="image/*" onchange="loadCompareImage(this)">
         </div>
       </div>
     </div>
@@ -913,6 +970,13 @@ input[type=number] { width: auto; }
     <div>
       <canvas id="cmcanvas" height="1050px" width="750px"></canvas>
       <a id="projectlink"></a>
+    </div>
+    <!-- Panneau comparaison : caché par défaut -->
+    <div id="compare-divider" style="display:none;"></div>
+    <div id="compare-panel">
+      <div id="compare-label">CARTE DE RÉFÉRENCE</div>
+      <canvas id="compare-canvas" width="826" height="1126"></canvas>
+      <button id="compare-close-btn" onclick="closeCompareMode()">✕ Fermer comparaison</button>
     </div>
     <div id="resize-right" class="resize-handle"></div>
     <div id="layer-panel">
@@ -1617,6 +1681,10 @@ document.addEventListener("keydown", function(e) {
   if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
   if (e.ctrlKey && e.key === "z") { e.preventDefault(); undo(); }
   if (e.ctrlKey && e.key === "y") { e.preventDefault(); redo(); }
+  // Copier le calque sélectionné
+  if (e.ctrlKey && e.key === "c") { e.preventDefault(); copySelectedLayer(); }
+  // Coller le calque copié
+  if (e.ctrlKey && e.key === "v") { e.preventDefault(); pasteLayer(); }
   // Supprimer le calque sélectionné avec la touche Suppr/Delete
   if ((e.key === "Delete" || e.key === "Backspace")) {
     // Point 8 : si mode groupe avec éléments groupés, supprimer tout le groupe
@@ -4634,6 +4702,7 @@ function applyCanvasZoom() {
       canvasWrap.style.zoom = "1";
     }
   }
+  _syncZoomSlider();
 }
 
 // ============================================================
@@ -4819,6 +4888,7 @@ function initResizeHandles() {
       if (d.canvasZoom) {
         var canvasWrap = document.querySelector('#canvas-area > div:nth-child(2)');
         if (canvasWrap) canvasWrap.style.zoom = d.canvasZoom;
+        _syncZoomSlider();
       }
       if (d.layerW && d.layerW > 0) {
         var lp = document.getElementById('layer-panel');
@@ -4828,6 +4898,7 @@ function initResizeHandles() {
   }
   // Exposer restoreLayout globalement pour l'appeler après startTemplate
   window._restoreLayout = restoreLayout;
+  window._saveLayoutFn = _saveLayout;
 
   var sidebarHandle = document.getElementById("sidebar-resize-handle");
   makeDragger(sidebarHandle, function(x) {
@@ -4853,6 +4924,8 @@ function initResizeHandles() {
     var newZoom = Math.max(0.3, Math.min(2.0, (x - _rr_wrapLeft) / _rr_naturalW));
     var canvasWrap = document.querySelector('#canvas-area > div:nth-child(2)');
     if (canvasWrap) canvasWrap.style.zoom = newZoom;
+    _syncZoomSlider();
+    _syncCompareZoom();
     _saveLayout();
   }, function() {
     // Capturer les valeurs stables au moment du mousedown
@@ -5711,6 +5784,151 @@ function endTutorial() {
     var wm = document.getElementById('shortcuts-watermark');
     if (wm) wm.classList.add('hidden');
   }
+}
+
+// ============================================================
+// COPIER / COLLER UN CALQUE (Ctrl+C / Ctrl+V)
+// ============================================================
+var _copiedLayer = null;
+
+function copySelectedLayer() {
+  if (!selectedLayerId || selectedLayerId === "dragdropdiv0") return;
+  var layer = aLayers[selectedLayerId];
+  if (!layer) return;
+  _copiedLayer = JSON.parse(JSON.stringify(layer));
+  // Mémoriser aussi l'iNum pour les blocs embedded/userFile (référence à userImageList)
+  _copiedLayer._srcId = selectedLayerId;
+}
+
+function pasteLayer() {
+  if (!_copiedLayer) return;
+  var src = JSON.parse(JSON.stringify(_copiedLayer));
+  // Décalage de 20px pour éviter la superposition exacte
+  src.x = (src.x || 0) + 20;
+  src.y = (src.y || 0) + 20;
+  // Ne pas copier le verrou
+  src.locked = false;
+
+  var toAdd = document.createElement("div");
+  toAdd.id = "dragdropdiv" + ddcount;
+  toAdd.classList.add("divRec");
+  toAdd.draggable = true;
+
+  var cb = document.createElement("input");
+  cb.type = "checkbox"; cb.classList.add("groupcheck"); cb.classList.add("vis-hidden"); cb.checked = false;
+  toAdd.appendChild(cb);
+
+  var childAdd = document.createElement("div");
+  childAdd.classList.add("inside");
+  childAdd.onclick = selectLayer;
+  childAdd.appendChild(createLayerThumb(src));
+
+  // Nom du calque (copie du nom original)
+  var origNameEl = document.getElementById("layername" + _copiedLayer._srcId.replace("dragdropdiv",""));
+  var origName = origNameEl ? origNameEl.value : (src.type || "calque");
+  childAdd.appendChild(createTextbox(origName + " (copie)"));
+  childAdd.appendChild(createLockIcon(src));
+  childAdd.appendChild(deleteButton());
+  toAdd.appendChild(childAdd);
+
+  aLayers[toAdd.id] = src;
+  ddcount++;
+
+  // Insérer juste après le calque sélectionné si possible
+  var selDiv = document.getElementById(_copiedLayer._srcId);
+  var layerlist = document.getElementById("layerlist");
+  if (selDiv && selDiv.nextSibling) {
+    layerlist.insertBefore(toAdd, selDiv.nextSibling);
+  } else {
+    layerlist.appendChild(toAdd);
+  }
+  sortable(layerlist, function() {});
+
+  // Sélectionner le nouveau calque
+  selectedLayerId = toAdd.id;
+  var allDivRec = document.getElementsByClassName("divRec");
+  for (var i = 0; i < allDivRec.length; i++) allDivRec[i].classList.remove("selected");
+  toAdd.classList.add("selected");
+
+  drawProject();
+  saveToHistory();
+}
+
+// ============================================================
+// ZOOM SLIDER
+// ============================================================
+function applyZoomSlider(val) {
+  var pct = parseInt(val, 10);
+  document.getElementById("zoom-label").textContent = pct + "%";
+  var canvasWrap = document.querySelector('#canvas-area > div:nth-child(2)');
+  if (canvasWrap) canvasWrap.style.zoom = (pct / 100).toFixed(2);
+  _syncCompareZoom();
+  // Sync avec le système de layout sauvegardé
+  if (window._saveLayoutFn) window._saveLayoutFn();
+}
+
+function _syncZoomSlider() {
+  var canvasWrap = document.querySelector('#canvas-area > div:nth-child(2)');
+  if (!canvasWrap) return;
+  var zoom = parseFloat(canvasWrap.style.zoom) || 1;
+  var pct = Math.round(zoom * 100);
+  var slider = document.getElementById("zoom-slider");
+  var label  = document.getElementById("zoom-label");
+  if (slider) slider.value = Math.max(30, Math.min(200, pct));
+  if (label)  label.textContent = pct + "%";
+}
+
+// ============================================================
+// MODE COMPARAISON
+// ============================================================
+function openCompareMode() {
+  document.getElementById("compare-fileselection").click();
+}
+
+function loadCompareImage(input) {
+  if (!input.files || !input.files[0]) return;
+  var file = input.files[0];
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var img = new Image();
+    img.onload = function() {
+      var cvs = document.getElementById("compare-canvas");
+      cvs.width  = img.width;
+      cvs.height = img.height;
+      var ctx = cvs.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+
+      // Appliquer le même zoom que le canvas principal
+      var mainWrap = document.querySelector('#canvas-area > div:nth-child(2)');
+      var zoom = mainWrap ? (parseFloat(mainWrap.style.zoom) || 1) : 1;
+      cvs.style.zoom = zoom;
+
+      // Afficher le panneau
+      document.getElementById("compare-divider").style.display = "";
+      document.getElementById("compare-panel").classList.add("active");
+      // Réinitialiser le input pour pouvoir recharger la même image
+      input.value = "";
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function closeCompareMode() {
+  document.getElementById("compare-divider").style.display = "none";
+  document.getElementById("compare-panel").classList.remove("active");
+  var cvs = document.getElementById("compare-canvas");
+  var ctx = cvs.getContext("2d");
+  ctx.clearRect(0, 0, cvs.width, cvs.height);
+}
+
+// Synchroniser le zoom du compare-canvas avec le zoom du canvas principal
+function _syncCompareZoom() {
+  var cvs = document.getElementById("compare-canvas");
+  if (!cvs || !document.getElementById("compare-panel").classList.contains("active")) return;
+  var mainWrap = document.querySelector('#canvas-area > div:nth-child(2)');
+  var zoom = mainWrap ? (parseFloat(mainWrap.style.zoom) || 1) : 1;
+  cvs.style.zoom = zoom;
 }
 
 // ============================================================
