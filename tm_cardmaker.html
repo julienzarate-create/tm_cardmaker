@@ -214,8 +214,8 @@ body {
 /* ============================================================
    CONTENU PRINCIPAL
    ============================================================ */
-#main-content { margin-left: var(--sidebar); min-height: 100vh; background: var(--space); padding: 18px; }
-#canvas-area { display: flex; gap: 18px; align-items: flex-start; flex-wrap: wrap; }
+#main-content { margin-left: var(--sidebar); min-height: 100vh; background: var(--space); padding: 18px 18px 18px 0; }
+#canvas-area { display: flex; gap: 0; align-items: flex-start; flex-wrap: wrap; }
 #cmcanvas {
   border: 2px solid var(--border); border-radius: 4px; flex-shrink: 0;
   box-shadow: 0 0 36px rgba(193,68,14,0.1), 0 4px 20px rgba(0,0,0,0.6);
@@ -225,13 +225,29 @@ body {
   width: auto !important;
   height: auto !important;
   object-fit: contain;
+  margin: 0 12px;
 }
 /* Curseur pendant le drag sur le canvas */
 #cmcanvas.dragging { cursor: grabbing; }
 
+/* ============================================================
+   SÉPARATEURS REDIMENSIONNABLES
+   ============================================================ */
+.resize-handle {
+  width: 6px; background: transparent; cursor: col-resize; flex-shrink: 0;
+  position: relative; z-index: 10; transition: background 0.15s;
+}
+.resize-handle:hover, .resize-handle.dragging { background: var(--rust); }
+.resize-handle::after {
+  content: ""; position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 2px; height: 40px; border-radius: 2px;
+  background: var(--border);
+}
+
 #layer-panel {
   background: var(--navy); border: 1px solid var(--border); border-radius: 8px;
-  padding: 13px; min-width: 230px; flex: 1; max-width: 290px;
+  padding: 13px; min-width: 230px; flex: 1; max-width: 290px; overflow: hidden; word-break: break-word;
 }
 #layer-panel h2 { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 9px; padding-bottom: 7px; border-bottom: 1px solid var(--border); }
 .divRec { cursor: move; border: 1px solid var(--border); border-radius: 5px; margin-bottom: 4px; background: var(--panel); transition: border-color 0.12s; font-size: 13px; }
@@ -353,33 +369,13 @@ input[type=number] { width: auto; }
       <div class="tpl-thumb tc-green"><img src="templates/green_normal.png" alt="" onerror="this.parentNode.innerHTML='🟢'"></div>
       <div class="tpl-name">Carte Verte</div><div class="tpl-sub">Standard</div>
     </div>
-    <div class="tpl-card" onclick="startTemplate('green_small_bottom')">
-      <div class="tpl-thumb tc-green"><img src="templates/green_small_bottom.png" alt="" onerror="this.parentNode.innerHTML='🟢'"></div>
-      <div class="tpl-name">Carte Verte</div><div class="tpl-sub">Petit bas</div>
-    </div>
-    <div class="tpl-card" onclick="startTemplate('green_big_bottom')">
-      <div class="tpl-thumb tc-green"><img src="templates/green_big_bottom.png" alt="" onerror="this.parentNode.innerHTML='🟢'"></div>
-      <div class="tpl-name">Carte Verte</div><div class="tpl-sub">Grand bas</div>
-    </div>
     <div class="tpl-card" onclick="startTemplate('blue_normal')">
       <div class="tpl-thumb tc-blue"><img src="templates/blue_normal.png" alt="" onerror="this.parentNode.innerHTML='🔵'"></div>
       <div class="tpl-name">Carte Bleue</div><div class="tpl-sub">Standard</div>
     </div>
-    <div class="tpl-card" onclick="startTemplate('blue_big_bottom')">
-      <div class="tpl-thumb tc-blue"><img src="templates/blue_big_bottom.png" alt="" onerror="this.parentNode.innerHTML='🔵'"></div>
-      <div class="tpl-name">Carte Bleue</div><div class="tpl-sub">Grand bas</div>
-    </div>
-    <div class="tpl-card" onclick="startTemplate('blue_big_top')">
-      <div class="tpl-thumb tc-blue"><img src="templates/blue_big_top.png" alt="" onerror="this.parentNode.innerHTML='🔵'"></div>
-      <div class="tpl-name">Carte Bleue</div><div class="tpl-sub">Grand haut</div>
-    </div>
     <div class="tpl-card" onclick="startTemplate('red_normal')">
       <div class="tpl-thumb tc-red"><img src="templates/red_normal.png" alt="" onerror="this.parentNode.innerHTML='🔴'"></div>
       <div class="tpl-name">Carte Rouge</div><div class="tpl-sub">Standard</div>
-    </div>
-    <div class="tpl-card" onclick="startTemplate('red_small_bottom')">
-      <div class="tpl-thumb tc-red"><img src="templates/red_small_bottom.png" alt="" onerror="this.parentNode.innerHTML='🔴'"></div>
-      <div class="tpl-name">Carte Rouge</div><div class="tpl-sub">Petit bas</div>
     </div>
     <div class="tpl-card" onclick="startTemplate('prelude')">
       <div class="tpl-thumb tc-purple" style="width:92px;height:66px;"><img src="templates/prelude.png" alt="" onerror="this.parentNode.innerHTML='💜'"></div>
@@ -513,16 +509,7 @@ input[type=number] { width: auto; }
       <div class="sb-sec">
         <button class="sb-sec-btn open" onclick="toggleSec(this,'stpl')">Templates <span class="arr">▼</span></button>
         <div class="sb-content open" id="stpl">
-          <a onclick="swapTemplate('green_normal')" href="#" class="sb-item">🟢 Verte Standard</a>
-          <a onclick="swapTemplate('green_small_bottom')" href="#" class="sb-item">🟢 Verte Petit bas</a>
-          <a onclick="swapTemplate('green_big_bottom')" href="#" class="sb-item">🟢 Verte Grand bas</a>
-          <a onclick="swapTemplate('blue_normal')" href="#" class="sb-item">🔵 Bleue Standard</a>
-          <a onclick="swapTemplate('blue_big_bottom')" href="#" class="sb-item">🔵 Bleue Grand bas</a>
-          <a onclick="swapTemplate('blue_big_top')" href="#" class="sb-item">🔵 Bleue Grand haut</a>
-          <a onclick="swapTemplate('red_normal')" href="#" class="sb-item">🔴 Rouge Standard</a>
-          <a onclick="swapTemplate('red_small_bottom')" href="#" class="sb-item">🔴 Rouge Petit bas</a>
-          <a onclick="swapTemplate('prelude')" href="#" class="sb-item">💜 Prélude</a>
-          <a onclick="swapTemplate('corporation')" href="#" class="sb-item">🏢 Corporation</a>
+          <!-- Rempli dynamiquement par updateTemplateList() -->
         </div>
       </div>
     </div>
@@ -549,10 +536,12 @@ input[type=number] { width: auto; }
   </div>
 
   <div id="canvas-area">
+    <div id="resize-left" class="resize-handle"></div>
     <div>
       <canvas id="cmcanvas" height="1050px" width="750px"></canvas>
       <a id="projectlink"></a>
     </div>
+    <div id="resize-right" class="resize-handle"></div>
     <div id="layer-panel">
       <h2>Calques — <small style="color:var(--muted);font-size:9px;">Double-clic sur texte = éditer</small></h2>
       <section id="layerlist"></section>
@@ -1387,8 +1376,14 @@ function startTemplate(name) {
   // Mettre à jour la largeur de la carte pour le wrap
   var tplData = megaTemplates[name];
   if (tplData && tplData.layers && tplData.layers[0]) WRAP_CARD_W = tplData.layers[0].width || 826;
-  addLayer("Base", {type:"base", color:"#ffffff", height:1126, width:826, params:"color"});
+  // Détecter si horizontale pour ajuster la Base
+  var isHorizontal = (name === "prelude" || name === "corporation");
+  var baseW = isHorizontal ? 1126 : 826;
+  var baseH = isHorizontal ? 826 : 1126;
+  addLayer("Base", {type:"base", color:"#ffffff", height:baseH, width:baseW, params:"color"});
   loadFrom(megaTemplates[name].layers);
+  applyCanvasZoom();
+  updateTemplateList();
   // Point 11 : verrouiller tous les calques sauf Card description
   var layerDivs = document.getElementsByClassName("divRec");
   for (var i = 0; i < layerDivs.length; i++) {
@@ -2252,7 +2247,8 @@ function clickSaveProject() {
 function saveProjectCont(need2wait) {
   var c = document.getElementById("cmcanvas");
   var projectlink = document.getElementById("projectlink");
-  projectlink.setAttribute("download", "cardMaker.png");
+  var fname = getCardFileName();
+  projectlink.setAttribute("download", fname + ".png");
   projectlink.setAttribute("href", c.toDataURL("image/png").replace("image/png","image/octet-stream"));
   projectlink.click();
   if (need2wait) saveDone();
@@ -3571,11 +3567,38 @@ elem.addEventListener("click", function(event) {
 // SWAP TEMPLATE — remplace le calque template sans toucher aux autres calques
 // Met aussi à jour FAN MADE (x, y, couleur) et Card description (x, y)
 // ============================================================
+// Textes spécifiques à chaque template (non partagés entre templates)
+var TEMPLATE_SPECIFIC_TEXTS = {
+  prelude:     ["P R E L U D E"],
+  corporation: ["C O R P O R A T I O N", "E F F E C T", "C O R P O R A T I O N NAME"]
+};
+// Textes communs à tous les templates (conservés lors du swap)
+var TEMPLATE_COMMON_TEXTS = ["FAN MADE", "CARD NAME", "Card description", "Flavor text"];
+
+function isTemplateSpecificText(data, templateName) {
+  if (!data) return false;
+  for (var tn in TEMPLATE_SPECIFIC_TEXTS) {
+    var arr = TEMPLATE_SPECIFIC_TEXTS[tn];
+    for (var i = 0; i < arr.length; i++) {
+      if (data.indexOf(arr[i]) === 0) return true;
+    }
+  }
+  return false;
+}
+
+function isCommonText(data) {
+  if (!data) return false;
+  for (var i = 0; i < TEMPLATE_COMMON_TEXTS.length; i++) {
+    if (data.indexOf(TEMPLATE_COMMON_TEXTS[i]) === 0) return true;
+  }
+  return false;
+}
+
 function swapTemplate(name) {
   if (!megaTemplates || !megaTemplates[name]) return;
   var tplLayers = megaTemplates[name].layers;
 
-  // Trouver le calque template dans tplLayers (type block, putUnder === "templates")
+  // Trouver le calque template visuel dans le nouveau template
   var newTplLayer = null;
   for (var ti = 0; ti < tplLayers.length; ti++) {
     if (tplLayers[ti].type === "block" && blockList[tplLayers[ti].iNum] && blockList[tplLayers[ti].iNum].putUnder === "templates") {
@@ -3585,17 +3608,19 @@ function swapTemplate(name) {
   }
   if (!newTplLayer) return;
 
-  // Trouver FAN MADE et Card description dans le nouveau template
-  var newFanMade = null, newCardDescr = null;
+  // Récupérer tous les calques texte du nouveau template indexés par data
+  var newTextLayers = {};
   for (var ti2 = 0; ti2 < tplLayers.length; ti2++) {
     var tl = tplLayers[ti2];
-    if (tl.type === "text") {
-      if (tl.data === "FAN MADE") newFanMade = tl;
-      else if (tl.data && tl.data.indexOf("Card description") === 0) newCardDescr = tl;
-    }
+    if (tl.type === "text" && tl.data) newTextLayers[tl.data] = tl;
+  }
+  var newFanMade   = newTextLayers["FAN MADE"]   || null;
+  var newCardDescr = null;
+  for (var k in newTextLayers) {
+    if (k.indexOf("Card description") === 0) { newCardDescr = newTextLayers[k]; break; }
   }
 
-  // Supprimer l'ancien calque template existant
+  // === Supprimer l'ancien calque template visuel ===
   var layerDivs = document.getElementsByClassName("divRec");
   for (var i = layerDivs.length - 1; i >= 0; i--) {
     var lyr = aLayers[layerDivs[i].id];
@@ -3607,55 +3632,59 @@ function swapTemplate(name) {
     }
   }
 
-  // Mettre à jour FAN MADE et Card description dans les calques existants
+  // === Supprimer les calques texte spécifiques à l'ancien template ===
   var layerDivs2 = document.getElementsByClassName("divRec");
+  var toRemove = [];
   for (var j = 0; j < layerDivs2.length; j++) {
-    var el = aLayers[layerDivs2[j].id];
-    if (!el || el.type !== "text") continue;
-    // FAN MADE : mettre à jour x, y, couleur
-    if (el.data === "FAN MADE" && newFanMade) {
-      el.x     = newFanMade.x;
-      el.y     = newFanMade.y;
-      el.color = newFanMade.color;
-      // Mettre à jour les champs si ce calque est sélectionné
-      if (selectedLayerId === layerDivs2[j].id) {
-        var ixEl = document.getElementById("inputx"); if (ixEl) ixEl.value = el.x;
-        var iyEl = document.getElementById("inputy"); if (iyEl) iyEl.value = el.y;
-        var icEl = document.getElementById("inputcolor"); if (icEl) icEl.value = el.color;
+    var el2 = aLayers[layerDivs2[j].id];
+    if (!el2 || el2.type !== "text") continue;
+    if (isTemplateSpecificText(el2.data) && !isCommonText(el2.data)) {
+      toRemove.push(layerDivs2[j]);
+    }
+  }
+  for (var r = 0; r < toRemove.length; r++) {
+    if (domParams.parentNode === toRemove[r]) toRemove[r].removeChild(domParams);
+    delete aLayers[toRemove[r].id];
+    toRemove[r].parentNode.removeChild(toRemove[r]);
+  }
+
+  // === Mettre à jour FAN MADE et Card description dans les calques existants ===
+  var layerDivs3 = document.getElementsByClassName("divRec");
+  for (var j3 = 0; j3 < layerDivs3.length; j3++) {
+    var el3 = aLayers[layerDivs3[j3].id];
+    if (!el3 || el3.type !== "text") continue;
+    if (el3.data === "FAN MADE" && newFanMade) {
+      el3.x = newFanMade.x; el3.y = newFanMade.y; el3.color = newFanMade.color;
+      if (selectedLayerId === layerDivs3[j3].id) {
+        var ixEl = document.getElementById("inputx"); if (ixEl) ixEl.value = el3.x;
+        var iyEl = document.getElementById("inputy"); if (iyEl) iyEl.value = el3.y;
+        var icEl = document.getElementById("inputcolor"); if (icEl) icEl.value = el3.color;
       }
     }
-    // Card description : mettre à jour x, y
-    if (el.data && el.data.indexOf("Card description") === 0 && newCardDescr) {
-      el.x = newCardDescr.x;
-      el.y = newCardDescr.y;
-      if (selectedLayerId === layerDivs2[j].id) {
-        var ixEl2 = document.getElementById("inputx"); if (ixEl2) ixEl2.value = el.x;
-        var iyEl2 = document.getElementById("inputy"); if (iyEl2) iyEl2.value = el.y;
+    if (el3.data && el3.data.indexOf("Card description") === 0 && newCardDescr) {
+      el3.x = newCardDescr.x; el3.y = newCardDescr.y;
+      if (selectedLayerId === layerDivs3[j3].id) {
+        var ixEl2 = document.getElementById("inputx"); if (ixEl2) ixEl2.value = el3.x;
+        var iyEl2 = document.getElementById("inputy"); if (iyEl2) iyEl2.value = el3.y;
       }
     }
   }
 
-  // Créer le nouveau calque template
+  // === Créer le nouveau calque template visuel ===
   var layer = {
     type: "block", iNum: newTplLayer.iNum,
     x: newTplLayer.x, y: newTplLayer.y,
     width: newTplLayer.width, height: newTplLayer.height,
     params: "allimages", locked: true
   };
-
-  // L'insérer juste après Base (dragdropdiv0), en deuxième position
   var layerlist = document.getElementById("layerlist");
-  var baseDiv = document.getElementById("dragdropdiv0");
-
+  var baseDiv   = document.getElementById("dragdropdiv0");
   var toAdd = document.createElement("div");
   toAdd.id = "dragdropdiv" + ddcount;
-  toAdd.classList.add("divRec");
-  toAdd.draggable = true;
-
+  toAdd.classList.add("divRec"); toAdd.draggable = true;
   var cb = document.createElement("input");
   cb.type = "checkbox"; cb.classList.add("groupcheck"); cb.classList.add("vis-hidden"); cb.checked = false;
   toAdd.appendChild(cb);
-
   var childAdd = document.createElement("div");
   childAdd.classList.add("inside");
   childAdd.appendChild(createLayerThumb(layer));
@@ -3664,23 +3693,72 @@ function swapTemplate(name) {
   childAdd.appendChild(createLockIcon(layer));
   childAdd.appendChild(deleteButton());
   toAdd.appendChild(childAdd);
+  aLayers[toAdd.id] = layer; ddcount++;
+  if (baseDiv && baseDiv.nextSibling) layerlist.insertBefore(toAdd, baseDiv.nextSibling);
+  else layerlist.appendChild(toAdd);
 
-  aLayers[toAdd.id] = layer;
-  ddcount++;
-
-  // Insérer après Base
-  if (baseDiv && baseDiv.nextSibling) {
-    layerlist.insertBefore(toAdd, baseDiv.nextSibling);
-  } else {
-    layerlist.appendChild(toAdd);
+  // === Ajouter les calques texte spécifiques au nouveau template ===
+  // Déterminer les data déjà présents dans les calques existants
+  var existingData = {};
+  var layerDivs4 = document.getElementsByClassName("divRec");
+  for (var e = 0; e < layerDivs4.length; e++) {
+    var el4 = aLayers[layerDivs4[e].id];
+    if (el4 && el4.type === "text" && el4.data) existingData[el4.data] = true;
+  }
+  // Ajouter les calques texte spécifiques au nouveau template qui ne sont pas déjà présents
+  var specificTexts = TEMPLATE_SPECIFIC_TEXTS[name] || [];
+  for (var ti3 = 0; ti3 < tplLayers.length; ti3++) {
+    var ntl = tplLayers[ti3];
+    if (ntl.type !== "text" || !ntl.data) continue;
+    var isSpecific = false;
+    for (var si = 0; si < specificTexts.length; si++) {
+      if (ntl.data.indexOf(specificTexts[si]) === 0) { isSpecific = true; break; }
+    }
+    if (!isSpecific) continue;
+    if (existingData[ntl.data]) continue;
+    // Créer et insérer ce calque texte
+    var newTextLayer = JSON.parse(JSON.stringify(ntl));
+    newTextLayer.locked = true;
+    var tDiv = document.createElement("div");
+    tDiv.id = "dragdropdiv" + ddcount;
+    tDiv.classList.add("divRec"); tDiv.draggable = true;
+    var tcb = document.createElement("input");
+    tcb.type = "checkbox"; tcb.classList.add("groupcheck"); tcb.classList.add("vis-hidden"); tcb.checked = false;
+    tDiv.appendChild(tcb);
+    var tChild = document.createElement("div");
+    tChild.classList.add("inside");
+    tChild.appendChild(createLayerThumb(newTextLayer));
+    tChild.appendChild(createTextbox("Text:" + ntl.data.substring(0, 10)));
+    tChild.onclick = selectLayer;
+    tChild.appendChild(createLockIcon(newTextLayer));
+    tChild.appendChild(deleteButton());
+    tDiv.appendChild(tChild);
+    aLayers[tDiv.id] = newTextLayer; ddcount++;
+    // Insérer juste après le nouveau calque template
+    if (toAdd.nextSibling) layerlist.insertBefore(tDiv, toAdd.nextSibling);
+    else layerlist.appendChild(tDiv);
+    existingData[ntl.data] = true;
   }
 
+  // === Mettre à jour la Base pour les dimensions du nouveau format ===
+  var isHoriz = (name === "prelude" || name === "corporation");
+  var baseLayer = aLayers["dragdropdiv0"];
+  if (baseLayer) {
+    baseLayer.width  = isHoriz ? 1126 : 826;
+    baseLayer.height = isHoriz ? 826  : 1126;
+    var bwEl = document.getElementById("inputwidth");
+    var bhEl = document.getElementById("inputheight");
+    if (selectedLayerId === "dragdropdiv0") {
+      if (bwEl) bwEl.value = baseLayer.width;
+      if (bhEl) bhEl.value = baseLayer.height;
+    }
+  }
+
+  applyCanvasZoom();
+  updateTemplateList();
   sortable(layerlist, function() {});
-  if (blockList[layer.iNum].obj) {
-    drawProject();
-  } else {
-    fetchBlock(layer.iNum);
-  }
+  if (blockList[layer.iNum].obj) drawProject();
+  else fetchBlock(layer.iNum);
   saveToHistory();
 }
 
@@ -3753,9 +3831,143 @@ function getParameterByName(name, url) {
 }
 
 // ============================================================
+// ZOOM AUTO CANVAS (format horizontal)
+// ============================================================
+function applyCanvasZoom() {
+  var baseLayer = aLayers["dragdropdiv0"];
+  var isHoriz = baseLayer && (baseLayer.width > baseLayer.height);
+  var mainContent = document.getElementById("main-content");
+  if (isHoriz) {
+    mainContent.style.zoom = "0.78";
+  } else {
+    mainContent.style.zoom = "1";
+  }
+}
+
+// ============================================================
+// LISTE TEMPLATES FILTRÉE SELON FORMAT
+// ============================================================
+var ALL_TEMPLATES = [
+  {name:"green_normal",      label:"🟢 Verte Standard",  horiz:false},
+  {name:"green_small_bottom",label:"🟢 Verte Petit bas",  horiz:false},
+  {name:"green_big_bottom",  label:"🟢 Verte Grand bas",  horiz:false},
+  {name:"blue_normal",       label:"🔵 Bleue Standard",   horiz:false},
+  {name:"blue_big_bottom",   label:"🔵 Bleue Grand bas",  horiz:false},
+  {name:"blue_big_top",      label:"🔵 Bleue Grand haut", horiz:false},
+  {name:"red_normal",        label:"🔴 Rouge Standard",   horiz:false},
+  {name:"red_small_bottom",  label:"🔴 Rouge Petit bas",  horiz:false},
+  {name:"prelude",           label:"💜 Prélude",           horiz:true},
+  {name:"corporation",       label:"🏢 Corporation",       horiz:true}
+];
+
+function updateTemplateList() {
+  var stpl = document.getElementById("stpl");
+  if (!stpl) return;
+  var baseLayer = aLayers["dragdropdiv0"];
+  var isHoriz = baseLayer && (baseLayer.width > baseLayer.height);
+  stpl.innerHTML = "";
+  for (var i = 0; i < ALL_TEMPLATES.length; i++) {
+    var t = ALL_TEMPLATES[i];
+    if (t.horiz !== isHoriz) continue;
+    var a = document.createElement("a");
+    a.href = "#";
+    a.className = "sb-item";
+    a.textContent = t.label;
+    (function(tname){ a.onclick = function(){ swapTemplate(tname); return false; }; })(t.name);
+    stpl.appendChild(a);
+  }
+}
+
+// ============================================================
+// NOM DE FICHIER = CARD NAME
+// ============================================================
+function getCardName() {
+  var layerDivs = document.getElementsByClassName("divRec");
+  for (var i = 0; i < layerDivs.length; i++) {
+    var lyr = aLayers[layerDivs[i].id];
+    if (!lyr || lyr.type !== "text") continue;
+    if (lyr.data && lyr.data !== "CARD NAME" && lyr.data !== "Card description" &&
+        lyr.data !== "FAN MADE" && lyr.data.indexOf("Flavor") !== 0 &&
+        lyr.data.indexOf("P R E L") !== 0 && lyr.data.indexOf("C O R P") !== 0 &&
+        lyr.data.indexOf("E F F E") !== 0) continue;
+    // Chercher le calque dont le label contient "CARD NAME" ou "Card Name"
+  }
+  // Parcourir à nouveau pour trouver le calque Card Name par son label dans le DOM
+  for (var j = 0; j < layerDivs.length; j++) {
+    var nameEl = layerDivs[j].querySelector("input[type=text]");
+    if (!nameEl) continue;
+    var label = nameEl.value || "";
+    if (label.toLowerCase().indexOf("card name") !== -1 || label.indexOf("CARD NAME") !== -1) {
+      var lyr2 = aLayers[layerDivs[j].id];
+      if (lyr2 && lyr2.data && lyr2.data !== "CARD NAME") return lyr2.data;
+    }
+  }
+  // Fallback : chercher le calque texte dont data contient "CARD NAME" puis utiliser son contenu actuel
+  for (var k = 0; k < layerDivs.length; k++) {
+    var lyrk = aLayers[layerDivs[k].id];
+    if (!lyrk || lyrk.type !== "text") continue;
+    if (lyrk.data === "CARD NAME") return "cardMaker";
+    // S'il y a un layer avec data non-générique et font Prototype, c'est probablement le nom
+  }
+  return "cardMaker";
+}
+
+function getCardFileName() {
+  // Chercher le calque dont le label DOM contient "CARD" ou le data a été modifié depuis "CARD NAME"
+  var layerDivs = document.getElementsByClassName("divRec");
+  for (var i = 0; i < layerDivs.length; i++) {
+    var lyrk = aLayers[layerDivs[i].id];
+    if (!lyrk || lyrk.type !== "text") continue;
+    var nameEl = layerDivs[i].querySelector("input[type=text]");
+    var label = nameEl ? nameEl.value : "";
+    // Le calque Card Name a le label "Text:CARD NAME" ou similaire
+    if ((label.indexOf("CARD NAME") !== -1 || label.indexOf("Card Name") !== -1) && lyrk.data) {
+      return lyrk.data.trim().replace(/[^a-zA-Z0-9_\-\. ]/g, "").trim() || "cardMaker";
+    }
+  }
+  return "cardMaker";
+}
+
+// ============================================================
+// RESIZE SIDEBARS (séparateurs glissables)
+// ============================================================
+function initResizeHandles() {
+  function makeDragger(el, onDrag) {
+    if (!el) return;
+    var dragging = false;
+    el.addEventListener("mousedown", function(e) {
+      dragging = true; e.preventDefault();
+      el.classList.add("dragging");
+    });
+    document.addEventListener("mousemove", function(e) { if (dragging) onDrag(e.clientX); });
+    document.addEventListener("mouseup", function() {
+      dragging = false;
+      el.classList.remove("dragging");
+    });
+  }
+  // Dragger gauche : redimensionne la sidebar gauche
+  makeDragger(document.getElementById("resize-left"), function(x) {
+    var newW = Math.max(200, Math.min(700, x));
+    document.documentElement.style.setProperty("--sidebar", newW + "px");
+  });
+  // Dragger droit : redimensionne le panneau calques
+  makeDragger(document.getElementById("resize-right"), function(x) {
+    var layerPanel = document.getElementById("layer-panel");
+    var mainContent = document.getElementById("main-content");
+    if (!layerPanel || !mainContent) return;
+    var mainRight = mainContent.getBoundingClientRect().right;
+    var newW = Math.max(180, Math.min(500, mainRight - x));
+    layerPanel.style.minWidth = newW + "px";
+    layerPanel.style.maxWidth = newW + "px";
+    layerPanel.style.width    = newW + "px";
+  });
+}
+
+// ============================================================
 // DÉMARRAGE
 // ============================================================
 (function init() {
+  initResizeHandles();
   var projectUrl = getParameterByName("project");
   var str = localStorage.getItem("loadedProjectUrl");
   if (projectUrl && projectUrl !== "") {
