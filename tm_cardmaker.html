@@ -628,6 +628,13 @@ input[type=number] { width: auto; }
             <button class="smod-btn" onclick="resetTutorial()" data-i18n="tuto_reset_btn">Réactiver</button>
           </div>
         </div>
+        <div class="smod-section">
+          <div class="smod-section-title" data-i18n="layout_section">Mise en page</div>
+          <div class="smod-row">
+            <span class="smod-label" data-i18n="layout_reset_label">Réinitialiser la taille des sidebars</span>
+            <button class="smod-btn" onclick="resetLayout()" data-i18n="layout_reset_btn">Réinitialiser</button>
+          </div>
+        </div>
       </div>
       <!-- ONGLET AIDE -->
       <div id="stab-help" style="display:none;">
@@ -1123,6 +1130,9 @@ var I18N = {
     tuto_section: "Tutoriel",
     tuto_reset_label: "Réactiver le tutoriel au prochain lancement",
     tuto_reset_btn: "Réactiver",
+    layout_section: "Mise en page",
+    layout_reset_label: "Réinitialiser la taille des sidebars",
+    layout_reset_btn: "Réinitialiser",
     // Aide — raccourcis
     shortcuts_section: "Raccourcis clavier",
     sc_th_key: "Touche", sc_th_action: "Action",
@@ -1293,6 +1303,9 @@ var I18N = {
     tuto_section: "Tutorial",
     tuto_reset_label: "Re-enable tutorial on next launch",
     tuto_reset_btn: "Re-enable",
+    layout_section: "Layout",
+    layout_reset_label: "Reset sidebar sizes to default",
+    layout_reset_btn: "Reset",
     // Help — shortcuts
     shortcuts_section: "Keyboard shortcuts",
     sc_th_key: "Key", sc_th_action: "Action",
@@ -4843,11 +4856,14 @@ function initResizeHandles() {
     _saveLayout();
   }, function() {
     // Capturer les valeurs stables au moment du mousedown
+    // On utilise la largeur intrinsèque du canvas HTML (826 ou 1126px selon format),
+    // pas offsetWidth qui change quand les images se chargent
     var canvasWrap = document.querySelector('#canvas-area > div:nth-child(2)');
-    if (!canvasWrap) return;
+    var cmcanvas = document.getElementById('cmcanvas');
+    if (!canvasWrap || !cmcanvas) return;
     _rr_startZoom = parseFloat(canvasWrap.style.zoom) || 1;
-    // offsetWidth avec zoom CSS : diviser par le zoom actuel pour avoir la largeur naturelle
-    _rr_naturalW = canvasWrap.offsetWidth / _rr_startZoom;
+    // Largeur naturelle = largeur réelle du canvas (attribut width, ex: 826px)
+    _rr_naturalW = cmcanvas.width || 826;
     var rect = canvasWrap.getBoundingClientRect();
     _rr_wrapLeft = rect.left;
   });
@@ -5404,6 +5420,12 @@ function toggleWatermark(on) {
   localStorage.setItem('tm_watermark', on ? '1' : '0');
   var wm = document.getElementById('shortcuts-watermark');
   if (wm) wm.classList.toggle('hidden', !on);
+}
+
+function resetLayout() {
+  localStorage.removeItem('tm_layout_vert');
+  localStorage.removeItem('tm_layout_horiz');
+  location.reload();
 }
 
 function resetTutorial() {
