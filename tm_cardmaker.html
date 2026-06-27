@@ -352,7 +352,7 @@ input[type=number] { width: auto; }
    BOUTON SETTINGS ⚙️ (toujours visible, coin supérieur droit)
    ============================================================ */
 #settings-btn {
-  position: fixed; top: 12px; right: 14px; z-index: 1001;
+  position: fixed; top: 12px; right: 14px; z-index: 1100;
   width: 36px; height: 36px; border-radius: 50%;
   background: var(--panel); border: 1px solid var(--border);
   color: var(--gold); font-size: 17px; cursor: pointer;
@@ -854,6 +854,7 @@ input[type=number] { width: auto; }
         <label for="groupmode">Mode groupe</label>
       </div>
     </div>
+    <div id="resize-far-right" class="resize-handle"></div>
   </div>
   <div id="xcanvases" style="width:100%;"></div>
 
@@ -1082,16 +1083,14 @@ var I18N = {
     tut_skip: "Passer", tut_next: "Suivant →", tut_finish: "Terminer",
     tut_of: "/",
     tut_steps: [
-      { title: "Nouvelle carte", text: "Le bouton <strong>Nouvelle carte</strong> vous permet de repartir de zéro en choisissant un nouveau type de carte." },
-      { title: "Les Badges", text: "Cette section contient tous les <strong>badges</strong> disponibles (Espace, Construction, Science…). Cliquez sur un badge pour l'ajouter à votre carte." },
-      { title: "Les Ressources", text: "Cette section contient toutes les <strong>ressources</strong> du jeu (Acier, Titane, Plante, Énergie…). Cliquez pour ajouter." },
-      { title: "Ajouter un badge", text: "Cliquez sur un badge pour le tester ! Les 3 premiers badges se placent automatiquement en haut à droite de la carte." },
-      { title: "Déplacer un élément", text: "Cliquez sur un élément du canvas et <strong>faites-le glisser</strong> pour le repositionner librement." },
-      { title: "Redimensionner", text: "Sélectionnez un élément puis utilisez les <strong>petits carrés oranges aux coins</strong> pour le redimensionner." },
-      { title: "Ordre des calques", text: "Dans ce panneau, <strong>glissez-déposez</strong> les calques pour les mettre en avant ou en arrière. Le premier calque de la liste est dessiné en dernier (au-dessus)." },
-      { title: "Image locale", text: "Utilisez <strong>Image locale</strong> pour importer une illustration depuis votre ordinateur et l'utiliser sur votre carte." },
-      { title: "Prérequis", text: "Ajoutez un prérequis (min ou max) puis ajustez sa <strong>largeur</strong> librement dans le panneau de paramètres." },
-      { title: "Fond autres", text: "La case <strong>Fond autres</strong> ajoute un contour orangé autour des ressources, badges et tuiles pour les faire ressortir." },
+      { title: "La sidebar", text: "La sidebar à gauche contient tous les éléments disponibles. Cliquez sur un <strong>onglet</strong> pour le déplier ou replier." },
+      { title: "Ajouter un élément", text: "<strong>Cliquez</strong> sur un élément pour l'ajouter automatiquement sur la carte, ou <strong>faites-le glisser</strong> directement sur le canvas pour le positionner précisément.", auto: true },
+      { title: "Déplacer & Redimensionner", text: "Cliquez sur un élément du canvas et <strong>faites-le glisser</strong> pour le déplacer. Utilisez les <strong>carrés oranges aux coins</strong> pour le redimensionner.", auto: true },
+      { title: "Panneau calques", text: "<strong>Glissez-déposez</strong> les calques de haut en bas pour les mettre en avant ou en arrière. Le panneau permet aussi d'ajuster finement la position et les dimensions.", auto: true },
+      { title: "Image locale", text: "Cliquez sur <strong>Image locale</strong> dans la sidebar pour importer une illustration depuis votre ordinateur.", auto: true },
+      { title: "Prérequis", text: "Cliquez sur un prérequis (<strong>Min</strong> ou <strong>Max</strong>) pour l'ajouter à la carte.", auto: true },
+      { title: "Ajuster le prérequis", text: "Vous pouvez ajuster librement la <strong>largeur</strong> du prérequis dans le panneau de paramètres à droite." },
+      { title: "Fond autres", text: "Sélectionnez un élément, puis activez <strong>Fond autres</strong> dans le panneau de paramètres pour ajouter un contour coloré autour de lui.", auto: true },
       { title: "Raccourcis clavier", text: "<strong>Ctrl+Z</strong> Annuler &nbsp;|&nbsp; <strong>Ctrl+Y</strong> Refaire<br><strong>Suppr</strong> Supprimer calque<br><strong>←↑→↓</strong> Déplacer 1px &nbsp;|&nbsp; <strong>Shift+flèches</strong> 25px<br><strong>Alt+flèches</strong> Redimensionner<br><strong>Ctrl+clic</strong> Mode groupe &nbsp;|&nbsp; <strong>Dbl-clic</strong> Éditer texte" }
     ],
     // Confirmations
@@ -1237,16 +1236,14 @@ var I18N = {
     tut_skip: "Skip", tut_next: "Next →", tut_finish: "Finish",
     tut_of: "/",
     tut_steps: [
-      { title: "New card", text: "The <strong>New card</strong> button lets you start fresh by choosing a new card type." },
-      { title: "Tags", text: "This section contains all available <strong>tags</strong> (Space, Building, Science…). Click a tag to add it to your card." },
-      { title: "Resources", text: "This section contains all game <strong>resources</strong> (Steel, Titanium, Plant, Energy…). Click to add." },
-      { title: "Add a tag", text: "Click a tag to try it out! The first 3 tags are automatically placed in the top-right of the card." },
-      { title: "Move an element", text: "Click an element on the canvas and <strong>drag it</strong> to reposition it freely." },
-      { title: "Resize", text: "Select an element then use the <strong>small orange squares at the corners</strong> to resize it." },
-      { title: "Layer order", text: "In this panel, <strong>drag and drop</strong> layers to bring them forward or send them back. The first layer in the list is drawn last (on top)." },
-      { title: "Local image", text: "Use <strong>Local image</strong> to import an illustration from your computer and use it on your card." },
-      { title: "Requirements", text: "Add a requirement (min or max) then freely adjust its <strong>width</strong> in the parameters panel." },
-      { title: "Other background", text: "The <strong>Other bg</strong> checkbox adds an orange border around resources, tags and tiles to make them stand out." },
+      { title: "The sidebar", text: "The left sidebar contains all available elements. Click an <strong>tab</strong> to expand or collapse it." },
+      { title: "Add an element", text: "<strong>Click</strong> an element to add it automatically to the card, or <strong>drag it</strong> directly onto the canvas to position it precisely.", auto: true },
+      { title: "Move & Resize", text: "Click an element on the canvas and <strong>drag it</strong> to move it. Use the <strong>orange squares at the corners</strong> to resize it.", auto: true },
+      { title: "Layer panel", text: "<strong>Drag and drop</strong> layers up and down to bring them forward or send them back. The panel also lets you fine-tune position and dimensions.", auto: true },
+      { title: "Local image", text: "Click <strong>Local image</strong> in the sidebar to import an illustration from your computer.", auto: true },
+      { title: "Requirements", text: "Click a requirement (<strong>Min</strong> or <strong>Max</strong>) to add it to the card.", auto: true },
+      { title: "Adjust requirement", text: "You can freely adjust the <strong>width</strong> of the requirement in the parameters panel on the right." },
+      { title: "Other background", text: "Select an element, then enable <strong>Other bg</strong> in the parameters panel to add a colored border around it.", auto: true },
       { title: "Keyboard shortcuts", text: "<strong>Ctrl+Z</strong> Undo &nbsp;|&nbsp; <strong>Ctrl+Y</strong> Redo<br><strong>Del</strong> Delete layer<br><strong>←↑→↓</strong> Move 1px &nbsp;|&nbsp; <strong>Shift+arrows</strong> 25px<br><strong>Alt+arrows</strong> Resize<br><strong>Ctrl+click</strong> Group mode &nbsp;|&nbsp; <strong>Dbl-click</strong> Edit text" }
     ],
     // Confirmations
@@ -4478,11 +4475,13 @@ function getParameterByName(name, url) {
 function applyCanvasZoom() {
   var baseLayer = aLayers["dragdropdiv0"];
   var isHoriz = baseLayer && (baseLayer.width > baseLayer.height);
-  var mainContent = document.getElementById("main-content");
-  if (isHoriz) {
-    mainContent.style.zoom = "0.78";
-  } else {
-    mainContent.style.zoom = "1";
+  var canvasWrap = document.querySelector('#canvas-area > div:nth-child(2)');
+  if (canvasWrap) {
+    if (isHoriz) {
+      canvasWrap.style.zoom = "0.72";
+    } else {
+      canvasWrap.style.zoom = "1";
+    }
   }
 }
 
@@ -4588,17 +4587,30 @@ function initResizeHandles() {
     });
   }
   // Dragger gauche : redimensionne la sidebar gauche
+  // Fonctionne en absolu depuis le bord gauche de la fenêtre
   makeDragger(document.getElementById("resize-left"), function(x) {
+    var sidebarW = document.getElementById("mySidebar").getBoundingClientRect().left;
     var newW = Math.max(200, Math.min(700, x));
     document.documentElement.style.setProperty("--sidebar", newW + "px");
   });
-  // Dragger droit : redimensionne le panneau calques
+  // Dragger droit (entre canvas et panneau calques) :
+  // Agrandit le panneau calques par la gauche
   makeDragger(document.getElementById("resize-right"), function(x) {
     var layerPanel = document.getElementById("layer-panel");
-    var mainContent = document.getElementById("main-content");
-    if (!layerPanel || !mainContent) return;
-    var mainRight = mainContent.getBoundingClientRect().right;
-    var newW = Math.max(180, Math.min(500, mainRight - x));
+    if (!layerPanel) return;
+    var lpRect = layerPanel.getBoundingClientRect();
+    var newW = Math.max(180, Math.min(500, lpRect.right - x));
+    layerPanel.style.minWidth = newW + "px";
+    layerPanel.style.maxWidth = newW + "px";
+    layerPanel.style.width    = newW + "px";
+  });
+  // Dragger far-right (à droite du panneau calques) :
+  // Réduit le panneau calques par la droite
+  makeDragger(document.getElementById("resize-far-right"), function(x) {
+    var layerPanel = document.getElementById("layer-panel");
+    if (!layerPanel) return;
+    var lpRect = layerPanel.getBoundingClientRect();
+    var newW = Math.max(180, Math.min(500, x - lpRect.left));
     layerPanel.style.minWidth = newW + "px";
     layerPanel.style.maxWidth = newW + "px";
     layerPanel.style.width    = newW + "px";
@@ -4818,7 +4830,9 @@ function applyLang() {
   document.querySelectorAll('[data-i18n]').forEach(function(el) {
     var key = el.getAttribute('data-i18n');
     var val = t(key);
-    if (val && val !== key) el.textContent = val;
+    if (val && val !== key) {
+      if (val.indexOf('<') !== -1) { el.innerHTML = val; } else { el.textContent = val; }
+    }
   });
 
   // Filigrane
@@ -5183,28 +5197,28 @@ function skipTutoInvite() {
 // TUTORIEL — Coach marks
 // ============================================================
 var tutStep = 0;
+var _tutAutoListeners = []; // listeners de détection auto, nettoyés entre étapes
 
-// Cibles des étapes : sélecteur CSS ou null (pas de highlight)
+// Cibles des étapes : sélecteur CSS ou null
 var TUT_TARGETS = [
-  '.new-btn',           // 0 — Nouvelle carte
-  '#st',                // 1 — Badges
-  '#sr',                // 2 — Ressources
-  '#st .sb-icon-grid',  // 3 — Ajouter un badge
-  '#cmcanvas',          // 4 — Déplacer
-  '#cmcanvas',          // 5 — Redimensionner
-  '#layer-panel',       // 6 — Ordre calques
-  '#so .sb-item:nth-child(6)', // 7 — Image locale
-  '#sq',                // 8 — Prérequis
-  null,                 // 9 — Fond autres (dans params, pas toujours visible)
-  null                  // 10 — Raccourcis
+  '#mySidebar',               // 0 — Sidebar
+  '.sb-icon-grid',            // 1 — Ajouter élément
+  '#cmcanvas',                // 2 — Déplacer/Redimensionner
+  '#layer-panel',             // 3 — Panneau calques
+  '#so',                      // 4 — Image locale
+  '#sq',                      // 5 — Prérequis
+  null,                       // 6 — Ajuster prérequis
+  null,                       // 7 — Fond autres
+  null                        // 8 — Raccourcis
 ];
 
 function startTutorial() {
   skipTutoInvite();
-  // Charger une carte verte
   startTemplate('green_normal');
   tutStep = 0;
   document.getElementById('tutorial-overlay').classList.remove('hidden');
+  // Rendre le backdrop non-bloquant (clics passent au travers)
+  document.getElementById('tutorial-backdrop').style.pointerEvents = 'none';
   showTutStep(0);
 }
 
@@ -5220,8 +5234,101 @@ function showTutStep(step) {
   nextBtn.textContent = (step === total-1) ? t('tut_finish') : t('tut_next');
   document.getElementById('tut-skip-btn').textContent = t('tut_skip');
 
-  // Positionner la bulle
+  // Nettoyer les listeners de détection auto de l'étape précédente
+  _tutCleanAutoListeners();
+
+  // Installer la détection auto si l'étape le demande
+  if (s.auto) _tutInstallAutoDetect(step);
+
   positionTutBubble(step);
+}
+
+function _tutCleanAutoListeners() {
+  for (var i = 0; i < _tutAutoListeners.length; i++) {
+    var l = _tutAutoListeners[i];
+    l.el.removeEventListener(l.evt, l.fn);
+  }
+  _tutAutoListeners = [];
+}
+
+function _tutAddAutoListener(el, evt, fn) {
+  if (!el) return;
+  el.addEventListener(evt, fn);
+  _tutAutoListeners.push({el: el, evt: evt, fn: fn});
+}
+
+function _tutInstallAutoDetect(step) {
+  // Étape 1 — ajout d'un élément : détecter drawProject après addBlock/addTextBox
+  if (step === 1) {
+    var orig = window._tutOrigDrawProject || drawProject;
+    window._tutOrigDrawProject = orig;
+    var fired = false;
+    // Écouter les clics sur les icônes de la sidebar
+    var icons = document.querySelectorAll('.sb-icon');
+    icons.forEach(function(icon) {
+      _tutAddAutoListener(icon, 'click', function() {
+        if (!fired && tutStep === 1) { fired = true; setTimeout(tutorialAutoAdvance, 600); }
+      });
+    });
+    // Aussi écouter les items texte/outils
+    var sbItems = document.querySelectorAll('.sb-item');
+    sbItems.forEach(function(item) {
+      _tutAddAutoListener(item, 'click', function() {
+        if (!fired && tutStep === 1) { fired = true; setTimeout(tutorialAutoAdvance, 600); }
+      });
+    });
+  }
+  // Étape 2 — déplacer : détecter mouseup sur canvas après drag
+  if (step === 2) {
+    var fired2 = false;
+    _tutAddAutoListener(document, 'mouseup', function() {
+      if (!fired2 && tutStep === 2 && layerToDrag !== null) {
+        fired2 = true; setTimeout(tutorialAutoAdvance, 400);
+      }
+    });
+  }
+  // Étape 3 — ordre calques : détecter dragend dans layerlist
+  if (step === 3) {
+    var fired3 = false;
+    var ll = document.getElementById('layerlist');
+    _tutAddAutoListener(ll, 'dragend', function() {
+      if (!fired3 && tutStep === 3) { fired3 = true; setTimeout(tutorialAutoAdvance, 400); }
+    });
+  }
+  // Étape 4 — image locale : détecter clic sur le sb-item image locale
+  if (step === 4) {
+    var fired4 = false;
+    var localBtn = document.querySelector('#so .sb-item:nth-child(6)');
+    if (!localBtn) localBtn = document.querySelector('[onclick*="fileselection"]');
+    _tutAddAutoListener(localBtn, 'click', function() {
+      if (!fired4 && tutStep === 4) { fired4 = true; setTimeout(tutorialAutoAdvance, 400); }
+    });
+  }
+  // Étape 5 — prérequis : détecter clic sur icône dans #sq
+  if (step === 5) {
+    var fired5 = false;
+    var reqIcons = document.querySelectorAll('#sq .sb-icon');
+    reqIcons.forEach(function(icon) {
+      _tutAddAutoListener(icon, 'click', function() {
+        if (!fired5 && tutStep === 5) { fired5 = true; setTimeout(tutorialAutoAdvance, 600); }
+      });
+    });
+  }
+  // Étape 7 — fond autres : détecter changement de la checkbox inputobg
+  if (step === 7) {
+    var fired7 = false;
+    var obgCb = document.getElementById('inputobg');
+    _tutAddAutoListener(obgCb, 'change', function() {
+      if (!fired7 && tutStep === 7 && this.checked) { fired7 = true; setTimeout(tutorialAutoAdvance, 400); }
+    });
+  }
+}
+
+function tutorialAutoAdvance() {
+  tutStep++;
+  var steps = t('tut_steps');
+  if (tutStep >= steps.length) { endTutorial(); return; }
+  showTutStep(tutStep);
 }
 
 function positionTutBubble(step) {
@@ -5286,6 +5393,7 @@ function positionTutBubble(step) {
 }
 
 function tutorialNext() {
+  _tutCleanAutoListeners();
   tutStep++;
   var steps = t('tut_steps');
   if (tutStep >= steps.length) { endTutorial(); return; }
@@ -5295,8 +5403,8 @@ function tutorialNext() {
 function tutorialSkip() { endTutorial(); }
 
 function endTutorial() {
+  _tutCleanAutoListeners();
   document.getElementById('tutorial-overlay').classList.add('hidden');
-  // Supprimer highlights
   document.querySelectorAll('.tut-highlight').forEach(function(el){ el.remove(); });
   TUTORIAL_DONE = true;
   localStorage.setItem('tm_tutorial_done', '1');
