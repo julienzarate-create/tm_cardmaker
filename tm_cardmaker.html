@@ -65,7 +65,7 @@ textarea { overflow: auto; }
   --border: rgba(232,101,26,0.22);
   --text: #F0E6D3;
   --muted: #8A7E6E;
-  --sidebar: 360px;
+  --sidebar: 500px;
 }
 
 body {
@@ -457,7 +457,7 @@ input[type=number] { width: auto; }
   .sb-col { flex: 1; min-width: 0; border-right: 1px solid var(--border); }
   .sb-col:last-child { border-right: none; }
   .sb-col .sb-sec { border-bottom: 1px solid var(--border); }
-  .sb-col .sb-sec-btn { font-size: 9px; padding: 7px 8px; }
+  .sb-col .sb-sec-btn { font-size: 9px; padding: 7px 6px; }
   </style>
   <div class="sb-two-cols">
     <div class="sb-col">
@@ -473,6 +473,16 @@ input[type=number] { width: auto; }
         <button class="sb-sec-btn open" onclick="toggleSec(this,'sp')">Partis <span class="arr">▼</span></button>
         <div class="sb-content open" id="sp"><div class="sb-icon-grid" id="parties"></div></div>
       </div>
+    </div>
+    <div class="sb-col">
+      <div class="sb-sec">
+        <button class="sb-sec-btn open" onclick="toggleSec(this,'sr')">Ressources <span class="arr">▼</span></button>
+        <div class="sb-content open" id="sr"><div class="sb-icon-grid" id="resources"></div></div>
+      </div>
+      <div class="sb-sec">
+        <button class="sb-sec-btn open" onclick="toggleSec(this,'sti')">Tuiles <span class="arr">▼</span></button>
+        <div class="sb-content open" id="sti"><div class="sb-icon-grid" id="tiles"></div></div>
+      </div>
       <div class="sb-sec">
         <button class="sb-sec-btn open" onclick="toggleSec(this,'so')">Texte &amp; outils <span class="arr">▼</span></button>
         <div class="sb-content open" id="so">
@@ -485,6 +495,20 @@ input[type=number] { width: auto; }
           <a onclick="openOverlay('fontoverlay')" href="#" class="sb-item" draggable="false">🔡 Police web</a>
           <input type="file" id="fileselection" class="hidden" onchange="addUserFile(this)">
         </div>
+      </div>
+    </div>
+    <div class="sb-col">
+      <div class="sb-sec">
+        <button class="sb-sec-btn open" onclick="toggleSec(this,'sq')">Prérequis <span class="arr">▼</span></button>
+        <div class="sb-content open" id="sq"><div class="sb-icon-grid" id="requisites"></div></div>
+      </div>
+      <div class="sb-sec">
+        <button class="sb-sec-btn open" onclick="toggleSec(this,'sg')">Params globaux <span class="arr">▼</span></button>
+        <div class="sb-content open" id="sg"><div class="sb-icon-grid" id="globalparameters"></div></div>
+      </div>
+      <div class="sb-sec">
+        <button class="sb-sec-btn open" onclick="toggleSec(this,'sm')">Divers <span class="arr">▼</span></button>
+        <div class="sb-content open" id="sm"><div class="sb-icon-grid" id="misc"></div></div>
       </div>
       <div class="sb-sec">
         <button class="sb-sec-btn open" onclick="toggleSec(this,'stpl')">Templates <span class="arr">▼</span></button>
@@ -500,28 +524,6 @@ input[type=number] { width: auto; }
           <a onclick="swapTemplate('prelude')" href="#" class="sb-item">💜 Prélude</a>
           <a onclick="swapTemplate('corporation')" href="#" class="sb-item">🏢 Corporation</a>
         </div>
-      </div>
-    </div>
-    <div class="sb-col">
-      <div class="sb-sec">
-        <button class="sb-sec-btn open" onclick="toggleSec(this,'sr')">Ressources <span class="arr">▼</span></button>
-        <div class="sb-content open" id="sr"><div class="sb-icon-grid" id="resources"></div></div>
-      </div>
-      <div class="sb-sec">
-        <button class="sb-sec-btn open" onclick="toggleSec(this,'sti')">Tuiles <span class="arr">▼</span></button>
-        <div class="sb-content open" id="sti"><div class="sb-icon-grid" id="tiles"></div></div>
-      </div>
-      <div class="sb-sec">
-        <button class="sb-sec-btn open" onclick="toggleSec(this,'sq')">Prérequis <span class="arr">▼</span></button>
-        <div class="sb-content open" id="sq"><div class="sb-icon-grid" id="requisites"></div></div>
-      </div>
-      <div class="sb-sec">
-        <button class="sb-sec-btn open" onclick="toggleSec(this,'sg')">Params globaux <span class="arr">▼</span></button>
-        <div class="sb-content open" id="sg"><div class="sb-icon-grid" id="globalparameters"></div></div>
-      </div>
-      <div class="sb-sec">
-        <button class="sb-sec-btn open" onclick="toggleSec(this,'sm')">Divers <span class="arr">▼</span></button>
-        <div class="sb-content open" id="sm"><div class="sb-icon-grid" id="misc"></div></div>
       </div>
     </div>
   </div>
@@ -878,21 +880,43 @@ document.addEventListener("keydown", function(e) {
   if (e.ctrlKey && e.key === "z") { e.preventDefault(); undo(); }
   if (e.ctrlKey && e.key === "y") { e.preventDefault(); redo(); }
   // Supprimer le calque sélectionné avec la touche Suppr/Delete
-  if ((e.key === "Delete" || e.key === "Backspace") && selectedLayerId && selectedLayerId !== "dragdropdiv0") {
-    e.preventDefault();
-    var layerToDelete = document.getElementById(selectedLayerId);
-    if (layerToDelete) {
-      var layer = aLayers[selectedLayerId];
-      if (layer && layer.locked) {
-        // Calque verrouillé : demander confirmation
-        if (!confirm("Ce calque est verrouillé. Supprimer quand même ?")) return;
+  if ((e.key === "Delete" || e.key === "Backspace")) {
+    // Point 8 : si mode groupe avec éléments groupés, supprimer tout le groupe
+    var groupChecked = document.getElementById("groupmode").checked;
+    if (groupChecked && groupSelection.length > 0) {
+      e.preventDefault();
+      var toDelete = groupSelection.slice(); // copie
+      for (var gi = 0; gi < toDelete.length; gi++) {
+        var gid = toDelete[gi];
+        if (gid === "dragdropdiv0") continue; // Base intouchable
+        var gDiv = document.getElementById(gid);
+        if (!gDiv) continue;
+        if (domParams.parentNode === gDiv) gDiv.removeChild(domParams);
+        delete aLayers[gid];
+        gDiv.parentNode.removeChild(gDiv);
       }
-      if (domParams.parentNode === layerToDelete) layerToDelete.removeChild(domParams);
-      delete aLayers[selectedLayerId];
-      layerToDelete.parentNode.removeChild(layerToDelete);
+      groupSelection = [];
       selectedLayerId = null;
       drawProject();
       saveToHistory();
+      return;
+    }
+    // Sinon : supprimer le calque sélectionné individuellement
+    if (selectedLayerId && selectedLayerId !== "dragdropdiv0") {
+      e.preventDefault();
+      var layerToDelete = document.getElementById(selectedLayerId);
+      if (layerToDelete) {
+        var layer = aLayers[selectedLayerId];
+        if (layer && layer.locked) {
+          if (!confirm("Ce calque est verrouillé. Supprimer quand même ?")) return;
+        }
+        if (domParams.parentNode === layerToDelete) layerToDelete.removeChild(domParams);
+        delete aLayers[selectedLayerId];
+        layerToDelete.parentNode.removeChild(layerToDelete);
+        selectedLayerId = null;
+        drawProject();
+        saveToHistory();
+      }
     }
   }
 });
@@ -1192,7 +1216,7 @@ var megaTemplates = {
   ]},
   prelude: { layers: [
     {type:"base",  color:"#ffffff", height:826, width:1126, params:"color"},
-    {type:"block", iNum:92, x:0,   y:0,   width:1126, height:826, params:"allimages"},
+    {type:"block", iNum:93, x:0,   y:0,   width:1126, height:826, params:"allimages"},
     {type:"text",  data:"CARD NAME",   x:563, y:218, width:826, height:48, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"text",  data:"FAN MADE",    x:563, y:500, width:150, height:24, color:"#ce809f", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center",  params:"allimages color alltext allpreset"},
     {type:"text",  data:"P R E L U D E", x:563, y:99, width:826, height:24, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
@@ -1201,10 +1225,10 @@ var megaTemplates = {
   ]},
   corporation: { layers: [
     {type:"base",   color:"#ffffff", height:826, width:1126, params:"color"},
-    {type:"block",  iNum:93, x:0,   y:0,   width:1126,   height:826, params:"allimages"},
-    {type:"block",  iNum:94, x:937, y:90,  width:257,    height:89,  params:"allimages allpreset", locked:true, _appliedPreset:"Tag Holder 0"},
+    {type:"block",  iNum:94, x:0,   y:0,   width:1126,   height:826, params:"allimages"},
+    {type:"block",  iNum:95, x:937, y:90,  width:257,    height:89,  params:"allimages allpreset", locked:true, _appliedPreset:"Tag Holder 0"},
     {type:"effect", x:600, y:300, width:400, height:300, params:"allimages allpreset"},
-    {type:"block",  iNum:95, x:631, y:307, width:346,    height:36,  params:"allimages allpreset", locked:true, _appliedPreset:"Effect (bg)"},
+    {type:"block",  iNum:96, x:631, y:307, width:346,    height:36,  params:"allimages allpreset", locked:true, _appliedPreset:"Effect (bg)"},
     {type:"text",   data:"E F F E C T",             x:800, y:333, width:1126, height:22, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
     {type:"text",   data:"FAN MADE",                x:198, y:736, width:150,  height:24, color:"#c3c3c3", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
     {type:"text",   data:"C O R P O R A T I O N",  x:563, y:109, width:826,  height:24, color:"#000000", font:"Prototype", style:"normal", weight:"normal", lineSpace:4, justify:"center", params:"allimages color alltext allpreset"},
@@ -2417,7 +2441,8 @@ function addBlock(th) {
   if (thisBlock.otherbg) {
     layer.params += " " + thisBlock.otherbg;
     layer.obg = false;
-    layer.obgSize = 6; // Point 17 : défaut = 6
+    // VP blank (fond VP) : épaisseur par défaut = 2, sinon 6
+    layer.obgSize = (thisBlock.src === "blank") ? 2 : 6;
   }
   if (blockDefaults[thisBlock.putUnder]) layer.params += " allpreset";
 
@@ -3090,6 +3115,41 @@ function dragStart(event) {
   }
 
   var layerDivs = document.getElementsByClassName("divRec");
+
+  // Point 7 : si mode groupe actif avec éléments groupés, vérifier si le clic est SUR un élément du groupe
+  var groupChecked = document.getElementById("groupmode").checked;
+  if (groupChecked && groupSelection.length > 0) {
+    var clickOnGroup = false;
+    for (var gi = layerDivs.length - 1; gi >= 0; gi--) {
+      var gl = aLayers[layerDivs[gi].id];
+      if (!gl) continue;
+      if (groupSelection.indexOf(layerDivs[gi].id) !== -1 && clickIsWithinLayer(gl, mouse.x, mouse.y)) {
+        clickOnGroup = true;
+        break;
+      }
+    }
+    if (!clickOnGroup) {
+      // Clic en dehors du groupe : déplacer uniquement l'élément sous le curseur (hors groupe)
+      for (var ni = layerDivs.length - 1; ni >= 0; ni--) {
+        var nl = aLayers[layerDivs[ni].id];
+        if (!nl || nl.locked) continue;
+        if (clickIsWithinLayer(nl, mouse.x, mouse.y)) {
+          var insideDiv2 = layerDivs[ni].querySelector(".inside");
+          if (insideDiv2) insideDiv2.onclick.call(insideDiv2);
+          layerToDrag = nl;
+          layerToDragId = layerDivs[ni].id;
+          dragOffsetX = nl.x - mouse.x;
+          dragOffsetY = nl.y - mouse.y;
+          document.getElementById("cmcanvas").classList.add("dragging");
+          return;
+        }
+      }
+      layerToDrag = null;
+      layerToDragId = null;
+      return;
+    }
+  }
+
   for (var i = layerDivs.length - 1; i >= 0; i--) {
     var layer = aLayers[layerDivs[i].id];
     if (layer.locked) continue;
@@ -3464,6 +3524,7 @@ function groupModeToggle() {
 }
 
 // Ctrl+clic sur canvas : ajouter/retirer du groupe
+// Point 6 : le calque déjà sélectionné (orange) est auto-inclus au premier Ctrl+clic
 elem.addEventListener("click", function(event) {
   if (!event.ctrlKey) return;
   event.preventDefault();
@@ -3474,6 +3535,17 @@ elem.addEventListener("click", function(event) {
     if (!layer || layer.type === "base") continue;
     if (clickIsWithinLayer(layer, mouse.x, mouse.y)) {
       var lid = layerDivs[i].id;
+
+      // Point 6 : si un calque est sélectionné (orange) et pas encore dans le groupe, l'y ajouter
+      if (selectedLayerId && selectedLayerId !== lid && groupSelection.indexOf(selectedLayerId) === -1) {
+        groupSelection.push(selectedLayerId);
+        var selDiv = document.getElementById(selectedLayerId);
+        if (selDiv) {
+          var selCb = selDiv.querySelector(".groupcheck");
+          if (selCb) selCb.checked = true;
+        }
+      }
+
       var idx = groupSelection.indexOf(lid);
       if (idx === -1) {
         groupSelection.push(lid);
@@ -3497,11 +3569,13 @@ elem.addEventListener("click", function(event) {
 
 // ============================================================
 // SWAP TEMPLATE — remplace le calque template sans toucher aux autres calques
+// Met aussi à jour FAN MADE (x, y, couleur) et Card description (x, y)
 // ============================================================
 function swapTemplate(name) {
   if (!megaTemplates || !megaTemplates[name]) return;
   var tplLayers = megaTemplates[name].layers;
-  // Trouver le calque template dans tplLayers (type block, iNum dans templates)
+
+  // Trouver le calque template dans tplLayers (type block, putUnder === "templates")
   var newTplLayer = null;
   for (var ti = 0; ti < tplLayers.length; ti++) {
     if (tplLayers[ti].type === "block" && blockList[tplLayers[ti].iNum] && blockList[tplLayers[ti].iNum].putUnder === "templates") {
@@ -3510,6 +3584,16 @@ function swapTemplate(name) {
     }
   }
   if (!newTplLayer) return;
+
+  // Trouver FAN MADE et Card description dans le nouveau template
+  var newFanMade = null, newCardDescr = null;
+  for (var ti2 = 0; ti2 < tplLayers.length; ti2++) {
+    var tl = tplLayers[ti2];
+    if (tl.type === "text") {
+      if (tl.data === "FAN MADE") newFanMade = tl;
+      else if (tl.data && tl.data.indexOf("Card description") === 0) newCardDescr = tl;
+    }
+  }
 
   // Supprimer l'ancien calque template existant
   var layerDivs = document.getElementsByClassName("divRec");
@@ -3520,6 +3604,34 @@ function swapTemplate(name) {
       delete aLayers[layerDivs[i].id];
       layerDivs[i].parentNode.removeChild(layerDivs[i]);
       break;
+    }
+  }
+
+  // Mettre à jour FAN MADE et Card description dans les calques existants
+  var layerDivs2 = document.getElementsByClassName("divRec");
+  for (var j = 0; j < layerDivs2.length; j++) {
+    var el = aLayers[layerDivs2[j].id];
+    if (!el || el.type !== "text") continue;
+    // FAN MADE : mettre à jour x, y, couleur
+    if (el.data === "FAN MADE" && newFanMade) {
+      el.x     = newFanMade.x;
+      el.y     = newFanMade.y;
+      el.color = newFanMade.color;
+      // Mettre à jour les champs si ce calque est sélectionné
+      if (selectedLayerId === layerDivs2[j].id) {
+        var ixEl = document.getElementById("inputx"); if (ixEl) ixEl.value = el.x;
+        var iyEl = document.getElementById("inputy"); if (iyEl) iyEl.value = el.y;
+        var icEl = document.getElementById("inputcolor"); if (icEl) icEl.value = el.color;
+      }
+    }
+    // Card description : mettre à jour x, y
+    if (el.data && el.data.indexOf("Card description") === 0 && newCardDescr) {
+      el.x = newCardDescr.x;
+      el.y = newCardDescr.y;
+      if (selectedLayerId === layerDivs2[j].id) {
+        var ixEl2 = document.getElementById("inputx"); if (ixEl2) ixEl2.value = el.x;
+        var iyEl2 = document.getElementById("inputy"); if (iyEl2) iyEl2.value = el.y;
+      }
     }
   }
 
@@ -3535,7 +3647,6 @@ function swapTemplate(name) {
   var layerlist = document.getElementById("layerlist");
   var baseDiv = document.getElementById("dragdropdiv0");
 
-  // Créer le div manuellement et l'insérer après Base
   var toAdd = document.createElement("div");
   toAdd.id = "dragdropdiv" + ddcount;
   toAdd.classList.add("divRec");
