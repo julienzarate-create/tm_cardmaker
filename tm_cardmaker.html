@@ -552,54 +552,79 @@ input[type=number] { width: auto; }
 .wm-desc { font-size: 9px; color: rgba(240,230,211,0.12); white-space: nowrap; }
 
 /* ============================================================
-   MODE COMPARAISON
+   CONTRÔLES CANVAS (zoom + opacité) — barre unique au-dessus du canvas
    ============================================================ */
-#compare-panel {
-  display: none; flex-direction: column; align-items: center;
-  gap: 8px; padding: 0 8px;
+#canvas-controls {
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 7px 12px 8px;
+  background: var(--panel); border: 1px solid var(--border); border-radius: 6px;
+  margin: 0 12px 6px;
+  box-sizing: border-box; min-width: 0; overflow: hidden;
+  /* S'aligne sur la largeur du canvas en dessous, pas sur tout le conteneur */
+  width: fit-content; max-width: 100%;
 }
-#compare-panel.active { display: flex; }
-#compare-canvas-wrap {
-  position: relative;
+.cc-row {
+  display: flex; align-items: center; gap: 8px; min-width: 0; width: 100%;
 }
+.cc-row.cc-hidden { display: none; }
+.cc-lbl {
+  font-size: 9px; color: var(--gold); text-transform: uppercase;
+  letter-spacing: 0.08em; font-family: "Montserrat", sans-serif; font-weight: 700;
+  white-space: nowrap; flex-shrink: 0; width: 110px;
+}
+.cc-row input[type=range] {
+  flex: 1; accent-color: var(--rust); cursor: pointer; min-width: 120px;
+}
+.cc-val {
+  font-size: 10px; color: var(--gold); width: 36px; text-align: right;
+  font-family: "Montserrat", sans-serif; font-weight: 700; flex-shrink: 0;
+}
+#cc-btns-row { gap: 6px; flex-wrap: wrap; }
+.cc-btn {
+  padding: 3px 9px; border-radius: 4px; border: 1px solid var(--border);
+  background: transparent; color: var(--muted); font-size: 10px;
+  font-family: "Montserrat", sans-serif; font-weight: 700;
+  cursor: pointer; transition: all 0.15s; white-space: nowrap;
+}
+.cc-btn:hover { background: var(--mars); color: #fff; border-color: var(--rust); }
+.cc-btn.active { background: var(--mars); color: #fff; border-color: var(--rust); }
+
+/* ============================================================
+   CANVAS AREA — layout
+   ============================================================ */
+#canvas-col-main {
+  display: flex; flex-direction: column; min-width: 0;
+  /* Ne pas s'étirer : colle à la largeur de son contenu (canvas + contrôles) */
+  flex: 0 0 auto;
+}
+#canvas-row {
+  display: flex; gap: 0; align-items: flex-start; min-width: 0;
+}
+
+/* Séparateur vertical (côte à côte) */
+#compare-divider {
+  width: 2px; background: var(--border); align-self: stretch; flex-shrink: 0;
+  margin: 0 8px; display: none;
+}
+
+/* Canvas de référence (côte à côte) */
 #compare-canvas {
   border: 2px solid var(--border); border-radius: 4px;
   box-shadow: 0 0 36px rgba(193,68,14,0.1), 0 4px 20px rgba(0,0,0,0.6);
-  background: #111;
-  max-height: calc(100vh - 40px);
-  max-width: calc(50vw - var(--sidebar) - 60px);
-  width: auto !important; height: auto !important;
-  object-fit: contain;
+  background: #111; max-height: calc(100vh - 120px);
+  width: auto !important; height: auto !important; display: block;
 }
-#compare-label {
-  font-size: 9px; color: var(--muted); text-transform: uppercase;
-  letter-spacing: 0.1em; font-family: "Montserrat", sans-serif; font-weight: 700;
-}
-#compare-close-btn {
-  padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border);
-  background: transparent; color: var(--muted); font-size: 10px;
-  font-family: "Montserrat", sans-serif; font-weight: 700;
-  cursor: pointer; transition: all 0.15s; letter-spacing: 0.04em;
-}
-#compare-close-btn:hover { background: var(--mars); color: #fff; border-color: var(--rust); }
-#compare-divider {
-  width: 2px; background: var(--border); align-self: stretch; flex-shrink: 0;
-  margin: 0 4px;
-}
+#compare-panel { display: none; }
+#compare-panel.active { display: block; }
 
-/* ============================================================
-   ZOOM SLIDER
-   ============================================================ */
-.zoom-bar {
-  display: flex; align-items: center; gap: 6px;
-  padding: 6px 10px; border-bottom: 1px solid var(--border);
-  background: rgba(0,0,0,0.2);
+/* Overlay superposition */
+#canvas-main-wrap { position: relative; display: inline-block; }
+#compare-overlay-canvas {
+  position: absolute; top: 0; left: 0; pointer-events: none; display: none;
 }
-.zoom-bar label { font-size: 10px; color: var(--muted); white-space: nowrap; }
-.zoom-bar input[type=range] {
-  flex: 1; accent-color: var(--rust); cursor: pointer;
-}
-.zoom-bar span { font-size: 10px; color: var(--gold); min-width: 34px; text-align: right; }
+#compare-overlay-canvas.draggable-overlay { pointer-events: all; cursor: grab; }
+#compare-overlay-canvas.draggable-overlay.dragging { cursor: grabbing; }
+
 
 /* ============================================================
    INVITATION TUTORIEL (écran de démarrage)
@@ -858,11 +883,6 @@ input[type=number] { width: auto; }
     <button id="btn-undo" class="undo-btn" onclick="undo()" disabled title="Ctrl+Z">↩ Annuler</button>
     <button id="btn-redo" class="undo-btn" onclick="redo()" disabled title="Ctrl+Y">Refaire ↪</button>
   </div>
-  <div class="zoom-bar">
-    <label>🔍</label>
-    <input type="range" id="zoom-slider" min="30" max="200" value="100" step="5" oninput="applyZoomSlider(this.value)">
-    <span id="zoom-label">100%</span>
-  </div>
   <button class="new-btn" onclick="showStart()">＋ Nouvelle carte</button>
 
   <div class="sb-sec">
@@ -967,17 +987,53 @@ input[type=number] { width: auto; }
 
   <div id="canvas-area">
     <div id="resize-left" class="resize-handle"></div>
-    <div>
-      <canvas id="cmcanvas" height="1050px" width="750px"></canvas>
+
+    <!-- Colonne principale : contrôles + canvases -->
+    <div id="canvas-col-main">
+
+      <!-- Barre de contrôles unique au-dessus du canvas -->
+      <div id="canvas-controls">
+        <!-- Ligne 1 : zoom carte (toujours visible) -->
+        <div class="cc-row" id="cc-row-zoom-main">
+          <span class="cc-lbl">🃏 Zoom carte</span>
+          <input type="range" id="zoom-slider" min="30" max="200" value="100" step="1" oninput="applyZoomSlider(this.value)">
+          <span class="cc-val" id="zoom-label">100%</span>
+        </div>
+        <!-- Ligne 2 : zoom référence (visible si comparaison active) -->
+        <div class="cc-row cc-hidden" id="cc-row-zoom-ref">
+          <span class="cc-lbl">🔍 Zoom référence</span>
+          <input type="range" id="compare-zoom-slider" min="30" max="200" value="100" step="1" oninput="applyCompareZoom(this.value)">
+          <span class="cc-val" id="compare-zoom-label">100%</span>
+        </div>
+        <!-- Ligne 3 : opacité référence (visible si comparaison active) -->
+        <div class="cc-row cc-hidden" id="cc-row-opacity-ref">
+          <span class="cc-lbl">☀ Opacité référence</span>
+          <input type="range" id="compare-opacity-slider" min="0" max="100" value="70" step="1" oninput="applyCompareOpacity(this.value)">
+          <span class="cc-val" id="compare-opacity-label">70%</span>
+        </div>
+        <!-- Ligne 4 : boutons (visible si comparaison active) -->
+        <div class="cc-row cc-hidden" id="cc-btns-row">
+          <button class="cc-btn" id="compare-mode-toggle-btn" onclick="toggleCompareMode()">⧉ Superposer</button>
+          <button class="cc-btn cc-hidden" id="compare-recenter-btn" onclick="recenterCompareOverlay()">⌖ Recentrer</button>
+          <button class="cc-btn" onclick="closeCompareMode()">✕ Fermer comparaison</button>
+        </div>
+      </div>
+
+      <!-- Canvases côte à côte -->
+      <div id="canvas-row">
+        <div id="canvas-main-wrap">
+          <canvas id="cmcanvas" height="1050px" width="750px"></canvas>
+          <canvas id="compare-overlay-canvas"></canvas>
+        </div>
+        <div id="compare-divider"></div>
+        <div id="compare-panel">
+          <canvas id="compare-canvas" width="826" height="1126"></canvas>
+        </div>
+      </div>
       <a id="projectlink"></a>
-    </div>
-    <!-- Panneau comparaison : caché par défaut -->
-    <div id="compare-divider" style="display:none;"></div>
-    <div id="compare-panel">
-      <div id="compare-label">CARTE DE RÉFÉRENCE</div>
-      <canvas id="compare-canvas" width="826" height="1126"></canvas>
-      <button id="compare-close-btn" onclick="closeCompareMode()">✕ Fermer comparaison</button>
-    </div>
+
+    </div><!-- /canvas-col-main -->
+
     <div id="resize-right" class="resize-handle"></div>
     <div id="layer-panel">
       <h2>Calques — <small style="color:var(--muted);font-size:9px;">Double-clic sur texte = éditer</small></h2>
@@ -2700,6 +2756,10 @@ function drawProject() {
       ctx.restore();
     }
   }
+  // Mode comparaison superposition : redessiner l'overlay
+  if (typeof _drawCompareOverlay === "function") _drawCompareOverlay();
+  // Synchroniser largeur barre contrôles
+  if (typeof _syncControlsWidth === "function") requestAnimationFrame(_syncControlsWidth);
 }
 
 // Extraction des fonctions de dessin complexes pour nettoyer drawProject()
@@ -4694,7 +4754,7 @@ function getParameterByName(name, url) {
 function applyCanvasZoom() {
   var baseLayer = aLayers["dragdropdiv0"];
   var isHoriz = baseLayer && (baseLayer.width > baseLayer.height);
-  var canvasWrap = document.querySelector('#canvas-area > div:nth-child(2)');
+  var canvasWrap = document.getElementById('canvas-main-wrap');
   if (canvasWrap) {
     if (isHoriz) {
       canvasWrap.style.zoom = "0.72";
@@ -4866,7 +4926,7 @@ function initResizeHandles() {
   }
   // Sauvegarder les 3 valeurs de layout
   function _saveLayout() {
-    var canvasWrap = document.querySelector('#canvas-area > div:nth-child(2)');
+    var canvasWrap = document.getElementById('canvas-main-wrap');
     var layerPanel = document.getElementById('layer-panel');
     var sidebarW = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--sidebar')) || 500;
     var canvasZoom = canvasWrap ? (parseFloat(canvasWrap.style.zoom) || 1) : 1;
@@ -4886,7 +4946,7 @@ function initResizeHandles() {
         if (h) h.style.left = (d.sidebarW - 3) + "px";
       }
       if (d.canvasZoom) {
-        var canvasWrap = document.querySelector('#canvas-area > div:nth-child(2)');
+        var canvasWrap = document.getElementById('canvas-main-wrap');
         if (canvasWrap) canvasWrap.style.zoom = d.canvasZoom;
         _syncZoomSlider();
       }
@@ -4922,16 +4982,16 @@ function initResizeHandles() {
   makeDragger(document.getElementById("resize-right"), function(x) {
     if (_rr_naturalW <= 0) return;
     var newZoom = Math.max(0.3, Math.min(2.0, (x - _rr_wrapLeft) / _rr_naturalW));
-    var canvasWrap = document.querySelector('#canvas-area > div:nth-child(2)');
+    var canvasWrap = document.getElementById('canvas-main-wrap');
     if (canvasWrap) canvasWrap.style.zoom = newZoom;
     _syncZoomSlider();
-    _syncCompareZoom();
+    _drawCompareOverlay();
     _saveLayout();
   }, function() {
     // Capturer les valeurs stables au moment du mousedown
     // On utilise la largeur intrinsèque du canvas HTML (826 ou 1126px selon format),
     // pas offsetWidth qui change quand les images se chargent
-    var canvasWrap = document.querySelector('#canvas-area > div:nth-child(2)');
+    var canvasWrap = document.getElementById('canvas-main-wrap');
     var cmcanvas = document.getElementById('cmcanvas');
     if (!canvasWrap || !cmcanvas) return;
     _rr_startZoom = parseFloat(canvasWrap.style.zoom) || 1;
@@ -5855,20 +5915,29 @@ function pasteLayer() {
 }
 
 // ============================================================
-// ZOOM SLIDER
+// ZOOM SLIDER — canvas principal (au-dessus du canvas)
 // ============================================================
+function _syncControlsWidth() {
+  // Aligne la largeur de #canvas-controls sur la largeur affichée du canvas-main-wrap
+  var wrap = document.getElementById("canvas-main-wrap");
+  var ctrl = document.getElementById("canvas-controls");
+  if (!wrap || !ctrl) return;
+  var w = wrap.getBoundingClientRect().width;
+  if (w > 0) ctrl.style.width = w + "px";
+}
+
 function applyZoomSlider(val) {
   var pct = parseInt(val, 10);
   document.getElementById("zoom-label").textContent = pct + "%";
-  var canvasWrap = document.querySelector('#canvas-area > div:nth-child(2)');
+  var canvasWrap = document.getElementById("canvas-main-wrap");
   if (canvasWrap) canvasWrap.style.zoom = (pct / 100).toFixed(2);
-  _syncCompareZoom();
-  // Sync avec le système de layout sauvegardé
+  requestAnimationFrame(_syncControlsWidth);
   if (window._saveLayoutFn) window._saveLayoutFn();
+  _drawCompareOverlay();
 }
 
 function _syncZoomSlider() {
-  var canvasWrap = document.querySelector('#canvas-area > div:nth-child(2)');
+  var canvasWrap = document.getElementById("canvas-main-wrap");
   if (!canvasWrap) return;
   var zoom = parseFloat(canvasWrap.style.zoom) || 1;
   var pct = Math.round(zoom * 100);
@@ -5876,11 +5945,101 @@ function _syncZoomSlider() {
   var label  = document.getElementById("zoom-label");
   if (slider) slider.value = Math.max(30, Math.min(200, pct));
   if (label)  label.textContent = pct + "%";
+  requestAnimationFrame(_syncControlsWidth);
 }
 
 // ============================================================
-// MODE COMPARAISON
+// ZOOM CANVAS DE RÉFÉRENCE
 // ============================================================
+function applyCompareZoom(val) {
+  var pct = parseInt(val, 10);
+  document.getElementById("compare-zoom-label").textContent = pct + "%";
+  var cvs = document.getElementById("compare-canvas");
+  if (cvs) cvs.style.zoom = (pct / 100).toFixed(2);
+  // En mode superposition, redessiner l'overlay avec le nouveau zoom
+  _drawCompareOverlay();
+}
+
+// ============================================================
+// OPACITÉ DE LA CARTE DE RÉFÉRENCE
+// ============================================================
+function applyCompareOpacity(val) {
+  var pct = parseInt(val, 10);
+  document.getElementById("compare-opacity-label").textContent = pct + "%";
+  _compareOpacity = pct / 100;
+  _drawCompareOverlay();
+}
+
+// ============================================================
+// MODE COMPARAISON — état global
+// ============================================================
+var _compareImg        = null;   // Image de référence chargée
+var _compareOpacity    = 0.7;    // Opacité courante
+var _compareSideBySide = true;   // true = côte à côte, false = superposition
+var _compareOffsetX    = 0;      // Décalage X de l'overlay (px canvas réels)
+var _compareOffsetY    = 0;      // Décalage Y de l'overlay (px canvas réels)
+
+// --- Drag de l'overlay ---
+var _overlayDragging  = false;
+var _overlayDragStartX = 0;
+var _overlayDragStartY = 0;
+var _overlayDragStartOX = 0;
+var _overlayDragStartOY = 0;
+
+function _initOverlayDrag() {
+  var ov = document.getElementById("compare-overlay-canvas");
+  if (!ov) return;
+
+  ov.addEventListener("mousedown", function(e) {
+    if (ov.style.display === "none") return;
+    _overlayDragging = true;
+    // Coordonnées souris dans l'espace zoomé du canvas-main-wrap
+    var rect = ov.getBoundingClientRect();
+    var mainWrap = document.getElementById("canvas-main-wrap");
+    var zoom = parseFloat(mainWrap ? mainWrap.style.zoom : "1") || 1;
+    _overlayDragStartX  = e.clientX;
+    _overlayDragStartY  = e.clientY;
+    _overlayDragStartOX = _compareOffsetX;
+    _overlayDragStartOY = _compareOffsetY;
+    ov.classList.add("dragging");
+    e.preventDefault();
+    e.stopPropagation(); // Ne pas déclencher le drag des calques sous-jacents
+  });
+
+  document.addEventListener("mousemove", function(e) {
+    if (!_overlayDragging) return;
+    var mainWrap = document.getElementById("canvas-main-wrap");
+    var zoom = parseFloat(mainWrap ? mainWrap.style.zoom : "1") || 1;
+    // Convertir le déplacement souris (px écran) en px canvas réels (diviser par zoom)
+    var dx = (e.clientX - _overlayDragStartX) / zoom;
+    var dy = (e.clientY - _overlayDragStartY) / zoom;
+    _compareOffsetX = Math.round(_overlayDragStartOX + dx);
+    _compareOffsetY = Math.round(_overlayDragStartOY + dy);
+    _drawCompareOverlay();
+  });
+
+  document.addEventListener("mouseup", function() {
+    if (!_overlayDragging) return;
+    _overlayDragging = false;
+    var ov2 = document.getElementById("compare-overlay-canvas");
+    if (ov2) ov2.classList.remove("dragging");
+  });
+}
+
+function recenterCompareOverlay() {
+  _compareOffsetX = 0;
+  _compareOffsetY = 0;
+  _drawCompareOverlay();
+}
+
+function _compareShowControls(visible) {
+  var rows = ["cc-row-zoom-ref", "cc-row-opacity-ref", "cc-btns-row"];
+  rows.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.classList.toggle("cc-hidden", !visible);
+  });
+}
+
 function openCompareMode() {
   document.getElementById("compare-fileselection").click();
 }
@@ -5892,21 +6051,32 @@ function loadCompareImage(input) {
   reader.onload = function(e) {
     var img = new Image();
     img.onload = function() {
+      _compareImg = img;
+      // Réinitialiser position
+      _compareOffsetX = 0; _compareOffsetY = 0;
+
+      // Dessiner dans le canvas côte à côte
       var cvs = document.getElementById("compare-canvas");
       cvs.width  = img.width;
       cvs.height = img.height;
       var ctx = cvs.getContext("2d");
       ctx.drawImage(img, 0, 0);
+      cvs.style.zoom = "1";
+      document.getElementById("compare-zoom-slider").value = 100;
+      document.getElementById("compare-zoom-label").textContent = "100%";
 
-      // Appliquer le même zoom que le canvas principal
-      var mainWrap = document.querySelector('#canvas-area > div:nth-child(2)');
-      var zoom = mainWrap ? (parseFloat(mainWrap.style.zoom) || 1) : 1;
-      cvs.style.zoom = zoom;
+      // Afficher les lignes de contrôle références
+      _compareShowControls(true);
 
-      // Afficher le panneau
-      document.getElementById("compare-divider").style.display = "";
+      // Afficher le panneau côte à côte ou overlay
+      document.getElementById("compare-divider").style.display = _compareSideBySide ? "" : "none";
       document.getElementById("compare-panel").classList.add("active");
-      // Réinitialiser le input pour pouvoir recharger la même image
+
+      // Si on était déjà en mode superposition, reconfigurer
+      if (!_compareSideBySide) {
+        _activateOverlayMode();
+      }
+
       input.value = "";
     };
     img.src = e.target.result;
@@ -5915,21 +6085,117 @@ function loadCompareImage(input) {
 }
 
 function closeCompareMode() {
-  document.getElementById("compare-divider").style.display = "none";
+  _compareImg = null;
+  _compareOffsetX = 0; _compareOffsetY = 0;
+  // Masquer les lignes de contrôle références
+  _compareShowControls(false);
+  // Masquer panneau et séparateur
   document.getElementById("compare-panel").classList.remove("active");
+  document.getElementById("compare-panel").classList.remove("overlay-mode");
+  document.getElementById("compare-divider").style.display = "none";
+  // Vider le canvas côte à côte
   var cvs = document.getElementById("compare-canvas");
-  var ctx = cvs.getContext("2d");
-  ctx.clearRect(0, 0, cvs.width, cvs.height);
+  cvs.getContext("2d").clearRect(0, 0, cvs.width, cvs.height);
+  cvs.style.display = "";
+  // Masquer et vider l'overlay
+  var ov = document.getElementById("compare-overlay-canvas");
+  ov.style.display = "none";
+  ov.classList.remove("draggable-overlay");
+  ov.getContext("2d").clearRect(0, 0, ov.width, ov.height);
+  // Remettre les boutons dans leur état initial
+  var btn = document.getElementById("compare-mode-toggle-btn");
+  if (btn) { btn.textContent = "⧉ Superposer"; btn.classList.remove("active"); }
+  var rcBtn = document.getElementById("compare-recenter-btn");
+  if (rcBtn) rcBtn.classList.add("cc-hidden");
+  _compareSideBySide = true;
 }
 
-// Synchroniser le zoom du compare-canvas avec le zoom du canvas principal
-function _syncCompareZoom() {
-  var cvs = document.getElementById("compare-canvas");
-  if (!cvs || !document.getElementById("compare-panel").classList.contains("active")) return;
-  var mainWrap = document.querySelector('#canvas-area > div:nth-child(2)');
-  var zoom = mainWrap ? (parseFloat(mainWrap.style.zoom) || 1) : 1;
-  cvs.style.zoom = zoom;
+// ============================================================
+// TOGGLE côte à côte / superposition
+// ============================================================
+function toggleCompareMode() {
+  if (_compareSideBySide) {
+    _activateOverlayMode();
+  } else {
+    _activateSideBySideMode();
+  }
 }
+
+function _activateOverlayMode() {
+  _compareSideBySide = false;
+  document.getElementById("compare-divider").style.display = "none";
+  document.getElementById("compare-canvas").style.display = "none";
+  document.getElementById("compare-panel").classList.add("overlay-mode");
+  var btn = document.getElementById("compare-mode-toggle-btn");
+  if (btn) { btn.textContent = "⧉ Côte à côte"; btn.classList.add("active"); }
+  // Afficher bouton recentrer
+  var rcBtn = document.getElementById("compare-recenter-btn");
+  if (rcBtn) rcBtn.classList.remove("cc-hidden");
+  // Activer overlay draggable
+  var ov = document.getElementById("compare-overlay-canvas");
+  ov.style.display = "block";
+  ov.classList.add("draggable-overlay");
+  _drawCompareOverlay();
+}
+
+function _activateSideBySideMode() {
+  _compareSideBySide = true;
+  document.getElementById("compare-divider").style.display = "";
+  document.getElementById("compare-canvas").style.display = "";
+  document.getElementById("compare-panel").classList.remove("overlay-mode");
+  // Désactiver overlay
+  var ov = document.getElementById("compare-overlay-canvas");
+  ov.style.display = "none";
+  ov.classList.remove("draggable-overlay");
+  ov.getContext("2d").clearRect(0, 0, ov.width, ov.height);
+  // Redessiner le canvas côte à côte
+  if (_compareImg) {
+    var cvs = document.getElementById("compare-canvas");
+    cvs.width = _compareImg.width; cvs.height = _compareImg.height;
+    cvs.getContext("2d").drawImage(_compareImg, 0, 0);
+  }
+  var btn = document.getElementById("compare-mode-toggle-btn");
+  if (btn) { btn.textContent = "⧉ Superposer"; btn.classList.remove("active"); }
+  // Masquer bouton recentrer
+  var rcBtn = document.getElementById("compare-recenter-btn");
+  if (rcBtn) rcBtn.classList.add("cc-hidden");
+}
+
+// ============================================================
+// DESSIN DE L'OVERLAY (mode superposition)
+// ============================================================
+function _drawCompareOverlay() {
+  var ov = document.getElementById("compare-overlay-canvas");
+  if (!ov || ov.style.display === "none" || !_compareImg) return;
+
+  // L'overlay couvre exactement le cmcanvas (taille réelle, non zoomée)
+  var main = document.getElementById("cmcanvas");
+  ov.width  = main.width;
+  ov.height = main.height;
+  ov.style.width  = main.width  + "px";
+  ov.style.height = main.height + "px";
+
+  // Zoom de la référence
+  var refZoomPct = parseInt(document.getElementById("compare-zoom-slider").value, 10) || 100;
+  var refZoom = refZoomPct / 100;
+
+  var ctx = ov.getContext("2d");
+  ctx.clearRect(0, 0, ov.width, ov.height);
+  ctx.save();
+  ctx.globalAlpha = _compareOpacity;
+
+  // Position : centrée + offset de drag
+  var dw = Math.round(_compareImg.width  * refZoom);
+  var dh = Math.round(_compareImg.height * refZoom);
+  var dx = Math.round((ov.width  - dw) / 2) + _compareOffsetX;
+  var dy = Math.round((ov.height - dh) / 2) + _compareOffsetY;
+
+  ctx.drawImage(_compareImg, dx, dy, dw, dh);
+  ctx.restore();
+}
+
+// Initialiser le drag overlay dès le chargement
+_initOverlayDrag();
 
 // ============================================================
 // INIT SETTINGS AU DÉMARRAGE
@@ -5950,6 +6216,9 @@ function _syncCompareZoom() {
   // Point 23 : brancher le bouton settings ici (openSettings est défini dans ce bloc)
   var settingsBtn = document.getElementById('settings-btn');
   if (settingsBtn) settingsBtn.addEventListener('click', function() { openSettings(); });
+  // Synchroniser la largeur des contrôles au chargement et sur resize
+  window.addEventListener('resize', _syncControlsWidth);
+  setTimeout(_syncControlsWidth, 300);
   // Appliquer langue après que tout le DOM/JS soit chargé
   // (appelé depuis init() après resetProject)
 })();
