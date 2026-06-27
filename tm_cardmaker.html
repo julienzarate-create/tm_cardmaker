@@ -947,7 +947,6 @@ input[type=number] { width: auto; }
       <canvas id="cmcanvas" height="1050px" width="750px"></canvas>
     </div>
     <a id="projectlink"></a>
-    <div id="resize-right" class="resize-handle"></div>
     <div id="layer-panel">
       <h2>Calques — <small style="color:var(--muted);font-size:9px;">Double-clic sur texte = éditer</small></h2>
       <section id="layerlist"></section>
@@ -2219,11 +2218,24 @@ function addLayer(title, layer) {
   }
   toAdd.appendChild(childAdd);
 
-  document.getElementById("layerlist").appendChild(toAdd);
+  var layerlist = document.getElementById("layerlist");
+  // Insertion en 3ème position pour les prérequis (après Base et calque template)
+  if (layer._insertAtThird) {
+    delete layer._insertAtThird;
+    var children = layerlist.children;
+    if (children.length >= 2) {
+      // Insérer après le 2ème enfant (index 1 = template), soit en position 3
+      layerlist.insertBefore(toAdd, children[2] || null);
+    } else {
+      layerlist.appendChild(toAdd);
+    }
+  } else {
+    layerlist.appendChild(toAdd);
+  }
   aLayers[toAdd.id] = layer;
   ddcount++;
 
-  sortable(document.getElementById("layerlist"), function() {});
+  sortable(layerlist, function() {});
   return layer;
 }
 
@@ -2461,6 +2473,26 @@ function selectLayer() {
     gpDiv.appendChild(btnNorm);
     gpDiv.appendChild(btnReq);
     domParams.insertBefore(gpDiv, domParams.firstChild);
+  }
+
+  // Boutons Corps / Prérequis pour tags, resources, parties, misc ciblés
+  var brBtnDiv = document.getElementById("br-mode-btns");
+  if (brBtnDiv) brBtnDiv.remove();
+  if (thisLayer.type === "block" && (thisLayer._tagSrc || thisLayer._resSrc || thisLayer._partySrc || thisLayer._miscReqSrc)) {
+    var brDiv = document.createElement("div");
+    brDiv.id = "br-mode-btns";
+    brDiv.style.cssText = "display:flex;gap:8px;margin-bottom:10px;padding-bottom:9px;border-bottom:1px solid var(--border);";
+    var btnBrNorm = document.createElement("button");
+    btnBrNorm.className = "btn btn-g"; btnBrNorm.innerText = t("btn_corps");
+    btnBrNorm.style.flex = "1";
+    btnBrNorm.onclick = function() { applyBodyReqMode(clickedNode.id, false); };
+    var btnBrReq = document.createElement("button");
+    btnBrReq.className = "btn btn-g"; btnBrReq.innerText = t("btn_prereq");
+    btnBrReq.style.flex = "1";
+    btnBrReq.onclick = function() { applyBodyReqMode(clickedNode.id, true); };
+    brDiv.appendChild(btnBrNorm);
+    brDiv.appendChild(btnBrReq);
+    domParams.insertBefore(brDiv, domParams.firstChild);
   }
 
   // Boutons Positif / Négatif pour les VPs
@@ -3145,17 +3177,39 @@ function applyGPMode(layerId, isRequisite) {
     else if (layer._gpSrc === "venus")  idx = 4;
     preset = isRequisite ? blockDefaults.globalparameters[idx+1] : blockDefaults.globalparameters[idx];
   } else if (layer._tileSrc !== undefined) {
-    // Tuile
-    preset = isRequisite ? blockDefaults.tiles[1] : null;
-    if (!isRequisite) {
-      // Standard tile : utiliser les dims de l'image ou 142
-      layer.x = 393; layer.y = 448;
-      layer.width = 168; layer.height = 142;
-      layer._appliedPreset = "Standard tile";
-      var ixEl = document.getElementById("inputx"); if (ixEl) ixEl.value = layer.x;
-      var iyEl = document.getElementById("inputy"); if (iyEl) iyEl.value = layer.y;
-      var iwEl = document.getElementById("inputwidth"); if (iwEl) iwEl.value = layer.width;
+    // Tuile — ratio proportionnel basé sur les dimensions corps de carte
+    if (isRequisite) {
+      // Mémoriser les dimensions corps de carte si pas encore fait
+      if (layer._bodyWidth === undefined) {
+        layer._bodyWidth  = layer.width;
+        layer._bodyHeight = layer.height;
+      }
+      var bw = layer._bodyWidth;
+      var bh = layer._bodyHeight;
+      layer.x      = REQ_POS.x;
+      layer.y      = REQ_POS.y;
+      layer.width  = Math.round(bw * REQ_RATIO);
+      layer.height = Math.round(bh * REQ_RATIO);
+      layer.obg    = false; // jamais activé en prérequis
+      layer._appliedPreset = "Prérequis";
+      var ixEl = document.getElementById("inputx");      if (ixEl) ixEl.value = layer.x;
+      var iyEl = document.getElementById("inputy");      if (iyEl) iyEl.value = layer.y;
+      var iwEl = document.getElementById("inputwidth");  if (iwEl) iwEl.value = layer.width;
       var ihEl = document.getElementById("inputheight"); if (ihEl) ihEl.value = layer.height;
+      drawProject(); saveToHistory(); return;
+    } else {
+      // Standard tile : restaurer dimensions corps de carte
+      if (layer._bodyWidth !== undefined) {
+        layer.width  = layer._bodyWidth;
+        layer.height = layer._bodyHeight;
+      }
+      layer.x = 393; layer.y = 448;
+      layer.obg = false;
+      layer._appliedPreset = "Corps de carte";
+      var ixEl2 = document.getElementById("inputx"); if (ixEl2) ixEl2.value = layer.x;
+      var iyEl2 = document.getElementById("inputy"); if (iyEl2) iyEl2.value = layer.y;
+      var iwEl2 = document.getElementById("inputwidth"); if (iwEl2) iwEl2.value = layer.width;
+      var ihEl2 = document.getElementById("inputheight"); if (ihEl2) ihEl2.value = layer.height;
       drawProject(); saveToHistory(); return;
     }
   }
@@ -3164,13 +3218,67 @@ function applyGPMode(layerId, isRequisite) {
     if (preset.y      !== undefined) { layer.y      = preset.y;      var el2 = document.getElementById("inputy");     if(el2) el2.value = preset.y; }
     if (preset.width  !== undefined) { layer.width  = preset.width;  var el3 = document.getElementById("inputwidth"); if(el3) el3.value = preset.width; }
     if (preset.height !== undefined) { layer.height = preset.height; var el4 = document.getElementById("inputheight");if(el4) el4.value = preset.height; }
-    if (preset.obg    !== undefined) { layer.obg = preset.obg; layer.obgSize = preset.obgSize || 6; }
+    // obg toujours false en prérequis
+    if (isRequisite) {
+      layer.obg = false;
+    } else if (preset.obg !== undefined) {
+      layer.obg = preset.obg; layer.obgSize = preset.obgSize || 6;
+    }
     layer._appliedPreset = preset.label;
   }
   drawProject();
   saveToHistory();
 }
 
+
+// ============================================================
+// BOUTONS CORPS DE CARTE / PRÉREQUIS — tags, resources, parties, misc ciblés
+// ============================================================
+var REQ_RATIO = 66 / 142; // ratio de réduction tuile standard → prérequis
+
+var REQ_POS = { x: 284, y: 92 };
+
+function applyBodyReqMode(layerId, isRequisite) {
+  var layer = aLayers[layerId];
+  if (!layer) return;
+
+  if (isRequisite) {
+    // Mémoriser les dimensions corps de carte si pas encore fait
+    if (layer._bodyWidth === undefined) {
+      layer._bodyWidth  = layer.width;
+      layer._bodyHeight = layer.height;
+    }
+    var bw = layer._bodyWidth;
+    var bh = layer._bodyHeight;
+    var newW = Math.round(bw * REQ_RATIO);
+    var newH = Math.round(bh * REQ_RATIO);
+    layer.x      = REQ_POS.x;
+    layer.y      = REQ_POS.y;
+    layer.width  = newW;
+    layer.height = newH;
+    layer.obg    = false;
+    layer._appliedPreset = "Prérequis";
+  } else {
+    // Retour au corps de carte
+    if (layer._bodyWidth !== undefined) {
+      layer.width  = layer._bodyWidth;
+      layer.height = layer._bodyHeight;
+    }
+    var c = document.getElementById("cmcanvas");
+    layer.x = Math.round(c.width  / 2);
+    layer.y = Math.round(c.height / 2);
+    layer.obg = false;
+    layer._appliedPreset = "Corps de carte";
+  }
+
+  var ixEl = document.getElementById("inputx");      if (ixEl) ixEl.value = layer.x;
+  var iyEl = document.getElementById("inputy");      if (iyEl) iyEl.value = layer.y;
+  var iwEl = document.getElementById("inputwidth");  if (iwEl) iwEl.value = layer.width;
+  var ihEl = document.getElementById("inputheight"); if (ihEl) ihEl.value = layer.height;
+
+  drawProject();
+  saveToHistory();
+}
 
 function applyVPMode(layerId, isNegative) {
   var layer = aLayers[layerId];
@@ -3223,6 +3331,7 @@ function addBlock(th) {
       }
     }
     layer.locked = true;
+    layer._insertAtThird = true; // flag pour insertion en 3ème position
   }
 
   // Point 15 : Logique VP
@@ -3279,6 +3388,21 @@ function addBlock(th) {
     if (isVPValueBlock) {
       layer._vpSrc = thisBlock.src;
     }
+  }
+
+  // Flags Corps/Prérequis pour tags, resources, parties, misc ciblés
+  if (thisBlock.putUnder === "tags") {
+    layer._tagSrc = true;
+  }
+  if (thisBlock.putUnder === "resources") {
+    layer._resSrc = thisBlock.src;
+  }
+  if (thisBlock.putUnder === "parties") {
+    layer._partySrc = true;
+  }
+  var MISC_REQ_SRCS = ["megacredit","delegate","chairman","party_leader","influence"];
+  if (thisBlock.putUnder === "misc" && MISC_REQ_SRCS.indexOf(thisBlock.src) !== -1) {
+    layer._miscReqSrc = thisBlock.src;
   }
 
   applyDefaultPreset(layer, thisBlock.putUnder, thisBlock.src);
@@ -3375,8 +3499,11 @@ function addBlock(th) {
       if (!layer.width)  layer.width  = 142;
       if (!layer.height) layer.height = 142;
     }
-    layer._appliedPreset = "Standard tile";
+    layer._appliedPreset = "Corps de carte";
     layer._tileSrc = thisBlock.src;
+    // Mémoriser les dimensions corps de carte dès l'ajout
+    layer._bodyWidth  = layer.width;
+    layer._bodyHeight = layer.height;
   }
 
   var newLayer = addLayer(thisBlock.text, layer);
@@ -5881,11 +6008,8 @@ function loadCompareImage(input) {
       toAdd.appendChild(childAdd);
       aLayers[toAdd.id] = layer;
       ddcount++;
-      if (baseDiv && baseDiv.nextSibling) {
-        layerlist.insertBefore(toAdd, baseDiv.nextSibling);
-      } else {
-        layerlist.appendChild(toAdd);
-      }
+      // Insérer en DERNIÈRE position (tout en bas)
+      layerlist.appendChild(toAdd);
       sortable(layerlist, function() {});
       drawProject();
       saveToHistory();
