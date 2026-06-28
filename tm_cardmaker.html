@@ -2196,7 +2196,7 @@ function startTemplate(name) {
   var baseW = isHorizontal ? 1126 : 826;
   var baseH = isHorizontal ? 826 : 1126;
   addLayer(t("layer_base"), {type:"base", color:"#ffffff", height:baseH, width:baseW, params:"color"});
-  loadFrom(megaTemplates[name].layers);
+  loadFrom(megaTemplates[name].layers, false, true);
   applyCanvasZoom();
   if (window._restoreLayout) window._restoreLayout();
   updateTemplateList();
@@ -2798,8 +2798,69 @@ function drawEffect(ctx, layer) {
 // ============================================================
 // AUTOSAVE — FIX : ne plus écrire pendant le drag
 // ============================================================
+// COMPATIBILITÉ FICHIERS SLICEOFBREAD ORIGINAL
+// Table de remapping : iNum original SliceOfBread -> iNum de notre fork
+// Établie empiriquement depuis des fichiers projet réels (ancres: megacredit=11, bar=15,
+// max_big=33, min_medium=37, tags/power=68, tiles/city=74)
+var legacyBlockRemap = {
+  // Calibré empiriquement sur 17 fichiers Raw SliceOfBread originaux.
+  // Zones ✓ = confirmées par params (res_otherbg, tag_otherbg, tiles_otherbg, mc_otherbg)
+  //           ou par corrélation visuelle carte/iNum.
+  // Zones (d) = déduites par contiguïté.
+
+  // REQUISITES : min_medium=37✓, normal=38(d)
+  37: 34,   // requisites/min_medium ✓
+  38: 35,   // requisites/normal (d)
+
+  // RESOURCES : commence à 39✓ (sans res_otherbg_hidden ni data ni fighter)
+  39: 36,   // resources/animal ✓
+  40: 37,   // resources/card ✓
+  41: 40,   // resources/floater ✓ (data[38]+fighter[39] insérés dans notre fork)
+  42: 41,   // resources/heat ✓
+  43: 42,   // resources/microbe ✓
+  // 44=plant, 45=power, 46=radiation... sont IDENTIQUES entre original et notre fork ✓
+
+  // TAGS : ancres ✓ sur earth=55, event=56, jovian=57, mars=58,
+  //        microbe=63, plant=67, power=68, science=70, space=71, venus=72, wild=73
+  //        (52-54 = animal,building,city supposés identiques)
+  //        (59-62, 64-66, 69 = tags extras de SoB non remappés car inconnus)
+  57: 59,   // tags/jovian ✓
+  58: 60,   // tags/mars ✓
+  63: 61,   // tags/microbe ✓
+  67: 65,   // tags/plant ✓
+  68: 66,   // tags/power ✓
+  70: 68,   // tags/science ✓
+  71: 69,   // tags/space ✓
+  72: 70,   // tags/venus ✓
+  73: 71,   // tags/wild ✓
+
+  // TILES : commence à 74✓ (décalage -2 vs notre liste qui commence à 72)
+  74: 72, 75: 73, 76: 74, 77: 75, 78: 76, 79: 77, 80: 78, 81: 79, 82: 80,
+
+  // VPs : commence à 83✓ (décalage -2 vs notre liste qui commence à 81)
+  83: 81, 84: 82, 85: 83, 86: 84, 87: 85, 88: 86,
+  89: 87, 90: 88, 91: 89, 92: 90, 93: 91,
+
+  // MISC/TEMPLATES fin : décalage -2 (d)
+  94: 92, 95: 93, 96: 94, 97: 95, 98: 96, 99: 97
+};
+
+function applyLegacyRemap(layers) {
+  for (var i = 0; i < layers.length; i++) {
+    var l = layers[i];
+    if (l.type === "block" && typeof l.iNum === "number") {
+      var remapped = legacyBlockRemap[l.iNum];
+      if (remapped !== undefined) l.iNum = remapped;
+    }
+  }
+  return layers;
+}
+
+// ============================================================
 function autoSave(layers) {
-  lastAutoSave = projectDataToJson(layers);
+  // Insérer un objet sentinelle en tête pour marquer les fichiers de notre fork
+  var marked = [{_jz:1}].concat(layers);
+  lastAutoSave = projectDataToJson(marked);
   try {
     if (typeof Storage !== "undefined") {
       localStorage.setItem("autosave", lastAutoSave);
@@ -2922,7 +2983,9 @@ function allLoadingDone(loadautosave) {
   document.getElementById("cmcanvas").style.display = "block";
   try {
     if (loadautosave) {
-      loadFrom(JSON.parse(localStorage.getItem("autosave")), true);
+      var _as = JSON.parse(localStorage.getItem("autosave"));
+      if (_as && _as[0] && _as[0]._jz) _as.shift(); // retirer la sentinelle _jz
+      loadFrom(_as, true);
     } else {
       drawProject();
     }
@@ -2934,9 +2997,18 @@ function allLoadingDone(loadautosave) {
 // ============================================================
 // CHARGEMENT / SAUVEGARDE DE PROJET
 // ============================================================
-function loadFrom(saved, autoload) {
+function loadFrom(saved, autoload, isNativeFork) {
   reloading    = true;
   unreloadable = false;
+  // Détection fichier de notre fork vs fichier SliceOfBread original :
+  // Nos fichiers ont {_jz:1} en premier élément ; les fichiers SliceOfBread n'ont pas cette sentinelle.
+  if (isNativeFork) {
+    // déjà nettoyé par l'appelant, rien à faire
+  } else if (saved && saved.length && saved[0]._jz) {
+    saved = saved.slice(1); // retirer la sentinelle, le reste est notre format natif
+  } else {
+    saved = applyLegacyRemap(JSON.parse(JSON.stringify(saved))); // cloner + remappe iNum
+  }
   var scale = {x:1, y:1, width:1, height:1};
   try {
     for (var li = 0; li < saved.length; li++) {
@@ -3590,7 +3662,7 @@ function addMegaTemplate() {
   document.getElementById("layerlist").innerHTML = "";
   ddcount = 0; aLayers = {}; tagCount = 0; undoHistory = []; undoIndex = -1;
   addLayer(t("layer_base"), {type:"base", color:"#ffffff", height:1126, width:826, params:"color"});
-  loadFrom(megaTemplates[mega].layers);
+  loadFrom(megaTemplates[mega].layers, false, true);
 }
 
 type2FuncList.text = addTextBox;
@@ -3762,6 +3834,9 @@ function userImageLoaded() {
             localCanvases.push(cvs);
           }
           var newLayers = JSON.parse(layerStr);
+          // Détecter si c'est un fichier de notre fork (sentinelle _jz en tête)
+          var _isNativeFork = (newLayers.length && newLayers[0]._jz);
+          if (_isNativeFork) newLayers.shift();
           for (var jj = 0; jj < newLayers.length; jj++) {
             if (newLayers[0] && newLayers[0].type === "base" && aLayers["dragdropdiv0"]) {
               var base = aLayers["dragdropdiv0"];
@@ -3774,7 +3849,7 @@ function userImageLoaded() {
               newLayers[jj].type = "embedded";
             }
           }
-          loadFrom(newLayers);
+          loadFrom(newLayers, false, _isNativeFork);
           projectLoad = false;
           setTimeout(drawProject, 100);
         } catch(err) {
