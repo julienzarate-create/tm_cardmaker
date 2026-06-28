@@ -1476,6 +1476,7 @@ function t(key) {
 var aLayers = {};       // { divId: layerObject }
 var ddcount  = 0;
 var tagCount = 0;
+var currentTemplateName = "green_normal"; // template actif courant
 var reloading = false;
 var unreloadable = false;
 var projectLoad = false;
@@ -1808,20 +1809,20 @@ var blockList = [
   {putUnder:"tags",             text:"",                      src:"mercury",   otherbg:"tag_otherbg"},
   {putUnder:"resources",        text:"",                      src:"asteroid",  otherbg:"res_otherbg"},
   {putUnder:"resources",        text:"",                      src:"ore",       otherbg:"res_otherbg"},
-  {putUnder:"custom_assets", text:"Cube Bleu",         src:"cube_bleu",           caW:92,  caH:87},
-  {putUnder:"custom_assets", text:"Cube Rouge",        src:"cube_rouge",          caW:92,  caH:87},
-  {putUnder:"custom_assets", text:"Dôme",              src:"dome1",               caW:92,  caH:92},
-  {putUnder:"custom_assets", text:"Gradient",          src:"picture_gradient",    caW:0,   caH:200, caFullW:true},
-  {putUnder:"custom_assets", text:"Dos Prélude",       src:"prelude_back",        caW:826, caH:584},
-  {putUnder:"custom_assets", text:"Proj. Standard",    src:"projet_standars",     caW:826, caH:222},
+  {putUnder:"custom_assets", text:"Cube Bleu",         src:"cube_bleu",           caW:100, caH:95},
+  {putUnder:"custom_assets", text:"Cube Rouge",        src:"cube_rouge",          caW:100, caH:95},
+  {putUnder:"custom_assets", text:"Dôme",              src:"dome1",               caW:130, caH:130},
+  {putUnder:"custom_assets", text:"Gradient",          src:"picture_gradient",    caGradient:true},
+  {putUnder:"custom_assets", text:"Dos Prélude",       src:"prelude_back",        caW:83,  caH:58},
+  {putUnder:"custom_assets", text:"Proj. Standard",    src:"projet_standars",     caW:300, caH:81},
   {putUnder:"custom_assets", text:"Sanctuaire",        src:"sanctuaire",          caW:130, caH:142},
-  {putUnder:"custom_assets", text:"Wilderness",        src:"wilderness1",         caW:142, caH:142},
-  {putUnder:"custom_assets", text:"Promo Marker",      src:"1_promo_marker",      caW:92,  caH:92},
-  {putUnder:"custom_assets", text:"Ressource Blanc",   src:"2_ressource_blanc",   caW:92,  caH:62},
-  {putUnder:"custom_assets", text:"25ab",              src:"25ab",                caW:92,  caH:92},
-  {putUnder:"custom_assets", text:"Cadre",             src:"cadre",               caW:0,   caH:0,   caFullCanvas:true},
-  {putUnder:"custom_assets", text:"Cadre Rouge",       src:"cadre_rouge",         caW:87,  caH:100},
-  {putUnder:"custom_assets", text:"Card Border",       src:"card_border",         caW:0,   caH:0,   caFullCanvas:true},
+  {putUnder:"custom_assets", text:"Wilderness",        src:"wilderness1",         caW:130, caH:130},
+  {putUnder:"custom_assets", text:"Promo Marker",      src:"1_promo_marker",      caW:35,  caH:35,  caFixedPos:true, caX:56, caY:869},
+  {putUnder:"custom_assets", text:"Ressource Blanc",   src:"2_ressource_blanc",   caW:150, caH:101},
+  {putUnder:"custom_assets", text:"25ab",              src:"25ab",                caW:150, caH:150},
+  {putUnder:"custom_assets", text:"Cadre",             src:"cadre",               caFullCanvas:true},
+  {putUnder:"custom_assets", text:"Cadre Rouge",       src:"cadre_rouge",         caW:150, caH:173},
+  {putUnder:"custom_assets", text:"Card Border",       src:"card_border",         caFullCanvas:true},
   {putUnder:"custom_assets", text:"Cercle Rouge",      src:"cercle_rouge_100pct", caW:92,  caH:92},
   {putUnder:"icons_extensions", text:"Base",                  src:"1A"},
   {putUnder:"icons_extensions", text:"Prélude",               src:"2prelude"},
@@ -2164,21 +2165,42 @@ function applyDefaultPreset(layer, putUnder, srcName) {
     preset = blockDefaults[putUnder][0];
   } else if (putUnder === "custom_assets") {
     var caBl = blockList[iNum];
-    var caW, caH;
+    var caW, caH, caX, caY;
+    var cx = Math.round(cmcanvas.width / 2);
+    var cy = Math.round(cmcanvas.height / 2);
     if (caBl.caFullCanvas) {
-      caW = cmcanvas.width;
-      caH = cmcanvas.height;
+      caW = cmcanvas.width; caH = cmcanvas.height; caX = 0; caY = 0;
     } else if (caBl.caFullW) {
-      caW = cmcanvas.width;
-      caH = caBl.caH;
+      caW = cmcanvas.width; caH = caBl.caH;
+      caX = 0; caY = cy - Math.round(caH / 2);
+    } else if (caBl.caFixedPos) {
+      caW = caBl.caW; caH = caBl.caH;
+      caX = caBl.caX; caY = caBl.caY;
+    } else if (caBl.caGradient) {
+      // Position selon template actif
+      var gradPresets = {
+        green_normal:    {x:75, y:207, w:676, h:400},
+        green_big_bottom:{x:75, y:207, w:676, h:300},
+        green_small_bottom:{x:75, y:207, w:676, h:450},
+        blue_normal:     {x:75, y:207, w:676, h:540},
+        blue_big_bottom: {x:75, y:207, w:676, h:490},
+        blue_big_top:    {x:75, y:207, w:676, h:590},
+        red_normal:      {x:75, y:207, w:676, h:420},
+        red_small_bottom:{x:75, y:207, w:676, h:450},
+        prelude:         {x:75, y:207, w:976, h:250},
+        corporation:     {x:75, y:207, w:976, h:250}
+      };
+      var gp = gradPresets[currentTemplateName] || gradPresets["green_normal"];
+      caX = gp.x; caY = gp.y; caW = gp.w; caH = gp.h;
     } else {
-      caW = caBl.caW;
-      caH = caBl.caH;
+      caW = caBl.caW; caH = caBl.caH;
+      caX = cx - Math.round(caW / 2);
+      caY = cy - Math.round(caH / 2);
     }
-    preset = { x: Math.round(cmcanvas.width / 2), y: Math.round(cmcanvas.height / 2), width: caW, height: caH, lockedRatio: true };
+    preset = { x: caX, y: caY, width: caW, height: caH, lockedRatio: true };
   } else if (putUnder === "icons_extensions") {
     // Icônes extensions : position fixe par défaut
-    preset = { x: 55, y: 898, width: 38, height: 38, lockedRatio: true };
+    preset = { x: 54, y: 867, width: 38, height: 38, lockedRatio: true };
   } else {
     preset = blockDefaults[putUnder][0];
   }
@@ -2216,6 +2238,7 @@ function hideStart() { document.getElementById("start-screen").style.display = "
 function startTemplate(name) {
   hideStart();
   if (!megaTemplates || !megaTemplates[name]) return;
+  currentTemplateName = name;
   document.getElementById("layerlist").innerHTML = "";
   ddcount = 0; aLayers = {}; tagCount = 0; undoHistory = []; undoIndex = -1;
   antiOverlapCounters = {}; wrapPositions = {}; // Reset des compteurs
