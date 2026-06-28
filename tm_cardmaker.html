@@ -913,6 +913,8 @@ input[type=number] { width: auto; }
       <div class="sb-sec">
         <button class="sb-sec-btn open" onclick="toggleSec(this,'sext')">Icônes Extensions <span class="arr">▼</span></button>
         <div class="sb-content open" id="sext"><div class="sb-icon-grid" id="icons_extensions"></div></div>
+        <button class="sb-sec-btn open" onclick="toggleSec(this,'scust')">Assets Perso <span class="arr">▼</span></button>
+        <div class="sb-content open" id="scust"><div class="sb-icon-grid" id="custom_assets"></div></div>
       </div>
       <div class="sb-sec">
         <button class="sb-sec-btn open" onclick="toggleSec(this,'stpl')">Templates <span class="arr">▼</span></button>
@@ -1806,6 +1808,21 @@ var blockList = [
   {putUnder:"tags",             text:"",                      src:"mercury",   otherbg:"tag_otherbg"},
   {putUnder:"resources",        text:"",                      src:"asteroid",  otherbg:"res_otherbg"},
   {putUnder:"resources",        text:"",                      src:"ore",       otherbg:"res_otherbg"},
+  {putUnder:"custom_assets", text:"Cube Bleu",         src:"cube_bleu",           caW:92,  caH:87},
+  {putUnder:"custom_assets", text:"Cube Rouge",        src:"cube_rouge",          caW:92,  caH:87},
+  {putUnder:"custom_assets", text:"Dôme",              src:"dome1",               caW:92,  caH:92},
+  {putUnder:"custom_assets", text:"Gradient",          src:"picture_gradient",    caW:0,   caH:200, caFullW:true},
+  {putUnder:"custom_assets", text:"Dos Prélude",       src:"prelude_back",        caW:826, caH:584},
+  {putUnder:"custom_assets", text:"Proj. Standard",    src:"projet_standars",     caW:826, caH:222},
+  {putUnder:"custom_assets", text:"Sanctuaire",        src:"sanctuaire",          caW:130, caH:142},
+  {putUnder:"custom_assets", text:"Wilderness",        src:"wilderness1",         caW:142, caH:142},
+  {putUnder:"custom_assets", text:"Promo Marker",      src:"1_promo_marker",      caW:92,  caH:92},
+  {putUnder:"custom_assets", text:"Ressource Blanc",   src:"2_ressource_blanc",   caW:92,  caH:62},
+  {putUnder:"custom_assets", text:"25ab",              src:"25ab",                caW:92,  caH:92},
+  {putUnder:"custom_assets", text:"Cadre",             src:"cadre",               caW:0,   caH:0,   caFullCanvas:true},
+  {putUnder:"custom_assets", text:"Cadre Rouge",       src:"cadre_rouge",         caW:87,  caH:100},
+  {putUnder:"custom_assets", text:"Card Border",       src:"card_border",         caW:0,   caH:0,   caFullCanvas:true},
+  {putUnder:"custom_assets", text:"Cercle Rouge",      src:"cercle_rouge_100pct", caW:92,  caH:92},
   {putUnder:"icons_extensions", text:"Base",                  src:"1A"},
   {putUnder:"icons_extensions", text:"Prélude",               src:"2prelude"},
   {putUnder:"icons_extensions", text:"Turmoil",               src:"3T"},
@@ -2145,6 +2162,20 @@ function applyDefaultPreset(layer, putUnder, srcName) {
     preset = { x: mPos.x, y: mPos.y, width: miscPresetW, height: miscPresetH };
   } else if (putUnder === "VPs" || putUnder === "requisites") {
     preset = blockDefaults[putUnder][0];
+  } else if (putUnder === "custom_assets") {
+    var caBl = blockList[iNum];
+    var caW, caH;
+    if (caBl.caFullCanvas) {
+      caW = cmcanvas.width;
+      caH = cmcanvas.height;
+    } else if (caBl.caFullW) {
+      caW = cmcanvas.width;
+      caH = caBl.caH;
+    } else {
+      caW = caBl.caW;
+      caH = caBl.caH;
+    }
+    preset = { x: Math.round(cmcanvas.width / 2), y: Math.round(cmcanvas.height / 2), width: caW, height: caH, lockedRatio: true };
   } else if (putUnder === "icons_extensions") {
     // Icônes extensions : position fixe par défaut
     preset = { x: 55, y: 898, width: 38, height: 38, lockedRatio: true };
